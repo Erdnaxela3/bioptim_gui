@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:bioptim_gui/models/acrobatics_ocp_config.dart';
 import 'package:bioptim_gui/models/acrobatics_somersault_direction.dart';
 import 'package:bioptim_gui/models/acrobatics_twist_side.dart';
-import 'package:bioptim_gui/models/dynamics.dart';
-import 'package:bioptim_gui/models/decision_variables.dart';
 import 'package:bioptim_gui/models/global.dart';
 import 'package:bioptim_gui/models/objective_type.dart';
 import 'package:bioptim_gui/models/penalty.dart';
@@ -16,22 +14,15 @@ class _Somersault {
   int nbShootingPoints;
   int nbHalfTwists;
   double duration;
-  Dynamics dynamics;
 
   final List<Objective> objectives = [];
   final List<Constraint> constraints = [];
-
-  DecisionVariables stateVariables =
-      DecisionVariables(DecisionVariableType.state);
-  DecisionVariables controlVariables =
-      DecisionVariables(DecisionVariableType.control);
 
   _Somersault({
     required this.somersaultIndex,
     required this.nbShootingPoints,
     required this.nbHalfTwists,
     required this.duration,
-    required this.dynamics,
   });
 }
 
@@ -61,13 +52,11 @@ class AcrobaticsOCPProgram {
     if (somersaults.length < generic.nbSomersaults) {
       for (int i = somersaults.length; i < generic.nbSomersaults; i++) {
         somersaults.add(_Somersault(
-            somersaultIndex: i,
-            duration: 1.0,
-            nbShootingPoints: 50,
-            nbHalfTwists: 0,
-            dynamics: const Dynamics(
-                type: DynamicsType.torqueDriven, isExpanded: true)));
-        resetVariables(somersaultIndex: i);
+          somersaultIndex: i,
+          duration: 1.0,
+          nbShootingPoints: 50,
+          nbHalfTwists: 0,
+        ));
       }
     } else {
       // Do not change anything if we already have the right number of somersaults
@@ -77,56 +66,6 @@ class AcrobaticsOCPProgram {
     }
     _hasPendingChangesToBeExported = true;
   }
-
-  void resetVariables({required int somersaultIndex}) {
-    somersaults[somersaultIndex].stateVariables.clearVariables();
-    for (final name in somersaults[somersaultIndex].dynamics.type.states) {
-      variables(
-              from: DecisionVariableType.state,
-              somersaultIndex: somersaultIndex)
-          .addVariable(DecisionVariable(
-        name: name,
-        bounds: Bounds(
-          nbElements: 1,
-          interpolation: Interpolation.constantWithFirstAndLastDifferent,
-        ),
-        initialGuess:
-            InitialGuess(nbElements: 1, interpolation: Interpolation.constant),
-      ));
-    }
-
-    somersaults[somersaultIndex].controlVariables.clearVariables();
-    for (final name in somersaults[somersaultIndex].dynamics.type.controls) {
-      variables(
-              from: DecisionVariableType.control,
-              somersaultIndex: somersaultIndex)
-          .addVariable(DecisionVariable(
-        name: name,
-        bounds: Bounds(
-          nbElements: 1,
-          interpolation: Interpolation.constantWithFirstAndLastDifferent,
-        ),
-        initialGuess:
-            InitialGuess(nbElements: 1, interpolation: Interpolation.constant),
-      ));
-    }
-
-    _hasPendingChangesToBeExported = true;
-  }
-
-  DecisionVariables variables(
-      {required DecisionVariableType from, required int somersaultIndex}) {
-    switch (from) {
-      case DecisionVariableType.state:
-        return somersaults[somersaultIndex].stateVariables;
-      case DecisionVariableType.control:
-        return somersaults[somersaultIndex].controlVariables;
-    }
-  }
-
-  DecisionVariable variable(String name,
-          {required DecisionVariableType from, required int somersaultIndex}) =>
-      variables(from: from, somersaultIndex: somersaultIndex)[name];
 
   ///
   /// Main interface

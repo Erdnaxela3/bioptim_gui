@@ -764,7 +764,7 @@ def get_arguments(somersault_index: int, constraint_index: int, key: str):
         return ArgumentResponse(
             key=key, type=arguments[key]["type"], value=arguments[key]["value"]
         )
-    except:
+    except KeyError:
         raise HTTPException(
             status_code=404,
             detail=f"{key} not found in arguments of constraint {constraint_index}",

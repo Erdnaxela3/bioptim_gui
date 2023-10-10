@@ -1081,7 +1081,7 @@ def test_put_argument_objective():
 
 def test_put_argument_objective_bad():
     response = client.put(
-        "/acrobatics/somersaults_info/0/objectives/1/arguments/minor_boundero",
+        "/acrobatics/somersaults_info/0/objectives/1/arguments/minor_bound",
         json={"type": "list", "value": [1, 2, 3]},
     )
     assert response.status_code == 404, response
@@ -1102,7 +1102,7 @@ def test_get_arguments_constraint():
     )
     assert response.status_code == 200, response
     data = response.json()
-    assert data["value"] == None
+    assert data["value"] is None
 
 
 def test_get_arguments_constraint_bad():

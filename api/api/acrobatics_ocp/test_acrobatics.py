@@ -57,8 +57,8 @@ def run_for_all():
                         "multi_thread": False,
                         "weight": 1.0,
                         "arguments": {
-                            "min_bound": {"value": 0.0, "type": "float"},
-                            "max_bound": {"value": 0.0, "type": "float"},
+                            "min_bound": {"value": 0.9, "type": "float"},
+                            "max_bound": {"value": 1.1, "type": "float"},
                         },
                     },
                 ],
@@ -426,13 +426,13 @@ def test_get_somersault_with_index_wrong():
 
 
 def test_put_shooting_points():
-    response = client.put("/acrobatics/somersaults_info/0/shooting_points")
+    response = client.get("/acrobatics/somersaults_info/0")
     assert response.status_code == 200, response
     data = response.json()
     assert data["nb_shooting_points"] == 24
 
     response = client.put(
-        "/acrobatics/somersaults_info/0/nb_shooting_points/",
+        "/acrobatics/somersaults_info/0/shooting_points",
         json={"nb_shooting_points": 10},
     )
     assert response.status_code == 200, response
@@ -443,27 +443,604 @@ def test_put_shooting_points():
     assert data["nb_shooting_points"] == 10
 
 
-def test_actually_deleted_fields():
-    # TODO change a somersault duration then delete
+def test_put_shooting_points_wrong():
+    response = client.put(
+        "/acrobatics/somersaults_info/0/shooting_points",
+        json={"nb_shooting_points": -10},
+    )
+    assert response.status_code == 400, response
+
+    response = client.put(
+        "/acrobatics/somersaults_info/0/shooting_points",
+        json={"nb_shooting_points": 0},
+    )
+    assert response.status_code == 400, response
+
+
+def test_put_shooting_points_wrong_type():
+    response = client.put(
+        "/acrobatics/somersaults_info/0/shooting_points",
+        json={"nb_shooting_points": "wrong"},
+    )
+    assert response.status_code == 422, response
+
+
+def test_put_shooting_points_unchanged_other_somersaults():
+    """
+    add a somersault, change its shooting points, check that the other somersaults are unchanged
+    """
+    response = client.put("/acrobatics/nb_somersaults/", json={"nb_somersaults": 2})
+    assert response.status_code == 200, response
+
+    response = client.put(
+        "/acrobatics/somersaults_info/0/shooting_points",
+        json={"nb_shooting_points": 10},
+    )
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data[0]["nb_shooting_points"] == 10
+    assert data[1]["nb_shooting_points"] == 24
+
+
+def test_put_somersault_duration():
+    response = client.get("/acrobatics/somersaults_info/0")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data["duration"] == 1
+
+    response = client.put(
+        "/acrobatics/somersaults_info/0/duration",
+        json={"duration": 0.5},
+    )
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info/0")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data["duration"] == 0.5
+
+
+def test_put_somersault_duration_wrong():
+    response = client.put(
+        "/acrobatics/somersaults_info/0/duration",
+        json={"duration": -0.5},
+    )
+    assert response.status_code == 400, response
+
+    response = client.put(
+        "/acrobatics/somersaults_info/0/duration",
+        json={"duration": 0},
+    )
+    assert response.status_code == 400, response
+
+
+def test_put_somersault_duration_wrong_type():
+    response = client.put(
+        "/acrobatics/somersaults_info/0/duration",
+        json={"duration": "wrong"},
+    )
+    assert response.status_code == 422, response
+
+
+def test_put_somersault_duration_unchanged_other_somersaults():
+    """
+    add a somersault, change its duration, check that the other somersaults are unchanged
+    """
+    response = client.put("/acrobatics/nb_somersaults/", json={"nb_somersaults": 2})
+    assert response.status_code == 200, response
+
+    response = client.put(
+        "/acrobatics/somersaults_info/0/duration",
+        json={"duration": 0.2},
+    )
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data[0]["duration"] == 0.2
+    assert data[1]["duration"] == 0.5
+
+
+def test_put_somersault_duration_changes_final_time_simple_more():
+    response = client.put(
+        "/acrobatics/somersaults_info/0/duration",
+        json={"duration": 1.2},
+    )
+    assert response.status_code == 200, response
+
     response = client.get("/acrobatics/")
     assert response.status_code == 200, response
     data = response.json()
+    assert data["final_time"] == 1.2
 
-    assert data["nb_somersaults"] == 1
-    assert data["model_path"] == "test/path"
-    assert data["final_time"] == 2
-    assert data["final_time_margin"] == 0.2
-    assert data["position"] == "tuck"
-    assert data["sport_type"] == "trampoline"
-    assert data["preferred_twist_side"] == "right"
 
-    client.put("/acrobatics/nb_somersaults/", json={"nb_somersaults": 0})
+def test_put_somersault_duration_changes_final_time_simple_less():
+    response = client.put(
+        "/acrobatics/somersaults_info/0/duration",
+        json={"duration": 0.2},
+    )
+    assert response.status_code == 200, response
 
-    client.put("/acrobatics/nb_somersaults/", json={"nb_somersaults": 1})
     response = client.get("/acrobatics/")
+    assert response.status_code == 200, response
     data = response.json()
-    assert data["model_path"] != "test/path"
-    assert data["final_time"] != 2
-    assert data["final_time_margin"] != 0.2
-    assert data["position"] != "tuck"
-    assert data["preferred_twist_side"] != "right"
+    assert data["final_time"] == 0.2
+
+
+def test_put_somersault_duration_changes_final_time_simple_more_multiple():
+    response = client.put("/acrobatics/nb_somersaults/", json={"nb_somersaults": 5})
+    assert response.status_code == 200, response
+
+    client.put(
+        "/acrobatics/somersaults_info/0/duration",
+        json={"duration": 1.2},
+    )
+
+    response = client.put(
+        "/acrobatics/somersaults_info/1/duration",
+        json={"duration": 0.6},
+    )
+    # durations : 1.2, 0.6, 0.2, 0.2, 0.2, final_time = 2.4
+
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data["final_time"] == 2.4
+
+
+def test_put_somersault_duration_changes_final_time_simple_less_multiple():
+    response = client.put("/acrobatics/nb_somersaults/", json={"nb_somersaults": 5})
+    assert response.status_code == 200, response
+
+    client.put(
+        "/acrobatics/somersaults_info/0/duration",
+        json={"duration": 0.1},
+    )
+
+    response = client.put(
+        "/acrobatics/somersaults_info/1/duration",
+        json={"duration": 0.1},
+    )
+    # durations : 0.1, 0.1, 0.2, 0.2, 0.2 final_time = 0.8
+
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data["final_time"] == 0.8
+
+
+def test_put_nb_half_twists():
+    response = client.get("/acrobatics/somersaults_info/0")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data["nb_half_twists"] == 0
+
+    response = client.put(
+        "/acrobatics/somersaults_info/0/nb_half_twists",
+        json={"nb_half_twists": 1},
+    )
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info/0")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data["nb_half_twists"] == 1
+
+
+def test_put_nb_half_twists_wrong():
+    response = client.put(
+        "/acrobatics/somersaults_info/0/nb_half_twists",
+        json={"nb_half_twists": -1},
+    )
+    assert response.status_code == 400, response
+
+    response = client.put(
+        "/acrobatics/somersaults_info/0/nb_half_twists",
+        json={"nb_half_twists": 0},
+    )
+    assert response.status_code == 200, response
+
+
+def test_put_nb_half_twists_wrong_type():
+    response = client.put(
+        "/acrobatics/somersaults_info/0/nb_half_twists",
+        json={"nb_half_twists": "wrong"},
+    )
+    assert response.status_code == 422, response
+
+
+def test_get_objectives():
+    response = client.get("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 2
+    assert data[0]["weight"] == 100.0
+    assert data[1]["weight"] == 1.0
+
+
+def test_add_objective_simple():
+    response = client.post("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 3
+
+
+def test_add_objective_multiple():
+    for _ in range(8):
+        response = client.post("/acrobatics/somersaults_info/0/objectives")
+        assert response.status_code == 200, response
+        data = response.json()
+        assert len(data) == _ + 3
+
+
+def test_delete_objective_0():
+    response = client.delete("/acrobatics/somersaults_info/0/objectives/0")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["penalty_type"] == "MINIMIZE_TIME"
+
+
+def test_delete_objective_1():
+    response = client.delete("/acrobatics/somersaults_info/0/objectives/1")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["penalty_type"] == "MINIMIZE_CONTROL"
+
+
+def test_add_and_remove_objective():
+    response = client.post("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 3
+
+    client.delete("/acrobatics/somersaults_info/0/objectives/0")
+    client.delete("/acrobatics/somersaults_info/0/objectives/0")
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info/0/objectives")
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["penalty_type"] == "MINIMIZE_CONTROL"
+
+
+def test_multiple_somersaults_add_remove_objective():
+    client.put("/acrobatics/nb_somersaults/", json={"nb_somersaults": 5})
+    response = client.post("/acrobatics/somersaults_info/3/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 3
+
+    client.delete("/acrobatics/somersaults_info/3/objectives/0")
+    client.delete("/acrobatics/somersaults_info/3/objectives/0")
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info/3/objectives")
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["penalty_type"] == "MINIMIZE_CONTROL"
+
+    for i in [0, 1, 2, 4]:
+        response = client.get(f"/acrobatics/somersaults_info/{i}/objectives")
+        data = response.json()
+        assert len(data) == 2
+        assert data[0]["penalty_type"] == "MINIMIZE_CONTROL"
+        assert data[1]["penalty_type"] == "MINIMIZE_TIME"
+
+
+@pytest.mark.parametrize(
+    (
+        "key",
+        "default_value",
+        "new_value",
+    ),
+    [
+        ("objective_type", "lagrange", "mayer"),
+        ("penalty_type", "MINIMIZE_CONTROL", "MINIMIZE_TIME"),
+        ("nodes", "all_shooting", "end"),
+        ("quadratic", True, False),
+        ("expand", True, False),
+        ("target", None, [0.2, 0.5]),
+        ("derivative", False, True),
+        ("integration_rule", "rectangle_left", "rectangle_right"),
+        ("multi_thread", False, True),
+        ("weight", 100.0, 10.0),
+    ],
+)
+def test_put_objective_common_argument(key, default_value, new_value):
+    response = client.get("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data[0][key] == default_value
+
+    response = client.put(
+        f"/acrobatics/somersaults_info/0/objectives/0/{key}",
+        json={key: new_value},
+    )
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data[0][key] == new_value
+
+
+@pytest.mark.parametrize(
+    (
+        "key",
+        "new_value",
+    ),
+    [
+        ("objective_type", "mayer"),
+        ("penalty_type", "MINIMIZE_TIME"),
+        ("nodes", "end"),
+        ("quadratic", False),
+        ("expand", False),
+        ("target", [0.2, 0.5]),
+        ("derivative", True),
+        ("integration_rule", "rectangle_right"),
+        ("multi_thread", True),
+        ("weight", 10.0),
+    ],
+)
+def test_actually_deleted_fields_objective(key, new_value):
+    """
+    add one objective, change its values,
+    remove it,
+    add another objective,
+    check that the values are reset
+    """
+    response = client.post("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 3
+
+    response = client.put(
+        f"/acrobatics/somersaults_info/0/objectives/2/{key}", json={key: new_value}
+    )
+    assert response.status_code == 200, response
+
+    response = client.delete("/acrobatics/somersaults_info/0/objectives/2")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 2
+
+    response = client.post("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 3
+    assert data[2][key] != new_value
+
+
+def test_get_constraints():
+    response = client.get("/acrobatics/somersaults_info/0/constraints")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 0
+
+
+def test_post_constraint():
+    response = client.post("/acrobatics/somersaults_info/0/constraints")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["penalty_type"] == "TIME_CONSTRAINT"
+    assert data[0]["nodes"] == "end"
+    assert data[0]["quadratic"]
+    assert data[0]["expand"]
+    assert data[0]["target"] is None
+    assert not data[0]["derivative"]
+    assert data[0]["integration_rule"] == "rectangle_left"
+    assert not data[0]["multi_thread"]
+
+
+def test_post_constraint_multiple():
+    for i in range(8):
+        response = client.post("/acrobatics/somersaults_info/0/constraints")
+        assert response.status_code == 200, response
+        data = response.json()
+        assert len(data) == i + 1
+        assert data[i]["penalty_type"] == "TIME_CONSTRAINT"
+        assert data[i]["nodes"] == "end"
+        assert data[i]["quadratic"]
+        assert data[i]["expand"]
+        assert data[i]["target"] is None
+        assert not data[i]["derivative"]
+        assert data[i]["integration_rule"] == "rectangle_left"
+        assert not data[i]["multi_thread"]
+
+
+def test_delete_constraint_0():
+    response = client.post("/acrobatics/somersaults_info/0/constraints")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 1
+
+    response = client.delete("/acrobatics/somersaults_info/0/constraints/0")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 0
+
+    response = client.get("/acrobatics/somersaults_info/0/constraints")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 0
+
+
+@pytest.mark.parametrize(
+    (
+        "key",
+        "default_value",
+        "new_value",
+    ),
+    [
+        ("penalty_type", "TIME_CONSTRAINT", "CONTINUITY"),
+        ("nodes", "end", "all_shooting"),
+        ("quadratic", True, False),
+        ("expand", True, False),
+        ("target", None, [0.2, 0.5]),
+        ("derivative", False, True),
+        ("integration_rule", "rectangle_left", "rectangle_right"),
+        ("multi_thread", False, True),
+    ],
+)
+def test_put_constraints_common_argument(key, default_value, new_value):
+    response = client.post("/acrobatics/somersaults_info/0/constraints")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 1
+
+    response = client.get("/acrobatics/somersaults_info/0/constraints")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data[0][key] == default_value
+
+    response = client.put(
+        f"/acrobatics/somersaults_info/0/constraints/0/{key}",
+        json={key: new_value},
+    )
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info/0/constraints")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data[0][key] == new_value
+
+
+def test_add_objective_check_arguments_changing_penalty_type():
+    response = client.get("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 2
+
+    assert data[0]["objective_type"] == "lagrange"
+    assert data[0]["penalty_type"] == "MINIMIZE_CONTROL"
+    assert data[0]["nodes"] == "all_shooting"
+    assert len(data[0]["arguments"]) == 1
+
+    assert data[1]["objective_type"] == "mayer"
+    assert data[1]["penalty_type"] == "MINIMIZE_TIME"
+    assert data[1]["nodes"] == "end"
+    assert len(data[1]["arguments"]) == 2
+
+    # change the penalty_type of MINIMIZE_CONTROL to PROPORTIONAL_STATE
+    response = client.put(
+        "/acrobatics/somersaults_info/0/objectives/0/penalty_type",
+        json={"penalty_type": "PROPORTIONAL_STATE"},
+    )
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data[0]["objective_type"] == "lagrange"
+    assert data[0]["penalty_type"] == "PROPORTIONAL_STATE"
+    assert data[0]["nodes"] == "all_shooting"
+    assert len(data[0]["arguments"]) == 6
+    for arg in (
+        "key",
+        "first_dof",
+        "second_dof",
+        "coef",
+        "first_dof_intercept",
+        "second_dof_intercept",
+    ):
+        assert arg in data[0]["arguments"].keys()
+
+    assert data[0]["arguments"]["key"]["value"] is None
+    assert data[0]["arguments"]["first_dof"]["value"] is None
+    assert data[0]["arguments"]["second_dof"]["value"] is None
+    assert data[0]["arguments"]["coef"]["value"] is None
+    assert data[0]["arguments"]["first_dof_intercept"]["value"] == 0
+    assert data[0]["arguments"]["second_dof_intercept"]["value"] == 0
+
+
+def test_add_objective_check_arguments_changing_objective_type():
+    response = client.get("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 2
+
+    assert data[0]["objective_type"] == "lagrange"
+    assert data[0]["penalty_type"] == "MINIMIZE_CONTROL"
+    assert data[0]["nodes"] == "all_shooting"
+    assert len(data[0]["arguments"]) == 1
+
+    assert data[1]["objective_type"] == "mayer"
+    assert data[1]["penalty_type"] == "MINIMIZE_TIME"
+    assert data[1]["nodes"] == "end"
+    assert len(data[1]["arguments"]) == 2
+
+    # change the objective_type from mayer to lagrange for time
+    response = client.put(
+        "/acrobatics/somersaults_info/0/objectives/1/objective_type",
+        json={"objective_type": "lagrange"},
+    )
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data[1]["objective_type"] == "lagrange"
+    assert data[1]["penalty_type"] == "MINIMIZE_TIME"
+    assert data[1]["nodes"] == "end"
+    assert len(data[1]["arguments"]) == 0
+
+
+def test_remove_constraints_fields_delete():
+    response = client.post("/acrobatics/somersaults_info/0/constraints")
+    assert response.status_code == 200, response
+
+    client.put(
+        "/acrobatics/somersaults_info/0/constraints/0/penalty_type",
+        json={"penalty_type": "CONTINUITY"},
+    )
+
+    response = client.delete("/acrobatics/somersaults_info/0/constraints/0")
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info/0/constraints")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 0
+
+    response = client.post("/acrobatics/somersaults_info/0/constraints")
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info/0/constraints")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["penalty_type"] != "CONTINUITY"
+
+
+def test_add_constraints_check_arguments_changing_penalty_type():
+    response = client.post("/acrobatics/somersaults_info/0/constraints")
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info/0/constraints")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 1
+    assert len(data[0]["arguments"]) == 0
+
+    response = client.put(
+        "/acrobatics/somersaults_info/0/constraints/0/penalty_type",
+        json={"penalty_type": "TRACK_POWER"},
+    )
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info/0/constraints")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert len(data) == 1
+    assert len(data[0]["arguments"]) == 1

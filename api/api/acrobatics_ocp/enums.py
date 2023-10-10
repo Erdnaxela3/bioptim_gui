@@ -26,7 +26,11 @@ class ObjectiveType(str, Enum):
     LAGRANGE = "lagrange"
 
 
-class GenericFcn(str, Enum):
+class PenaltyFcn(str, Enum):
+    pass
+
+
+class GenericFcn(PenaltyFcn):
     minimize_angular_momentum = "MINIMIZE_ANGULAR_MOMENTUM"
     minimize_com_position = "MINIMIZE_COM_POSITION"
     minimize_com_velocity = "MINIMIZE_COM_VELOCITY"
@@ -47,3 +51,9 @@ class GenericFcn(str, Enum):
     track_vector_orientations_from_markers = "TRACK_VECTOR_ORIENTATIONS_FROM_MARKERS"
     minimize_time = "MINIMIZE_TIME"
     minimize_q_dot = "MINIMIZE_Q_DOT"
+
+
+class ConstraintFcn(PenaltyFcn):
+    time_constraint = "TIME_CONSTRAINT"
+    continuity = "CONTINUITY"
+    track_power = "TRACK_POWER"

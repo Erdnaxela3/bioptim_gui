@@ -101,4 +101,5 @@ class ObjectiveFcnRequest(BaseModel):
 
 
 class ArgumentRequest(BaseModel):
-    key: str
+    type: str
+    value: int | float | str | list | None

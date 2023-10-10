@@ -1044,3 +1044,107 @@ def test_add_constraints_check_arguments_changing_penalty_type():
     data = response.json()
     assert len(data) == 1
     assert len(data[0]["arguments"]) == 1
+    assert "key_control" in data[0]["arguments"].keys()
+
+
+def test_get_arguments():
+    response = client.get(
+        "/acrobatics/somersaults_info/0/objectives/1/arguments/min_bound",
+    )
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data["value"] == 0.9
+
+
+def test_get_arguments_bad():
+    response = client.get(
+        "/acrobatics/somersaults_info/0/objectives/1/arguments/impossible",
+    )
+    assert response.status_code == 404, response
+
+
+def test_put_argument_objective():
+    response = client.put(
+        "/acrobatics/somersaults_info/0/objectives/1/arguments/min_bound",
+        json={"type": "list", "value": [1, 2, 3]},
+    )
+    assert response.status_code == 200, response
+
+    response = client.get(
+        "/acrobatics/somersaults_info/0/objectives/1/arguments/min_bound",
+    )
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data["value"] == [1, 2, 3]
+    assert data["type"] == "list"
+
+
+def test_put_argument_objective_bad():
+    response = client.put(
+        "/acrobatics/somersaults_info/0/objectives/1/arguments/minor_boundero",
+        json={"type": "list", "value": [1, 2, 3]},
+    )
+    assert response.status_code == 404, response
+
+
+def test_get_arguments_constraint():
+    response = client.post("/acrobatics/somersaults_info/0/constraints")
+    assert response.status_code == 200, response
+
+    response = client.put(
+        "/acrobatics/somersaults_info/0/constraints/0/penalty_type",
+        json={"penalty_type": "TRACK_POWER"},
+    )
+    assert response.status_code == 200, response
+
+    response = client.get(
+        "/acrobatics/somersaults_info/0/constraints/0/arguments/key_control",
+    )
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data["value"] == None
+
+
+def test_get_arguments_constraint_bad():
+    client.post("/acrobatics/somersaults_info/0/constraints")
+    client.put(
+        "/acrobatics/somersaults_info/0/constraints/0/penalty_type",
+        json={"penalty_type": "TRACK_POWER"},
+    )
+
+    response = client.get(
+        "/acrobatics/somersaults_info/0/constraints/0/arguments/impossible",
+    )
+    assert response.status_code == 404, response
+
+
+def test_put_arguments_constraint():
+    client.post("/acrobatics/somersaults_info/0/constraints")
+    client.put(
+        "/acrobatics/somersaults_info/0/constraints/0/penalty_type",
+        json={"penalty_type": "TRACK_POWER"},
+    )
+
+    response = client.put(
+        "/acrobatics/somersaults_info/0/constraints/0/arguments/key_control",
+        json={"type": "list", "value": [1, 2, 3]},
+    )
+    assert response.status_code == 200, response
+
+    response = client.get(
+        "/acrobatics/somersaults_info/0/constraints/0/arguments/key_control",
+    )
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data["value"] == [1, 2, 3]
+    assert data["type"] == "list"
+
+
+def test_put_arguments_constraint_bad():
+    client.post("/acrobatics/somersaults_info/0/constraints")
+
+    response = client.put(
+        "/acrobatics/somersaults_info/0/constraints/0/arguments/impossible",
+        json={"type": "list", "value": [1, 2, 3]},
+    )
+    assert response.status_code == 404, response

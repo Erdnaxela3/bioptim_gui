@@ -194,16 +194,14 @@ def read_acrobatics_data(key: str = None):
     return data if key is None else data[key]
 
 
-@router.get("/")
-def get_acrobatics_data() -> dict:
+@router.get("/", response_model=dict)
+def get_acrobatics_data():
     data = read_acrobatics_data()
     return data
 
 
-@router.put("/nb_somersaults")
-def update_nb_somersaults(
-    nb_somersaults: NbSomersaultsRequest,
-) -> NbSomersaultsResponse:
+@router.put("/nb_somersaults", response_model=NbSomersaultsResponse)
+def update_nb_somersaults(nb_somersaults: NbSomersaultsRequest):
     old_value = read_acrobatics_data("nb_somersaults")
     new_value = nb_somersaults.nb_somersaults
     if new_value < 0:
@@ -218,14 +216,14 @@ def update_nb_somersaults(
     return NbSomersaultsResponse(nb_somersaults=new_value)
 
 
-@router.put("/model_path")
-def put_model_path(model_path: ModelPathRequest) -> ModelPathResponse:
+@router.put("/model_path", response_model=ModelPathResponse)
+def put_model_path(model_path: ModelPathRequest):
     update_acrobatics_data("model_path", model_path.model_path)
     return ModelPathResponse(model_path=model_path.model_path)
 
 
-@router.put("/final_time")
-def put_final_time(final_time: FinalTimeRequest) -> FinalTimeResponse:
+@router.put("/final_time", response_model=FinalTimeResponse)
+def put_final_time(final_time: FinalTimeRequest):
     new_value = final_time.final_time
     if new_value < 0:
         raise HTTPException(status_code=400, detail="final_time must be positive")
@@ -233,10 +231,8 @@ def put_final_time(final_time: FinalTimeRequest) -> FinalTimeResponse:
     return FinalTimeResponse(final_time=new_value)
 
 
-@router.put("/final_time_margin")
-def put_final_time_margin(
-    final_time_margin: FinalTimeMarginRequest,
-) -> FinalTimeMarginResponse:
+@router.put("/final_time_margin", response_model=FinalTimeMarginResponse)
+def put_final_time_margin(final_time_margin: FinalTimeMarginRequest):
     new_value = final_time_margin.final_time_margin
     if new_value < 0:
         raise HTTPException(
@@ -246,24 +242,22 @@ def put_final_time_margin(
     return FinalTimeMarginResponse(final_time_margin=new_value)
 
 
-@router.put("/position")
-def put_position(position: PositionRequest) -> PositionResponse:
+@router.put("/position", response_model=PositionResponse)
+def put_position(position: PositionRequest):
     new_value = position.position.value
     update_acrobatics_data("position", new_value)
     return PositionResponse(position=new_value)
 
 
-@router.put("/sport_type")
-def put_sport_type(sport_type: SportTypeRequest) -> SportTypeResponse:
+@router.put("/sport_type", response_model=SportTypeResponse)
+def put_sport_type(sport_type: SportTypeRequest):
     new_value = sport_type.sport_type.value
     update_acrobatics_data("sport_type", new_value)
     return SportTypeResponse(sport_type=new_value)
 
 
-@router.put("/preferred_twist_side")
-def put_preferred_twist_side(
-    preferred_twist_side: PreferredTwistSideRequest,
-) -> PreferredTwistSideResponse:
+@router.put("/preferred_twist_side", response_model=PreferredTwistSideResponse)
+def put_preferred_twist_side(preferred_twist_side: PreferredTwistSideRequest):
     new_value = preferred_twist_side.preferred_twist_side.value
 
     update_acrobatics_data("preferred_twist_side", new_value)
@@ -273,14 +267,14 @@ def put_preferred_twist_side(
 # somersaults info endpoints
 
 
-@router.get("/somersaults_info/")
-def get_somersaults_info() -> list:
+@router.get("/somersaults_info/", response_model=list)
+def get_somersaults_info():
     somersaults_info = read_acrobatics_data("somersaults_info")
     return somersaults_info
 
 
-@router.get("/somersaults_info/{somersault_index}")
-def get_somersaults_info(somersault_index: int) -> dict:
+@router.get("/somersaults_info/{somersault_index}", response_model=dict)
+def get_somersaults_info(somersault_index: int):
     n_somersaults = read_acrobatics_data("nb_somersaults")
     if somersault_index < 0 or somersault_index >= n_somersaults:
         raise HTTPException(
@@ -291,10 +285,13 @@ def get_somersaults_info(somersault_index: int) -> dict:
     return somersaults_info[somersault_index]
 
 
-@router.put("/somersaults_info/{somersault_index}/shooting_points")
+@router.put(
+    "/somersaults_info/{somersault_index}/shooting_points",
+    response_model=NbShootingPointsResponse,
+)
 def put_nb_shooting_points(
     somersault_index: int, nb_shooting_points: NbShootingPointsRequest
-) -> NbShootingPointsResponse:
+):
     if nb_shooting_points.nb_shooting_points <= 0:
         raise HTTPException(
             status_code=400, detail="nb_shooting_points must be positive"
@@ -309,10 +306,11 @@ def put_nb_shooting_points(
     )
 
 
-@router.put("/somersaults_info/{somersault_index}/duration")
-def put_duration(
-    somersault_index: int, duration: SomersaultDurationRequest
-) -> SomersaultDurationResponse:
+@router.put(
+    "/somersaults_info/{somersault_index}/duration",
+    response_model=SomersaultDurationResponse,
+)
+def put_duration(somersault_index: int, duration: SomersaultDurationRequest):
     if duration.duration <= 0:
         raise HTTPException(status_code=400, detail="duration must be positive")
     infos = read_acrobatics_data()
@@ -324,10 +322,11 @@ def put_duration(
     return SomersaultDurationResponse(duration=duration.duration)
 
 
-@router.put("/somersaults_info/{somersault_index}/nb_half_twists")
-def put_nb_half_twist(
-    somersault_index: int, nb_half_twists: NbHalfTwistsRequest
-) -> NbHalfTwistsResponse:
+@router.put(
+    "/somersaults_info/{somersault_index}/nb_half_twists",
+    response_model=NbHalfTwistsResponse,
+)
+def put_nb_half_twist(somersault_index: int, nb_half_twists: NbHalfTwistsRequest):
     if nb_half_twists.nb_half_twists < 0:
         raise HTTPException(
             status_code=400, detail="nb_half_twists must be positive or zero"
@@ -341,15 +340,15 @@ def put_nb_half_twist(
 # objectives endpoints
 
 
-@router.get("/somersaults_info/{somersault_index}/objectives")
-def get_objectives(somersault_index: int) -> list:
+@router.get("/somersaults_info/{somersault_index}/objectives", response_model=list)
+def get_objectives(somersault_index: int):
     somersaults_info = read_acrobatics_data("somersaults_info")
     objectives = somersaults_info[somersault_index]["objectives"]
     return objectives
 
 
-@router.post("/somersaults_info/{somersault_index}/objectives")
-def add_objective(somersault_index: int) -> list:
+@router.post("/somersaults_info/{somersault_index}/objectives", response_model=list)
+def add_objective(somersault_index: int):
     somersaults_info = read_acrobatics_data("somersaults_info")
     objectives = somersaults_info[somersault_index]["objectives"]
     objectives.append(default_objective)
@@ -358,8 +357,11 @@ def add_objective(somersault_index: int) -> list:
     return objectives
 
 
-@router.delete("/somersaults_info/{somersault_index}/objectives/{objective_index}")
-def delete_objective(somersault_index: int, objective_index: int) -> list:
+@router.delete(
+    "/somersaults_info/{somersault_index}/objectives/{objective_index}",
+    response_model=list,
+)
+def delete_objective(somersault_index: int, objective_index: int):
     somersaults_info = read_acrobatics_data("somersaults_info")
     objectives = somersaults_info[somersault_index]["objectives"]
     objectives.pop(objective_index)
@@ -369,11 +371,12 @@ def delete_objective(somersault_index: int, objective_index: int) -> list:
 
 
 @router.put(
-    "/somersaults_info/{somersault_index}/objectives/{objective_index}/objective_type"
+    "/somersaults_info/{somersault_index}/objectives/{objective_index}/objective_type",
+    response_model=ObjectiveTypeResponse,
 )
 def put_objective_type(
     somersault_index: int, objective_index: int, objective_type: ObjectiveTypeRequest
-) -> ObjectiveTypeResponse:
+):
     somersaults_info = read_acrobatics_data("somersaults_info")
     somersaults_info[somersault_index]["objectives"][objective_index][
         "objective_type"
@@ -397,11 +400,12 @@ def put_objective_type(
 
 
 @router.put(
-    "/somersaults_info/{somersault_index}/objectives/{objective_index}/penalty_type"
+    "/somersaults_info/{somersault_index}/objectives/{objective_index}/penalty_type",
+    response_model=PenaltyTypeResponse,
 )
 def put_penalty_type(
     somersault_index: int, objective_index: int, penalty_type: ObjectiveFcnRequest
-) -> PenaltyTypeResponse:
+):
     penalty_type_value = penalty_type.penalty_type.value
     somersaults_info = read_acrobatics_data("somersaults_info")
 
@@ -421,10 +425,11 @@ def put_penalty_type(
     return PenaltyTypeResponse(penalty_type=penalty_type.penalty_type)
 
 
-@router.put("/somersaults_info/{somersault_index}/objectives/{objective_index}/nodes")
-def put_nodes(
-    somersault_index: int, objective_index: int, nodes: NodesRequest
-) -> NodesResponse:
+@router.put(
+    "/somersaults_info/{somersault_index}/objectives/{objective_index}/nodes",
+    response_model=NodesResponse,
+)
+def put_nodes(somersault_index: int, objective_index: int, nodes: NodesRequest):
     somersaults_info = read_acrobatics_data("somersaults_info")
     somersaults_info[somersault_index]["objectives"][objective_index][
         "nodes"
@@ -434,11 +439,12 @@ def put_nodes(
 
 
 @router.put(
-    "/somersaults_info/{somersault_index}/objectives/{objective_index}/quadratic"
+    "/somersaults_info/{somersault_index}/objectives/{objective_index}/quadratic",
+    response_model=QuadraticResponse,
 )
 def put_quadratic(
     somersault_index: int, objective_index: int, quadratic: QuadraticRequest
-) -> QuadraticResponse:
+):
     somersaults_info = read_acrobatics_data("somersaults_info")
     somersaults_info[somersault_index]["objectives"][objective_index][
         "quadratic"
@@ -447,10 +453,11 @@ def put_quadratic(
     return QuadraticResponse(quadratic=quadratic.quadratic)
 
 
-@router.put("/somersaults_info/{somersault_index}/objectives/{objective_index}/expand")
-def put_expand(
-    somersault_index: int, objective_index: int, expand: ExpandRequest
-) -> ExpandResponse:
+@router.put(
+    "/somersaults_info/{somersault_index}/objectives/{objective_index}/expand",
+    response_model=ExpandResponse,
+)
+def put_expand(somersault_index: int, objective_index: int, expand: ExpandRequest):
     somersaults_info = read_acrobatics_data("somersaults_info")
     somersaults_info[somersault_index]["objectives"][objective_index][
         "expand"
@@ -459,10 +466,11 @@ def put_expand(
     return ExpandResponse(expand=expand.expand)
 
 
-@router.put("/somersaults_info/{somersault_index}/objectives/{objective_index}/target")
-def put_target(
-    somersault_index: int, objective_index: int, target: TargetRequest
-) -> TargetResponse:
+@router.put(
+    "/somersaults_info/{somersault_index}/objectives/{objective_index}/target",
+    response_model=TargetResponse,
+)
+def put_target(somersault_index: int, objective_index: int, target: TargetRequest):
     somersaults_info = read_acrobatics_data("somersaults_info")
     somersaults_info[somersault_index]["objectives"][objective_index][
         "target"
@@ -472,11 +480,12 @@ def put_target(
 
 
 @router.put(
-    "/somersaults_info/{somersault_index}/objectives/{objective_index}/derivative"
+    "/somersaults_info/{somersault_index}/objectives/{objective_index}/derivative",
+    response_model=DerivativeResponse,
 )
 def put_derivative(
     somersault_index: int, objective_index: int, derivative: DerivativeRequest
-) -> DerivativeResponse:
+):
     somersaults_info = read_acrobatics_data("somersaults_info")
     somersaults_info[somersault_index]["objectives"][objective_index][
         "derivative"
@@ -486,13 +495,14 @@ def put_derivative(
 
 
 @router.put(
-    "/somersaults_info/{somersault_index}/objectives/{objective_index}/integration_rule"
+    "/somersaults_info/{somersault_index}/objectives/{objective_index}/integration_rule",
+    response_model=IntegrationRuleResponse,
 )
 def put_integration_rule(
     somersault_index: int,
     objective_index: int,
     integration_rule: IntegrationRuleRequest,
-) -> IntegrationRuleResponse:
+):
     somersaults_info = read_acrobatics_data("somersaults_info")
     somersaults_info[somersault_index]["objectives"][objective_index][
         "integration_rule"
@@ -502,11 +512,12 @@ def put_integration_rule(
 
 
 @router.put(
-    "/somersaults_info/{somersault_index}/objectives/{objective_index}/multi_thread"
+    "/somersaults_info/{somersault_index}/objectives/{objective_index}/multi_thread",
+    response_model=MultiThreadResponse,
 )
 def put_multi_thread(
     somersault_index: int, objective_index: int, multi_thread: MultiThreadRequest
-) -> MultiThreadResponse:
+):
     somersaults_info = read_acrobatics_data("somersaults_info")
     somersaults_info[somersault_index]["objectives"][objective_index][
         "multi_thread"
@@ -515,10 +526,11 @@ def put_multi_thread(
     return MultiThreadResponse(multi_thread=multi_thread.multi_thread)
 
 
-@router.put("/somersaults_info/{somersault_index}/objectives/{objective_index}/weight")
-def put_weight(
-    somersault_index: int, objective_index: int, weight: WeightRequest
-) -> WeightResponse:
+@router.put(
+    "/somersaults_info/{somersault_index}/objectives/{objective_index}/weight",
+    response_model=WeightResponse,
+)
+def put_weight(somersault_index: int, objective_index: int, weight: WeightRequest):
     somersaults_info = read_acrobatics_data("somersaults_info")
     somersaults_info[somersault_index]["objectives"][objective_index][
         "weight"
@@ -528,55 +540,70 @@ def put_weight(
 
 
 @router.get(
-    "/somersaults_info/{somersault_index}/objectives/{objective_index}/arguments"
+    "/somersaults_info/{somersault_index}/objectives/{objective_index}/arguments/{key}",
+    response_model=ArgumentResponse,
 )
-def get_arguments(
-    somersault_index: int, objective_index: int, argument_req: ArgumentRequest
-) -> ArgumentResponse:
+def get_arguments(somersault_index: int, objective_index: int, key: str):
     somersaults_info = read_acrobatics_data("somersaults_info")
     arguments = somersaults_info[somersault_index]["objectives"][objective_index][
         "arguments"
     ]
-    key = argument_req.key
-    return ArgumentResponse(
-        key=key, type=arguments[key]["type"], value=arguments[key]["value"]
-    )
+
+    try:
+        return ArgumentResponse(
+            key=key, type=arguments[key]["type"], value=arguments[key]["value"]
+        )
+    except KeyError:
+        raise HTTPException(
+            status_code=404,
+            detail=f"{key} not found in arguments of objective {objective_index}",
+        )
 
 
 @router.put(
-    "/somersaults_info/{somersault_index}/objectives/{objective_index}/arguments"
+    "/somersaults_info/{somersault_index}/objectives/{objective_index}/arguments/{key}",
+    response_model=ArgumentResponse,
 )
 def put_arguments(
-    somersault_index: int, objective_index: int, argument_req: ArgumentRequest
-) -> ArgumentResponse:
+    somersault_index: int, objective_index: int, key: str, argument_req: ArgumentRequest
+):
     somersaults_info = read_acrobatics_data("somersaults_info")
+
     arguments = somersaults_info[somersault_index]["objectives"][objective_index][
         "arguments"
     ]
-    key = argument_req.key
-    arguments[key]["type"] = argument_req.type
-    arguments[key]["value"] = argument_req.value
-    somersaults_info[somersault_index]["objectives"][objective_index][
-        "arguments"
-    ] = arguments
-    update_acrobatics_data("somersaults_info", somersaults_info)
-    return ArgumentResponse(
-        key=key, type=arguments[key]["type"], value=arguments[key]["value"]
-    )
+
+    try:
+        arguments[key]["type"] = argument_req.type
+        arguments[key]["value"] = argument_req.value
+
+        somersaults_info[somersault_index]["objectives"][objective_index][
+            "arguments"
+        ] = arguments
+
+        update_acrobatics_data("somersaults_info", somersaults_info)
+        return ArgumentResponse(
+            key=key, type=arguments[key]["type"], value=arguments[key]["value"]
+        )
+    except KeyError:
+        raise HTTPException(
+            status_code=404,
+            detail=f"{key} not found in arguments of objective {objective_index}",
+        )
 
 
 # constraints endpoints
 
 
-@router.get("/somersaults_info/{somersault_index}/constraints")
-def get_constraints(somersault_index: int) -> list:
+@router.get("/somersaults_info/{somersault_index}/constraints", response_model=list)
+def get_constraints(somersault_index: int):
     somersaults_info = read_acrobatics_data("somersaults_info")
     constraints = somersaults_info[somersault_index]["constraints"]
     return constraints
 
 
-@router.post("/somersaults_info/{somersault_index}/constraints")
-def add_constraint(somersault_index: int) -> list:
+@router.post("/somersaults_info/{somersault_index}/constraints", response_model=list)
+def add_constraint(somersault_index: int):
     somersaults_info = read_acrobatics_data("somersaults_info")
     constraints = somersaults_info[somersault_index]["constraints"]
     constraints.append(default_constraint)
@@ -585,8 +612,11 @@ def add_constraint(somersault_index: int) -> list:
     return constraints
 
 
-@router.delete("/somersaults_info/{somersault_index}/constraints/{constraint_index}")
-def delete_constraint(somersault_index: int, constraint_index: int) -> list:
+@router.delete(
+    "/somersaults_info/{somersault_index}/constraints/{constraint_index}",
+    response_model=list,
+)
+def delete_constraint(somersault_index: int, constraint_index: int):
     somersaults_info = read_acrobatics_data("somersaults_info")
     constraints = somersaults_info[somersault_index]["constraints"]
     constraints.pop(constraint_index)
@@ -599,11 +629,12 @@ def delete_constraint(somersault_index: int, constraint_index: int) -> list:
 
 
 @router.put(
-    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/penalty_type"
+    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/penalty_type",
+    response_model=PenaltyTypeResponse,
 )
 def put_penalty_type(
     somersault_index: int, constraint_index: int, penalty_type: ConstraintFcnRequest
-) -> PenaltyTypeResponse:
+):
     somersaults_info = read_acrobatics_data("somersaults_info")
     somersaults_info[somersault_index]["constraints"][constraint_index][
         "penalty_type"
@@ -618,10 +649,11 @@ def put_penalty_type(
     return PenaltyTypeResponse(penalty_type=penalty_type.penalty_type)
 
 
-@router.put("/somersaults_info/{somersault_index}/constraints/{constraint_index}/nodes")
-def put_nodes(
-    somersault_index: int, constraint_index: int, nodes: NodesRequest
-) -> NodesResponse:
+@router.put(
+    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/nodes",
+    response_model=NodesResponse,
+)
+def put_nodes(somersault_index: int, constraint_index: int, nodes: NodesRequest):
     somersaults_info = read_acrobatics_data("somersaults_info")
     somersaults_info[somersault_index]["constraints"][constraint_index][
         "nodes"
@@ -631,11 +663,12 @@ def put_nodes(
 
 
 @router.put(
-    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/quadratic"
+    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/quadratic",
+    response_model=QuadraticResponse,
 )
 def put_quadratic(
     somersault_index: int, constraint_index: int, quadratic: QuadraticRequest
-) -> QuadraticResponse:
+):
     somersaults_info = read_acrobatics_data("somersaults_info")
     somersaults_info[somersault_index]["constraints"][constraint_index][
         "quadratic"
@@ -645,11 +678,10 @@ def put_quadratic(
 
 
 @router.put(
-    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/expand"
+    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/expand",
+    response_model=ExpandResponse,
 )
-def put_expand(
-    somersault_index: int, constraint_index: int, expand: ExpandRequest
-) -> ExpandResponse:
+def put_expand(somersault_index: int, constraint_index: int, expand: ExpandRequest):
     somersaults_info = read_acrobatics_data("somersaults_info")
     somersaults_info[somersault_index]["constraints"][constraint_index][
         "expand"
@@ -659,11 +691,10 @@ def put_expand(
 
 
 @router.put(
-    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/target"
+    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/target",
+    response_model=TargetResponse,
 )
-def put_target(
-    somersault_index: int, constraint_index: int, target: TargetRequest
-) -> TargetResponse:
+def put_target(somersault_index: int, constraint_index: int, target: TargetRequest):
     somersaults_info = read_acrobatics_data("somersaults_info")
     somersaults_info[somersault_index]["constraints"][constraint_index][
         "target"
@@ -673,11 +704,12 @@ def put_target(
 
 
 @router.put(
-    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/derivative"
+    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/derivative",
+    response_model=DerivativeResponse,
 )
 def put_derivative(
     somersault_index: int, constraint_index: int, derivative: DerivativeRequest
-) -> DerivativeResponse:
+):
     somersaults_info = read_acrobatics_data("somersaults_info")
     somersaults_info[somersault_index]["constraints"][constraint_index][
         "derivative"
@@ -687,13 +719,14 @@ def put_derivative(
 
 
 @router.put(
-    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/integration_rule"
+    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/integration_rule",
+    response_model=IntegrationRuleResponse,
 )
 def put_integration_rule(
     somersault_index: int,
     constraint_index: int,
     integration_rule: IntegrationRuleRequest,
-) -> IntegrationRuleResponse:
+):
     somersaults_info = read_acrobatics_data("somersaults_info")
     somersaults_info[somersault_index]["constraints"][constraint_index][
         "integration_rule"
@@ -703,11 +736,12 @@ def put_integration_rule(
 
 
 @router.put(
-    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/multi_thread"
+    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/multi_thread",
+    response_model=MultiThreadResponse,
 )
 def put_multi_thread(
     somersault_index: int, constraint_index: int, multi_thread: MultiThreadRequest
-) -> MultiThreadResponse:
+):
     somersaults_info = read_acrobatics_data("somersaults_info")
     somersaults_info[somersault_index]["constraints"][constraint_index][
         "multi_thread"
@@ -717,38 +751,55 @@ def put_multi_thread(
 
 
 @router.get(
-    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/arguments"
+    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/arguments/{key}",
+    response_model=ArgumentResponse,
 )
-def get_arguments(
-    somersault_index: int, constraint_index: int, argument_req: ArgumentRequest
-) -> ArgumentResponse:
+def get_arguments(somersault_index: int, constraint_index: int, key: str):
     somersaults_info = read_acrobatics_data("somersaults_info")
     arguments = somersaults_info[somersault_index]["constraints"][constraint_index][
         "arguments"
     ]
-    key = argument_req.key
-    return ArgumentResponse(
-        key=key, type=arguments[key]["type"], value=arguments[key]["value"]
-    )
+
+    try:
+        return ArgumentResponse(
+            key=key, type=arguments[key]["type"], value=arguments[key]["value"]
+        )
+    except:
+        raise HTTPException(
+            status_code=404,
+            detail=f"{key} not found in arguments of constraint {constraint_index}",
+        )
 
 
 @router.put(
-    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/arguments"
+    "/somersaults_info/{somersault_index}/constraints/{constraint_index}/arguments/{key}",
+    response_model=ArgumentResponse,
 )
 def put_arguments(
-    somersault_index: int, constraint_index: int, argument_req: ArgumentRequest
-) -> ArgumentResponse:
+    somersault_index: int,
+    constraint_index: int,
+    key: str,
+    argument_req: ArgumentRequest,
+):
     somersaults_info = read_acrobatics_data("somersaults_info")
     arguments = somersaults_info[somersault_index]["constraints"][constraint_index][
         "arguments"
     ]
-    key = argument_req.key
-    arguments[key]["type"] = argument_req.type
-    arguments[key]["value"] = argument_req.value
-    somersaults_info[somersault_index]["constraints"][constraint_index][
-        "arguments"
-    ] = arguments
-    update_acrobatics_data("somersaults_info", somersaults_info)
-    return ArgumentResponse(
-        key=key, type=arguments[key]["type"], value=arguments[key]["value"]
-    )
+
+    try:
+        arguments[key]["type"] = argument_req.type
+        arguments[key]["value"] = argument_req.value
+
+        somersaults_info[somersault_index]["constraints"][constraint_index][
+            "arguments"
+        ] = arguments
+        update_acrobatics_data("somersaults_info", somersaults_info)
+
+        return ArgumentResponse(
+            key=key, type=arguments[key]["type"], value=arguments[key]["value"]
+        )
+    except KeyError:
+        raise HTTPException(
+            status_code=404,
+            detail=f"{key} not found in arguments of constraint {constraint_index}",
+        )

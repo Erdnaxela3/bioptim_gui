@@ -1,3 +1,5 @@
+from typing import Union
+
 from acrobatics_ocp.acrobatics_requests import *
 
 
@@ -92,4 +94,4 @@ class ObjectiveFcnResponse(ObjectiveFcnRequest):
 class ArgumentResponse(BaseModel):
     key: str
     type: str
-    value: int | float | str | list
+    value: Union[int, float, str, list, None]

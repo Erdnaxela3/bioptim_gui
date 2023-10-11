@@ -1,5 +1,5 @@
 import 'package:bioptim_gui/models/python_interface.dart';
-import 'package:bioptim_gui/screens/generate_code_page.dart';
+import 'package:bioptim_gui/screens/generate_code_page/generate_code_page.dart';
 import 'package:bioptim_gui/screens/generate_model.dart';
 import 'package:bioptim_gui/screens/load_existing_page.dart';
 import 'package:flutter/material.dart';

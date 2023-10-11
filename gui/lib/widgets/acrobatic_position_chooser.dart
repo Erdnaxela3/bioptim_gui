@@ -1,6 +1,4 @@
-import 'package:bioptim_gui/models/acrobatics_ocp_controllers.dart';
-import 'package:bioptim_gui/models/acrobatics_position.dart';
-import 'package:bioptim_gui/widgets/custom_dropdown_button.dart';
+import 'package:bioptim_gui/widgets/custom_http_dropdown.dart';
 import 'package:flutter/material.dart';
 
 class AcrobaticPositionChooser extends StatelessWidget {
@@ -13,17 +11,14 @@ class AcrobaticPositionChooser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controllers = AcrobaticsOCPControllers.instance;
-
-    return SizedBox(
+    return CustomHttpDropdown(
+      title: "Jump position *",
       width: width,
-      child: CustomDropdownButton<AcrobaticsPosition>(
-        value: controllers.position,
-        items: AcrobaticsPosition.values,
-        title: 'Jump position *',
-        onSelected: (value) => controllers.setPosition(value),
-        color: Colors.red,
-      ),
+      defaultValue: "Straight",
+      getEndpoint: "/acrobatics/position",
+      putEndpoint: "/acrobatics/position",
+      requestKey: "position",
+      color: Colors.red,
     );
   }
 }

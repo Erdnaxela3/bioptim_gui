@@ -8,6 +8,7 @@ class PreferredTwistSide(str, Enum):
 
 class SportType(str, Enum):
     TRAMPOLINE = "trampoline"
+    DIVING = "diving"
 
 
 class Position(str, Enum):

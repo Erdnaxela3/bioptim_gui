@@ -129,6 +129,7 @@ class OptimalControlProgramControllers {
   final nbShootingPointsControllers = <TextEditingController>[];
   int getNbShootingPoints({required int phaseIndex}) =>
       _ocp.phases[phaseIndex].nbShootingPoints;
+
   void setNbShootingPoints(int value, {required int phaseIndex}) {
     if (value == _ocp.phases[phaseIndex].nbShootingPoints) return;
 

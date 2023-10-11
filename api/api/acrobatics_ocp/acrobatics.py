@@ -242,23 +242,60 @@ def put_final_time_margin(final_time_margin: FinalTimeMarginRequest):
     return FinalTimeMarginResponse(final_time_margin=new_value)
 
 
+@router.get("/position", response_model=list)
+def get_position():
+    return [side.value.capitalize() for side in Position]
+
+
 @router.put("/position", response_model=PositionResponse)
 def put_position(position: PositionRequest):
     new_value = position.position.value
+    old_value = read_acrobatics_data("position")
+
+    if old_value == new_value:
+        raise HTTPException(
+            status_code=304,
+            detail=f"position is already {position}",
+        )
+
     update_acrobatics_data("position", new_value)
     return PositionResponse(position=new_value)
+
+
+@router.get("/sport_type", response_model=list)
+def put_sport_type():
+    return [side.value.capitalize() for side in SportType]
 
 
 @router.put("/sport_type", response_model=SportTypeResponse)
 def put_sport_type(sport_type: SportTypeRequest):
     new_value = sport_type.sport_type.value
+    old_value = read_acrobatics_data("sport_type")
+
+    if old_value == new_value:
+        raise HTTPException(
+            status_code=304,
+            detail=f"sport_type is already {sport_type}",
+        )
+
     update_acrobatics_data("sport_type", new_value)
     return SportTypeResponse(sport_type=new_value)
+
+
+@router.get("/preferred_twist_side", response_model=list)
+def get_preferred_twist_side():
+    return [side.value.capitalize() for side in PreferredTwistSide]
 
 
 @router.put("/preferred_twist_side", response_model=PreferredTwistSideResponse)
 def put_preferred_twist_side(preferred_twist_side: PreferredTwistSideRequest):
     new_value = preferred_twist_side.preferred_twist_side.value
+    old_value = read_acrobatics_data("preferred_twist_side")
+    if old_value == new_value:
+        raise HTTPException(
+            status_code=304,
+            detail=f"preferred_twist_side is already {preferred_twist_side}",
+        )
 
     update_acrobatics_data("preferred_twist_side", new_value)
     return PreferredTwistSideResponse(preferred_twist_side=new_value)

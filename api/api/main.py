@@ -3,9 +3,13 @@ import json
 from fastapi import FastAPI
 
 import acrobatics_ocp.acrobatics as acrobatics
+import penalty.penalty as penalty
+
 
 app = FastAPI()
+
 app.include_router(acrobatics.router)
+app.include_router(penalty.router)
 
 
 @app.on_event("startup")

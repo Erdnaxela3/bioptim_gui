@@ -1,6 +1,4 @@
-import 'package:bioptim_gui/models/acrobatics_ocp_controllers.dart';
-import 'package:bioptim_gui/models/acrobatics_sport_type.dart';
-import 'package:bioptim_gui/widgets/custom_dropdown_button.dart';
+import 'package:bioptim_gui/widgets/custom_http_dropdown.dart';
 import 'package:flutter/material.dart';
 
 class AcrobaticSportTypeChooser extends StatelessWidget {
@@ -13,16 +11,13 @@ class AcrobaticSportTypeChooser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controllers = AcrobaticsOCPControllers.instance;
-
-    return SizedBox(
+    return CustomHttpDropdown(
+      title: "Sport type",
       width: width,
-      child: CustomDropdownButton<AcrobaticsSportType>(
-        value: controllers.sportType,
-        items: AcrobaticsSportType.values,
-        title: 'Sport type',
-        onSelected: (value) => controllers.setSportType(value),
-      ),
+      defaultValue: "Trampoline",
+      getEndpoint: "/acrobatics/sport_type",
+      putEndpoint: "/acrobatics/sport_type",
+      requestKey: "sport_type",
     );
   }
 }

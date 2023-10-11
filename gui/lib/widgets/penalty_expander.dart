@@ -7,10 +7,12 @@ import 'package:bioptim_gui/models/optimal_control_program_type.dart';
 import 'package:bioptim_gui/models/penalty.dart';
 import 'package:bioptim_gui/models/quadrature_rules.dart';
 import 'package:bioptim_gui/widgets/animated_expanding_widget.dart';
-import 'package:bioptim_gui/widgets/boolean_switch.dart';
 import 'package:bioptim_gui/widgets/custom_dropdown_button.dart';
+import 'package:bioptim_gui/widgets/integration_rule_chooser.dart';
 import 'package:bioptim_gui/widgets/maximize_minimize_radio.dart';
+import 'package:bioptim_gui/widgets/nodes_chooser.dart';
 import 'package:bioptim_gui/widgets/objective_type_radio.dart';
+import 'package:bioptim_gui/widgets/remote_boolean_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -505,24 +507,14 @@ class _PathTile extends StatelessWidget {
         Row(
           children: [
             SizedBox(
-              width: (penalty.runtimeType == Objective) ? width / 2 - 3 : width,
-              child: CustomDropdownButton<Nodes>(
-                title: 'Nodes to apply',
-                value: penalty.nodes,
-                items: Nodes.values,
-                onSelected: (value) {
-                  if (value == penalty.nodes) return;
-
-                  penaltyInterface.update(
-                      _penaltyFactoryPartial(
-                        penalty,
-                        penalty.fcn,
-                        nodes: value,
-                      ),
-                      penaltyIndex: penaltyIndex);
-                },
-              ),
-            ),
+                width:
+                    (penalty.runtimeType == Objective) ? width / 2 - 3 : width,
+                child: NodesChooser(
+                  width: width,
+                  putEndpoint: (penalty.runtimeType == Objective)
+                      ? '/acrobatics/somersaults_info/0/objectives/$penaltyIndex/nodes'
+                      : '/acrobatics/somersaults_info/0/constraints/$penaltyIndex/nodes',
+                )),
             if (penalty.runtimeType == Objective)
               SizedBox(
                 width: width / 4 - 3,
@@ -578,21 +570,11 @@ class _PathTile extends StatelessWidget {
             children: [
               SizedBox(
                 width: width,
-                child: CustomDropdownButton<QuadratureRules>(
-                  title: 'Integration rule',
-                  value: penalty.quadratureRules,
-                  items: QuadratureRules.values,
-                  onSelected: (value) {
-                    if (value == penalty.quadratureRules) return;
-
-                    penaltyInterface.update(
-                        _penaltyFactoryPartial(
-                          penalty,
-                          penalty.fcn,
-                          quadratureRules: value,
-                        ),
-                        penaltyIndex: penaltyIndex);
-                  },
+                child: IntegrationRuleChooser(
+                  width: width,
+                  putEndpoint: (penalty.runtimeType == Objective)
+                      ? '/acrobatics/somersaults_info/0/objectives/$penaltyIndex/integration_rule'
+                      : '/acrobatics/somersaults_info/0/constraints/$penaltyIndex/integration_rule',
                 ),
               ),
             ],
@@ -600,77 +582,40 @@ class _PathTile extends StatelessWidget {
         const SizedBox(height: 12),
         Row(
           children: [
-            BooleanSwitch(
-              initialValue: penalty.quadratic,
-              customOnChanged: (value) {
-                if (value == penalty.quadratic) return;
-
-                penaltyInterface.update(
-                    _penaltyFactoryPartial(
-                      penalty,
-                      penalty.fcn,
-                      quadratic: value,
-                    ),
-                    penaltyIndex: penaltyIndex);
-              },
-              leftText: 'Quadratic',
-              width: width / 2 - 6,
-            ),
+            RemoteBooleanSwitch(
+                endpoint:
+                    '/acrobatics/somersaults_info/0/objectives/0/quadratic',
+                defaultValue: true,
+                leftText: "Quadratic",
+                width: width / 2 - 6,
+                requestKey: "quadratic"),
             const SizedBox(width: 12),
-            BooleanSwitch(
-              initialValue: penalty.expand,
-              customOnChanged: (value) {
-                if (value == penalty.expand) return;
-
-                penaltyInterface.update(
-                    _penaltyFactoryPartial(
-                      penalty,
-                      penalty.fcn,
-                      expand: value,
-                    ),
-                    penaltyIndex: penaltyIndex);
-              },
-              leftText: 'Expand',
-              width: width / 2 - 6,
-            ),
+            RemoteBooleanSwitch(
+                endpoint: '/acrobatics/somersaults_info/0/objectives/0/expand',
+                defaultValue: true,
+                leftText: "Expand",
+                width: width / 2 - 6,
+                requestKey: "expand"),
           ],
         ),
         const SizedBox(height: 12),
         Row(
           children: [
-            BooleanSwitch(
-              initialValue: penalty.multiThread,
-              customOnChanged: (value) {
-                if (value == penalty.multiThread) return;
-
-                penaltyInterface.update(
-                    _penaltyFactoryPartial(
-                      penalty,
-                      penalty.fcn,
-                      multiThread: value,
-                    ),
-                    penaltyIndex: penaltyIndex);
-              },
-              leftText: 'MultiThread',
-              width: width / 2 - 6,
-            ),
+            RemoteBooleanSwitch(
+                endpoint:
+                    '/acrobatics/somersaults_info/0/objectives/0/multi_thread',
+                defaultValue: false,
+                leftText: "MultiThread",
+                width: width / 2 - 6,
+                requestKey: "multi_thread"),
             const SizedBox(width: 12),
-            BooleanSwitch(
-              initialValue: penalty.derivative,
-              customOnChanged: (value) {
-                if (value == penalty.derivative) return;
-
-                penaltyInterface.update(
-                    _penaltyFactoryPartial(
-                      penalty,
-                      penalty.fcn,
-                      derivative: value,
-                    ),
-                    penaltyIndex: penaltyIndex);
-              },
-              leftText: 'Derivative',
-              width: width / 2 - 6,
-            ),
+            RemoteBooleanSwitch(
+                endpoint:
+                    '/acrobatics/somersaults_info/0/objectives/0/derivative',
+                defaultValue: false,
+                leftText: "Derivative",
+                width: width / 2 - 6,
+                requestKey: "derivative"),
           ],
         ),
         Align(

@@ -3,15 +3,11 @@ import 'package:bioptim_gui/models/acrobatics_ocp_controllers.dart';
 import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
 import 'package:bioptim_gui/models/optimal_control_program_type.dart';
 import 'package:bioptim_gui/models/python_interface.dart';
-import 'package:bioptim_gui/widgets/acrobatic_bio_model_chooser.dart';
-import 'package:bioptim_gui/widgets/acrobatic_position_chooser.dart';
-import 'package:bioptim_gui/widgets/acrobatic_sport_type_chooser.dart';
-import 'package:bioptim_gui/widgets/acrobatic_twist_side_chooser.dart';
-import 'package:bioptim_gui/widgets/generate_phases.dart';
+import 'package:bioptim_gui/screens/generate_code_page/acrobatics/acrobatics_header.dart';
+import 'package:bioptim_gui/screens/generate_code_page/acrobatics/generate_somersaults.dart';
+import 'package:bioptim_gui/screens/generate_code_page/generic/generate_phases.dart';
+import 'package:bioptim_gui/screens/generate_code_page/generic/generic_header.dart';
 import 'package:bioptim_gui/widgets/console_out.dart';
-import 'package:bioptim_gui/widgets/generate_somersaults.dart';
-import 'package:bioptim_gui/widgets/number_of_phases_chooser.dart';
-import 'package:bioptim_gui/widgets/acrobatic_information.dart';
 import 'package:bioptim_gui/widgets/optimal_control_program_type_chooser.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -103,68 +99,13 @@ class _HeaderBuilder extends StatelessWidget {
             OptimalControlProgramTypeChooser(width: width),
             const SizedBox(height: 12),
             if (controllers.ocpType == OptimalControlProgramType.ocp)
-              _GenericOCPHeaderBuilder(width: width)
+              GenericOCPHeaderBuilder(width: width)
             else if (controllers.ocpType ==
                 OptimalControlProgramType.abrobaticsOCP)
-              _AcrobaticsHeaderBuilder(width: width),
+              AcrobaticsHeaderBuilder(width: width),
           ],
         ),
       ),
-    );
-  }
-}
-
-class _GenericOCPHeaderBuilder extends StatelessWidget {
-  const _GenericOCPHeaderBuilder({
-    required this.width,
-  });
-
-  final double width;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 12),
-        NumberOfPhasesChooser(width: width),
-      ],
-    );
-  }
-}
-
-class _AcrobaticsHeaderBuilder extends StatelessWidget {
-  const _AcrobaticsHeaderBuilder({
-    required this.width,
-  });
-
-  final double width;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AcrobaticSportTypeChooser(width: width),
-        const SizedBox(height: 12),
-        AcrobaticBioModelChooser(width: width),
-        const SizedBox(height: 12),
-        AcrobaticInformation(width: width),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            SizedBox(
-              width: width / 2 - 6,
-              child: AcrobaticTwistSideChooser(width: width),
-            ),
-            const SizedBox(width: 12),
-            SizedBox(
-              width: width / 2 - 6,
-              child: AcrobaticPositionChooser(width: width),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }

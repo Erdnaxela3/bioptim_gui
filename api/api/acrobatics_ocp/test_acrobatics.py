@@ -175,6 +175,12 @@ def test_put_final_time_margin():
     assert response.json()["final_time_margin"] == 0.2
 
 
+def test_get_position():
+    response = client.get("/acrobatics/position/")
+    assert response.status_code == 200, response
+    assert set(response.json()) == set(["Straight", "Tuck", "Pike"])
+
+
 def test_put_position():
     response = client.put("/acrobatics/position/", json={"position": "tuck"})
     assert response.status_code == 200, response
@@ -190,14 +196,25 @@ def test_put_position_wrong():
     assert response.status_code == 422, response
 
 
-def test_put_sport_type():
-    response = client.put("/acrobatics/sport_type/", json={"sport_type": "trampoline"})
+def test_put_position_same():
+    response = client.put("/acrobatics/position/", json={"position": "straight"})
+    assert response.status_code == 304, response
+
+
+def test_get_preferred_twist_side():
+    response = client.get("/acrobatics/preferred_twist_side/")
     assert response.status_code == 200, response
-    assert response.json() == {"sport_type": "trampoline"}
+    assert set(response.json()) == set(["Trampoline"])
+
+
+def test_put_sport_type():
+    response = client.put("/acrobatics/sport_type/", json={"sport_type": "diving"})
+    assert response.status_code == 200, response
+    assert response.json() == {"sport_type": "diving"}
 
     response = client.get("/acrobatics/")
     assert response.status_code == 200, response
-    assert response.json()["sport_type"] == "trampoline"
+    assert response.json()["sport_type"] == "diving"
 
 
 def test_put_sport_type_wrong():
@@ -205,16 +222,22 @@ def test_put_sport_type_wrong():
     assert response.status_code == 422, response
 
 
-def test_put_preferred_twist_side():
-    response = client.put(
-        "/acrobatics/preferred_twist_side/", json={"preferred_twist_side": "right"}
-    )
-    assert response.status_code == 200, response
-    assert response.json() == {"preferred_twist_side": "right"}
+def test_put_sport_type_same():
+    response = client.put("/acrobatics/sport_type/", json={"sport_type": "trampoline"})
+    assert response.status_code == 304, response
 
-    response = client.get("/acrobatics/")
+
+def test_get_preferred_twist_side():
+    response = client.get("/acrobatics/preferred_twist_side/")
     assert response.status_code == 200, response
-    assert response.json()["preferred_twist_side"] == "right"
+    assert set(response.json()) == set(["Left", "Right"])
+
+
+def test_put_preferred_twist_side_same():
+    response = client.put(
+        "/acrobatics/preferred_twist_side/", json={"preferred_twist_side": "left"}
+    )
+    assert response.status_code == 304, response
 
 
 def test_put_preferred_twist_side_wrong():

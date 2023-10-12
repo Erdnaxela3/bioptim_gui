@@ -2,9 +2,9 @@ import 'dart:math';
 
 import 'package:bioptim_gui/models/decision_variables.dart';
 import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
-import 'package:bioptim_gui/widgets/animated_expanding_widget.dart';
-import 'package:bioptim_gui/widgets/custom_dropdown_button.dart';
-import 'package:bioptim_gui/widgets/positive_integer_text_field.dart';
+import 'package:bioptim_gui/widgets/utils/animated_expanding_widget.dart';
+import 'package:bioptim_gui/widgets/utils/custom_dropdown_button.dart';
+import 'package:bioptim_gui/widgets/utils/positive_integer_text_field.dart';
 import 'package:flutter/material.dart';
 
 class DecisionVariableExpander extends StatelessWidget {

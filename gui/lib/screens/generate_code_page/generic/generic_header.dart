@@ -1,4 +1,4 @@
-import 'package:bioptim_gui/widgets/number_of_phases_chooser.dart';
+import 'package:bioptim_gui/widgets/generic_ocp/number_of_phases_chooser.dart';
 import 'package:flutter/material.dart';
 
 class GenericOCPHeaderBuilder extends StatelessWidget {

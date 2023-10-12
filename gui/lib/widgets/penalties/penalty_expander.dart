@@ -4,13 +4,13 @@ import 'package:bioptim_gui/models/minimize_maximize.dart';
 import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
 import 'package:bioptim_gui/models/optimal_control_program_type.dart';
 import 'package:bioptim_gui/models/penalty.dart';
-import 'package:bioptim_gui/widgets/animated_expanding_widget.dart';
-import 'package:bioptim_gui/widgets/custom_dropdown_button.dart';
-import 'package:bioptim_gui/widgets/integration_rule_chooser.dart';
-import 'package:bioptim_gui/widgets/maximize_minimize_radio.dart';
-import 'package:bioptim_gui/widgets/nodes_chooser.dart';
-import 'package:bioptim_gui/widgets/objective_type_radio.dart';
-import 'package:bioptim_gui/widgets/remote_boolean_switch.dart';
+import 'package:bioptim_gui/widgets/penalties/integration_rule_chooser.dart';
+import 'package:bioptim_gui/widgets/penalties/maximize_minimize_radio.dart';
+import 'package:bioptim_gui/widgets/penalties/nodes_chooser.dart';
+import 'package:bioptim_gui/widgets/penalties/objective_type_radio.dart';
+import 'package:bioptim_gui/widgets/utils/animated_expanding_widget.dart';
+import 'package:bioptim_gui/widgets/utils/custom_dropdown_button.dart';
+import 'package:bioptim_gui/widgets/utils/remote_boolean_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -143,13 +143,7 @@ class PenaltyExpander extends StatelessWidget {
                   penaltyFactory: (
                     fcn, {
                     arguments,
-                    derivative,
-                    expand,
                     target,
-                    multiThread,
-                    nodes,
-                    quadratic,
-                    quadratureRules,
                     weight,
                     minimizeOrMaximize,
                     objectiveType,

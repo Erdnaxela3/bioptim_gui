@@ -1,8 +1,8 @@
-import 'package:bioptim_gui/widgets/acrobatic_bio_model_chooser.dart';
-import 'package:bioptim_gui/widgets/acrobatic_information.dart';
-import 'package:bioptim_gui/widgets/acrobatic_position_chooser.dart';
-import 'package:bioptim_gui/widgets/acrobatic_sport_type_chooser.dart';
-import 'package:bioptim_gui/widgets/acrobatic_twist_side_chooser.dart';
+import 'package:bioptim_gui/widgets/acrobatics/acrobatic_bio_model_chooser.dart';
+import 'package:bioptim_gui/widgets/acrobatics/acrobatic_information.dart';
+import 'package:bioptim_gui/widgets/acrobatics/acrobatic_position_chooser.dart';
+import 'package:bioptim_gui/widgets/acrobatics/acrobatic_sport_type_chooser.dart';
+import 'package:bioptim_gui/widgets/acrobatics/acrobatic_twist_side_chooser.dart';
 import 'package:flutter/material.dart';
 
 class AcrobaticsHeaderBuilder extends StatelessWidget {

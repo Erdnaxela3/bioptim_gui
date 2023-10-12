@@ -47,12 +47,12 @@ class AcrobaticsOCPControllers {
 
   int get nbSomersaults => _ocp.generic.nbSomersaults;
 
-  void setNbSomersaults(int value) {
+  Future<void> setNbSomersaults(int value) async {
     _ocp.generic.nbSomersaults = value;
     _ocp.updateSomersaults();
     _nbSomersaultsMax = max(nbSomersaults, _nbSomersaultsMax);
+
     if (nbSomersaultsController.text != nbSomersaults.toString()) {
-      // This if case is to ensure non recursive calls
       nbSomersaultsController.text = nbSomersaults.toString();
     }
     // Wait for one frame so the the UI is updated

@@ -1,5 +1,5 @@
 import 'package:bioptim_gui/models/acrobatics_ocp_controllers.dart';
-import 'package:bioptim_gui/widgets/positive_integer_text_field.dart';
+import 'package:bioptim_gui/widgets/utils/positive_integer_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

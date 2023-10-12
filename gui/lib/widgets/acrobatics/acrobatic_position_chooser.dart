@@ -1,4 +1,4 @@
-import 'package:bioptim_gui/widgets/custom_http_dropdown.dart';
+import 'package:bioptim_gui/widgets/utils/custom_http_dropdown.dart';
 import 'package:flutter/material.dart';
 
 class AcrobaticPositionChooser extends StatelessWidget {

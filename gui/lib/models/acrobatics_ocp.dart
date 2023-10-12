@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:bioptim_gui/models/acrobatics_ocp_config.dart';
+import 'package:bioptim_gui/models/api_config.dart';
 import 'package:bioptim_gui/models/global.dart';
 import 'package:bioptim_gui/models/penalty.dart';
+import 'package:http/http.dart' as http;
 
 class _Somersault {
   int somersaultIndex;
@@ -43,7 +46,7 @@ class AcrobaticsOCPProgram {
   AcrobaticsOptimalControlProgram generic = AcrobaticsOptimalControlProgram();
 
   final somersaults = <_Somersault>[];
-  void updateSomersaults() {
+  Future<void> updateSomersaults() async {
     if (somersaults.length < generic.nbSomersaults) {
       for (int i = somersaults.length; i < generic.nbSomersaults; i++) {
         somersaults.add(_Somersault(

@@ -1,6 +1,6 @@
 import 'package:bioptim_gui/models/dynamics.dart';
 import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
-import 'package:bioptim_gui/widgets/custom_dropdown_button.dart';
+import 'package:bioptim_gui/widgets/utils/custom_dropdown_button.dart';
 import 'package:flutter/material.dart';
 
 class DynamicsChooser extends StatelessWidget {

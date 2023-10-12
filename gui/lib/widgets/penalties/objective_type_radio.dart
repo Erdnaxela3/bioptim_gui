@@ -1,5 +1,5 @@
 import 'package:bioptim_gui/models/objective_type.dart';
-import 'package:bioptim_gui/widgets/custom_radio_button.dart';
+import 'package:bioptim_gui/widgets/utils/custom_radio_button.dart';
 import 'package:flutter/material.dart';
 
 class ObjectiveTypeRadio extends StatelessWidget {

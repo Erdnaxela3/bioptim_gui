@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:bioptim_gui/models/api_config.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http; // Import the http package.
+import 'package:http/http.dart' as http;
 
 class AcrobaticBioModelChooser extends StatefulWidget {
   const AcrobaticBioModelChooser({

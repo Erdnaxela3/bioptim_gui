@@ -1,12 +1,12 @@
-import 'package:bioptim_gui/widgets/custom_http_dropdown.dart';
+import 'package:bioptim_gui/widgets/utils/custom_http_dropdown.dart';
 import 'package:flutter/material.dart';
 
-class IntegrationRuleChooser extends StatelessWidget {
-  const IntegrationRuleChooser({
+class NodesChooser extends StatelessWidget {
+  const NodesChooser({
     super.key,
     required this.width,
     required this.putEndpoint,
-    this.defaultValue = "Rectangle left",
+    this.defaultValue = "All shooting",
   });
 
   final double width;
@@ -16,12 +16,12 @@ class IntegrationRuleChooser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomHttpDropdown(
-      title: "Integration rule",
+      title: "Nodes to apply",
       width: width,
       defaultValue: defaultValue,
-      getEndpoint: "/penalties/integration_rules",
+      getEndpoint: "/penalties/nodes",
       putEndpoint: putEndpoint,
-      requestKey: "integration_rule",
+      requestKey: "nodes",
       customStringFormatting: (s) => s.replaceAll(" ", "_").toLowerCase(),
     );
   }

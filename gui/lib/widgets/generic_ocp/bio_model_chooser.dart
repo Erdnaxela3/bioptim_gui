@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:bioptim_gui/models/bio_model.dart';
 import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
-import 'package:bioptim_gui/widgets/custom_dropdown_button.dart';
+import 'package:bioptim_gui/widgets/utils/custom_dropdown_button.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 

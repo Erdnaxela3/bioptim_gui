@@ -1,12 +1,12 @@
 import 'package:bioptim_gui/models/decision_variables.dart';
 import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
 import 'package:bioptim_gui/models/penalty.dart';
-import 'package:bioptim_gui/widgets/animated_expanding_widget.dart';
-import 'package:bioptim_gui/widgets/bio_model_chooser.dart';
 import 'package:bioptim_gui/widgets/decision_variable_expander.dart';
 import 'package:bioptim_gui/widgets/dynamics_chooser.dart';
-import 'package:bioptim_gui/widgets/penalty_expander.dart';
-import 'package:bioptim_gui/widgets/phase_information.dart';
+import 'package:bioptim_gui/widgets/generic_ocp/bio_model_chooser.dart';
+import 'package:bioptim_gui/widgets/generic_ocp/phase_information.dart';
+import 'package:bioptim_gui/widgets/penalties/penalty_expander.dart';
+import 'package:bioptim_gui/widgets/utils/animated_expanding_widget.dart';
 import 'package:flutter/material.dart';
 
 class PhaseGenerationMenu extends StatelessWidget {

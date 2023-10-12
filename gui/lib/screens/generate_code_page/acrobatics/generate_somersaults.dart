@@ -1,8 +1,8 @@
 import 'package:bioptim_gui/models/acrobatics_ocp_controllers.dart';
 import 'package:bioptim_gui/models/penalty.dart';
-import 'package:bioptim_gui/widgets/animated_expanding_widget.dart';
-import 'package:bioptim_gui/widgets/penalty_expander.dart';
-import 'package:bioptim_gui/widgets/somersault_informations.dart';
+import 'package:bioptim_gui/widgets/penalties/penalty_expander.dart';
+import 'package:bioptim_gui/widgets/acrobatics/somersault_informations.dart';
+import 'package:bioptim_gui/widgets/utils/animated_expanding_widget.dart';
 import 'package:flutter/material.dart';
 
 class SomersaultGenerationMenu extends StatelessWidget {

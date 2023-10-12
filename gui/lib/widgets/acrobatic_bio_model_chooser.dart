@@ -1,10 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
-
-import 'package:bioptim_gui/models/acrobatics_ocp_controllers.dart';
+import 'package:bioptim_gui/models/api_config.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http; // Import the http package.
 
-class AcrobaticBioModelChooser extends StatelessWidget {
+class AcrobaticBioModelChooser extends StatefulWidget {
   const AcrobaticBioModelChooser({
     super.key,
     this.width,
@@ -13,32 +14,38 @@ class AcrobaticBioModelChooser extends StatelessWidget {
   final double? width;
 
   @override
-  Widget build(BuildContext context) {
-    final controllers = AcrobaticsOCPControllers.instance;
+  AcrobaticBioModelChooserState createState() =>
+      AcrobaticBioModelChooserState();
+}
 
-    final bioModel = controllers.getBioModel();
-    final modelPath = controllers.getModelPath();
+class AcrobaticBioModelChooserState extends State<AcrobaticBioModelChooser> {
+  String modelPath = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final String endpoint = '${APIConfig.url}/acrobatics/model_path';
 
     return SizedBox(
-      width: width,
+      width: widget.width,
       child: TextField(
         decoration: InputDecoration(
           labelText: "Model path *",
           enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.red), // Unfocused border color
+            borderSide: BorderSide(color: Colors.red),
           ),
           focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.red), // Focused border color
+            borderSide: BorderSide(color: Colors.red),
           ),
           suffixIcon: IconButton(
             icon: const Icon(Icons.file_upload_outlined),
             onPressed: () async {
               final results = await FilePicker.platform.pickFiles(
                 type: FileType.custom,
-                allowedExtensions: [bioModel.extension],
+                allowedExtensions: ["bioMod"],
               );
               if (results == null) return;
-              controllers.setModelPath(results.files.single.path!);
+
+              _updateModelPath(endpoint, results.files.single.path!);
             },
           ),
         ),
@@ -54,5 +61,19 @@ class AcrobaticBioModelChooser extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _updateModelPath(String endpoint, String modelPathValue) async {
+    final response = await http.put(
+      Uri.parse(endpoint),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode({'model_path': modelPathValue}),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        modelPath = modelPathValue;
+      });
+    }
   }
 }

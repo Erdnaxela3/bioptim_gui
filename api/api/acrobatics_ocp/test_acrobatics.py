@@ -178,7 +178,7 @@ def test_put_final_time_margin():
 def test_get_position():
     response = client.get("/acrobatics/position/")
     assert response.status_code == 200, response
-    assert set(response.json()) == set(["Straight", "Tuck", "Pike"])
+    assert set(response.json()) == {"Straight", "Tuck", "Pike"}
 
 
 def test_put_position():
@@ -201,10 +201,10 @@ def test_put_position_same():
     assert response.status_code == 304, response
 
 
-def test_get_preferred_twist_side():
-    response = client.get("/acrobatics/preferred_twist_side/")
+def test_get_sport_type():
+    response = client.get("/acrobatics/sport_type/")
     assert response.status_code == 200, response
-    assert set(response.json()) == set(["Trampoline"])
+    assert set(response.json()) == {"Trampoline", "Diving"}
 
 
 def test_put_sport_type():
@@ -230,7 +230,7 @@ def test_put_sport_type_same():
 def test_get_preferred_twist_side():
     response = client.get("/acrobatics/preferred_twist_side/")
     assert response.status_code == 200, response
-    assert set(response.json()) == set(["Left", "Right"])
+    assert set(response.json()) == {"Left", "Right"}
 
 
 def test_put_preferred_twist_side_same():

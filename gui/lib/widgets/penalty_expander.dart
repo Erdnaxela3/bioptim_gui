@@ -1,11 +1,9 @@
 import 'package:bioptim_gui/models/acrobatics_ocp_controllers.dart';
 import 'package:bioptim_gui/models/objective_type.dart';
 import 'package:bioptim_gui/models/minimize_maximize.dart';
-import 'package:bioptim_gui/models/nodes.dart';
 import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
 import 'package:bioptim_gui/models/optimal_control_program_type.dart';
 import 'package:bioptim_gui/models/penalty.dart';
-import 'package:bioptim_gui/models/quadrature_rules.dart';
 import 'package:bioptim_gui/widgets/animated_expanding_widget.dart';
 import 'package:bioptim_gui/widgets/custom_dropdown_button.dart';
 import 'package:bioptim_gui/widgets/integration_rule_chooser.dart';
@@ -45,13 +43,7 @@ class PenaltyExpander extends StatelessWidget {
     required MinMax? minimizeOrMaximize,
     required ObjectiveType? objectiveType,
     required GenericFcn? genericFcn,
-    required Nodes? nodes,
-    required QuadratureRules? quadratureRules,
-    required bool? quadratic,
-    required bool? expand,
     required String? target,
-    required bool? derivative,
-    required bool? multiThread,
     required Map<String, dynamic>? arguments,
   }) {
     switch (fcn.runtimeType) {
@@ -62,14 +54,7 @@ class PenaltyExpander extends StatelessWidget {
           minimizeOrMaximize: minimizeOrMaximize ?? MinMax.minimize,
           objectiveType: objectiveType ?? ObjectiveType.mayer,
           genericFcn: genericFcn ?? GenericFcn.minimizeControls,
-          nodes: nodes ?? Nodes.all,
-          quadratureRules:
-              quadratureRules ?? QuadratureRules.defaultQuadraticRule,
-          quadratic: quadratic ?? true,
-          expand: expand ?? true,
           target: target ?? 'None',
-          derivative: derivative ?? false,
-          multiThread: multiThread ?? false,
           arguments: arguments ?? {},
         );
       case MayerFcn:
@@ -79,27 +64,13 @@ class PenaltyExpander extends StatelessWidget {
           minimizeOrMaximize: minimizeOrMaximize ?? MinMax.minimize,
           objectiveType: objectiveType ?? ObjectiveType.mayer,
           genericFcn: genericFcn ?? GenericFcn.minimizeControls,
-          nodes: nodes ?? Nodes.end,
-          quadratureRules:
-              quadratureRules ?? QuadratureRules.defaultQuadraticRule,
-          quadratic: quadratic ?? true,
-          expand: expand ?? true,
           target: target ?? 'None',
-          derivative: derivative ?? false,
-          multiThread: multiThread ?? false,
           arguments: arguments ?? {},
         );
       case ConstraintFcn:
         return Constraint.generic(
           fcn: fcn as ConstraintFcn,
-          nodes: nodes ?? Nodes.end,
-          quadratureRules:
-              quadratureRules ?? QuadratureRules.defaultQuadraticRule,
-          quadratic: quadratic ?? true,
-          expand: expand ?? true,
           target: target ?? 'None',
-          derivative: derivative ?? false,
-          multiThread: multiThread ?? false,
           arguments: arguments ?? {},
         );
       default:
@@ -187,12 +158,6 @@ class PenaltyExpander extends StatelessWidget {
                     return _penaltyFactory(
                       fcn,
                       arguments: arguments,
-                      derivative: derivative,
-                      expand: expand,
-                      multiThread: multiThread,
-                      nodes: nodes,
-                      quadratic: quadratic,
-                      quadratureRules: quadratureRules,
                       target: target,
                       weight: weight,
                       minimizeOrMaximize: minimizeOrMaximize,
@@ -251,13 +216,7 @@ class _PathTile extends StatelessWidget {
   final Function(
     PenaltyFcn fcn, {
     required Map<String, dynamic>? arguments,
-    required Nodes? nodes,
-    required QuadratureRules? quadratureRules,
-    required bool? quadratic,
-    required bool? expand,
     required String? target,
-    required bool? derivative,
-    required bool? multiThread,
     required double? weight,
     required MinMax? minimizeOrMaximize,
     required ObjectiveType? objectiveType,
@@ -275,13 +234,7 @@ class _PathTile extends StatelessWidget {
     MinMax? minimizeOrMaximize,
     ObjectiveType? objectiveType,
     GenericFcn? genericFcn,
-    Nodes? nodes,
-    QuadratureRules? quadratureRules,
-    bool? quadratic,
-    bool? expand,
     String? target,
-    bool? derivative,
-    bool? multiThread,
     Map<String, dynamic>? arguments,
   }) {
     final objective =
@@ -292,13 +245,7 @@ class _PathTile extends StatelessWidget {
     minimizeOrMaximize = minimizeOrMaximize ?? objective?.minimizeOrMaximize;
     objectiveType = objectiveType ?? objective?.objectiveType;
     genericFcn = genericFcn ?? objective?.genericFcn;
-    nodes = nodes ?? penalty.nodes;
-    quadratureRules = quadratureRules ?? penalty.quadratureRules;
-    quadratic = quadratic ?? penalty.quadratic;
-    expand = expand ?? penalty.expand;
     target = target ?? penalty.target;
-    derivative = derivative ?? penalty.derivative;
-    multiThread = multiThread ?? penalty.multiThread;
     arguments = arguments ?? penalty.arguments;
 
     switch (fcn.runtimeType) {
@@ -309,13 +256,7 @@ class _PathTile extends StatelessWidget {
           minimizeOrMaximize: minimizeOrMaximize,
           objectiveType: objectiveType,
           genericFcn: genericFcn,
-          nodes: nodes,
-          quadratureRules: quadratureRules,
-          quadratic: quadratic,
-          expand: expand,
           target: target,
-          derivative: derivative,
-          multiThread: multiThread,
           arguments: arguments,
         );
       case MayerFcn:
@@ -325,13 +266,7 @@ class _PathTile extends StatelessWidget {
           minimizeOrMaximize: minimizeOrMaximize,
           objectiveType: objectiveType,
           genericFcn: genericFcn,
-          nodes: nodes,
-          quadratureRules: quadratureRules,
-          quadratic: quadratic,
-          expand: expand,
           target: target,
-          derivative: derivative,
-          multiThread: multiThread,
           arguments: arguments,
         );
       case ConstraintFcn:
@@ -341,13 +276,7 @@ class _PathTile extends StatelessWidget {
           minimizeOrMaximize: minimizeOrMaximize,
           objectiveType: objectiveType,
           genericFcn: genericFcn,
-          nodes: nodes,
-          quadratureRules: quadratureRules,
-          quadratic: quadratic,
-          expand: expand,
           target: target,
-          derivative: derivative,
-          multiThread: multiThread,
           arguments: arguments,
         );
       default:
@@ -410,12 +339,6 @@ class _PathTile extends StatelessWidget {
                         minimizeOrMaximize: null,
                         objectiveType: objectiveType,
                         genericFcn: value,
-                        nodes: null,
-                        quadratureRules: null,
-                        derivative: null,
-                        expand: null,
-                        quadratic: null,
-                        multiThread: null,
                         target: null,
                         arguments: null,
                       ),
@@ -428,12 +351,6 @@ class _PathTile extends StatelessWidget {
                         minimizeOrMaximize: null,
                         objectiveType: null,
                         genericFcn: null,
-                        nodes: null,
-                        quadratureRules: null,
-                        derivative: null,
-                        expand: null,
-                        quadratic: null,
-                        multiThread: null,
                         target: null,
                         arguments: null,
                       ),
@@ -468,12 +385,6 @@ class _PathTile extends StatelessWidget {
                         minimizeOrMaximize: null,
                         objectiveType: value,
                         genericFcn: penalty.genericFcn,
-                        nodes: null,
-                        quadratureRules: null,
-                        derivative: null,
-                        quadratic: null,
-                        expand: null,
-                        multiThread: null,
                         target: null,
                         arguments: null,
                       ),

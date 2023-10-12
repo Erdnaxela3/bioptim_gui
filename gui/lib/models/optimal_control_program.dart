@@ -5,10 +5,7 @@ import 'package:bioptim_gui/models/dynamics.dart';
 import 'package:bioptim_gui/models/generic_ocp_config.dart';
 import 'package:bioptim_gui/models/global.dart';
 import 'package:bioptim_gui/models/decision_variables.dart';
-import 'package:bioptim_gui/models/objective_type.dart';
 import 'package:bioptim_gui/models/penalty.dart';
-import 'package:bioptim_gui/models/quadrature_rules.dart';
-import 'package:bioptim_gui/utils.dart';
 
 class _Phase {
   int phaseIndex;
@@ -217,13 +214,13 @@ class OptimalControlProgram {
             '    objective_functions.add(\n'
             '        objective=${objective.fcn.toPythonString()},\n'
             '${objective.arguments.keys.isEmpty ? '' : '${objective.arguments.keys.map((key) => '        ${objective.argumentToPythonString(key)},').join('\n')}\n'}'
-            '        node=${objective.nodes.toPythonString()},\n'
-            '${objective.quadratic == true ? '' : '        quadratic=${objective.quadratic.toPythonString()},\n'}'
-            '${objective.expand == true ? '' : '        expand=${objective.expand.toPythonString()},\n'}'
-            '${objective.target == 'None' ? '' : '        target=${objective.target == 'None' ? 'None' : 'np.array([${objective.target}])'},\n'}'
-            '${objective.derivative == false ? '' : '        derivative=${objective.derivative.toPythonString()},\n'}'
-            '${objective.objectiveType == ObjectiveType.mayer ? '' : objective.quadratureRules == QuadratureRules.rectangleLeft ? '' : '        integration_rule=${objective.quadratureRules.toPythonString()},\n'}'
-            '${objective.multiThread == false ? '' : '        multi_thread=${objective.multiThread.toPythonString()},\n'}'
+            // '        node=${objective.nodes.toPythonString()},\n'
+            // '${objective.quadratic == true ? '' : '        quadratic=${objective.quadratic.toPythonString()},\n'}'
+            // '${objective.expand == true ? '' : '        expand=${objective.expand.toPythonString()},\n'}'
+            // '${objective.target == 'None' ? '' : '        target=${objective.target == 'None' ? 'None' : 'np.array([${objective.target}])'},\n'}'
+            // '${objective.derivative == false ? '' : '        derivative=${objective.derivative.toPythonString()},\n'}'
+            // '${objective.objectiveType == ObjectiveType.mayer ? '' : objective.quadratureRules == QuadratureRules.rectangleLeft ? '' : '        integration_rule=${objective.quadratureRules.toPythonString()},\n'}'
+            // '${objective.multiThread == false ? '' : '        multi_thread=${objective.multiThread.toPythonString()},\n'}'
             '${generic.nbPhases == 1 ? '' : '        phase=$phaseIndex,\n'}'
             '        weight=${objective.minimizeOrMaximize.toPythonString()}${objective.weight},\n'
             '    )\n',
@@ -234,13 +231,13 @@ class OptimalControlProgram {
             '    constraints.add(\n'
             '        constraint=${constraint.fcn.toPythonString()},\n'
             '${constraint.arguments.keys.isEmpty ? '' : '${constraint.arguments.keys.map((key) => '        ${constraint.argumentToPythonString(key)},').join('\n')}\n'}'
-            '        node=${constraint.nodes.toPythonString()},\n'
-            '${constraint.quadratic == true ? '' : '        quadratic=${constraint.quadratic.toPythonString()},\n'}'
-            '${constraint.expand == true ? '' : '        expand=${constraint.expand.toPythonString()},\n'}'
+            // '        node=${constraint.nodes.toPythonString()},\n'
+            // '${constraint.quadratic == true ? '' : '        quadratic=${constraint.quadratic.toPythonString()},\n'}'
+            // '${constraint.expand == true ? '' : '        expand=${constraint.expand.toPythonString()},\n'}'
             '${constraint.target == 'None' ? '' : '        target=${constraint.target == 'None' ? 'None' : 'np.array([${constraint.target}])'},\n'}'
-            '${constraint.derivative == false ? '' : '        derivative=${constraint.derivative.toPythonString()},\n'}'
-            '${constraint.quadratureRules == QuadratureRules.rectangleLeft ? '' : '        integration_rule=${constraint.quadratureRules.toPythonString()},\n'}'
-            '${constraint.multiThread == false ? '' : '        multi_thread=${constraint.multiThread.toPythonString()},\n'}'
+            // '${constraint.derivative == false ? '' : '        derivative=${constraint.derivative.toPythonString()},\n'}'
+            // '${constraint.quadratureRules == QuadratureRules.rectangleLeft ? '' : '        integration_rule=${constraint.quadratureRules.toPythonString()},\n'}'
+            // '${constraint.multiThread == false ? '' : '        multi_thread=${constraint.multiThread.toPythonString()},\n'}'
             '${generic.nbPhases == 1 ? '' : '        phase=$phaseIndex,\n'}'
             '${generic.nbPhases == 1 ? '' : '        phase=$phaseIndex,\n'}'
             '    )\n',

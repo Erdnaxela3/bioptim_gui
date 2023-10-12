@@ -6,9 +6,6 @@ from acrobatics_ocp.enums import (
     SportType,
     PreferredTwistSide,
     ObjectiveType,
-    GenericFcn,
-    ConstraintFcn,
-    PenaltyFcn,
 )
 
 
@@ -89,15 +86,15 @@ class ObjectiveTypeRequest(BaseModel):
 
 
 class PenaltyTypeRequest(BaseModel):
-    penalty_type: PenaltyFcn
+    penalty_type: str
 
 
 class ConstraintFcnRequest(BaseModel):
-    penalty_type: ConstraintFcn
+    penalty_type: str
 
 
 class ObjectiveFcnRequest(BaseModel):
-    penalty_type: GenericFcn
+    penalty_type: str
 
 
 class ArgumentRequest(BaseModel):

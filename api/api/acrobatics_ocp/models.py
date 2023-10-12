@@ -5,7 +5,7 @@ from acrobatics_ocp.enums import *
 
 
 class Penalty(BaseModel):
-    penalty_type: PenaltyFcn
+    penalty_type: str
     nodes: Node
     quadratic: bool = True
     expand: bool = True

@@ -1,13 +1,8 @@
 import 'dart:io';
 
 import 'package:bioptim_gui/models/acrobatics_ocp_config.dart';
-import 'package:bioptim_gui/models/acrobatics_somersault_direction.dart';
-import 'package:bioptim_gui/models/acrobatics_twist_side.dart';
 import 'package:bioptim_gui/models/global.dart';
-import 'package:bioptim_gui/models/objective_type.dart';
 import 'package:bioptim_gui/models/penalty.dart';
-import 'package:bioptim_gui/models/quadrature_rules.dart';
-import 'package:bioptim_gui/utils.dart';
 
 class _Somersault {
   int somersaultIndex;
@@ -126,8 +121,8 @@ class AcrobaticsOCPProgram {
     final nSomersaultsAsString = nSomersaults.toString();
     final finalTimeMarginAsString = generic.finalTimeMargin.toString();
 
-    final bioModelAsString =
-        '[${generic.bioModel.toPythonString()}(r"${generic.modelPath}") for _ in range(n_somersault)]';
+    // final bioModelAsString =
+    // '[${generic.bioModel.toPythonString()}(r"${generic.modelPath}") for _ in range(n_somersault)]';
 
     final nShootingAsString = '${[
       for (int i = 0; i < nSomersaults; i++)
@@ -143,13 +138,13 @@ class AcrobaticsOCPProgram {
       for (int i = 0; i < nSomersaults; i++) somersaults[i].duration.toString()
     ]}';
 
-    final sumHalfTwist = [
-      for (int i = 0; i < nSomersaults; i++) somersaults[i].nbHalfTwists
-    ].reduce((value, element) => value + element);
+    // final sumHalfTwist = [
+    //   for (int i = 0; i < nSomersaults; i++) somersaults[i].nbHalfTwists
+    // ].reduce((value, element) => value + element);
 
-    final somersaultDirection = sumHalfTwist % 2 == 0
-        ? SomersaultDirection.backward
-        : SomersaultDirection.forward;
+    // final somersaultDirection = sumHalfTwist % 2 == 0
+    // ? SomersaultDirection.backward
+    // : SomersaultDirection.forward;
 
     file.writeAsStringSync(
         '    # Declaration of generic elements\n'
@@ -159,7 +154,7 @@ class AcrobaticsOCPProgram {
         '    n_somersault = $nSomersaultsAsString\n'
         '    n_half_twist = $nHalfTwistsAsString\n'
         '\n'
-        '    bio_model = $bioModelAsString\n'
+        // '    bio_model = $bioModelAsString\n'
         '    # can\'t use * to have multiple, needs duplication\n'
         '\n',
         mode: FileMode.append);
@@ -176,13 +171,13 @@ class AcrobaticsOCPProgram {
             '    objective_functions.add(\n'
             '        objective=${objective.fcn.toPythonString()},\n'
             '${objective.arguments.keys.isEmpty ? '' : '${objective.arguments.keys.map((key) => '        ${objective.argumentToPythonString(key)},').join('\n')}\n'}'
-            '        node=${objective.nodes.toPythonString()},\n'
-            '${objective.quadratic == true ? '' : '        quadratic=${objective.quadratic.toPythonString()},\n'}'
-            '${objective.expand == true ? '' : '        expand=${objective.expand.toPythonString()},\n'}'
-            '${objective.target == 'None' ? '' : '        target=${objective.target == 'None' ? 'None' : 'np.array([${objective.target}])'},\n'}'
-            '${objective.derivative == false ? '' : '        derivative=${objective.derivative.toPythonString()},\n'}'
-            '${objective.objectiveType == ObjectiveType.mayer ? '' : objective.quadratureRules == QuadratureRules.rectangleLeft ? '' : '        integration_rule=${objective.quadratureRules.toPythonString()},\n'}'
-            '${objective.multiThread == false ? '' : '        multi_thread=${objective.multiThread.toPythonString()},\n'}'
+            // '        node=${objective.nodes.toPythonString()},\n'
+            // '${objective.quadratic == true ? '' : '        quadratic=${objective.quadratic.toPythonString()},\n'}'
+            // '${objective.expand == true ? '' : '        expand=${objective.expand.toPythonString()},\n'}'
+            // '${objective.target == 'None' ? '' : '        target=${objective.target == 'None' ? 'None' : 'np.array([${objective.target}])'},\n'}'
+            // '${objective.derivative == false ? '' : '        derivative=${objective.derivative.toPythonString()},\n'}'
+            // '${objective.objectiveType == ObjectiveType.mayer ? '' : objective.quadratureRules == QuadratureRules.rectangleLeft ? '' : '        integration_rule=${objective.quadratureRules.toPythonString()},\n'}'
+            // '${objective.multiThread == false ? '' : '        multi_thread=${objective.multiThread.toPythonString()},\n'}'
             '${generic.nbSomersaults == 1 ? '' : '        phase=$phaseIndex,\n'}'
             '        weight=${objective.minimizeOrMaximize.toPythonString()}${objective.weight},\n'
             '    )\n',
@@ -193,13 +188,13 @@ class AcrobaticsOCPProgram {
             '    constraints.add(\n'
             '        constraint=${constraint.fcn.toPythonString()},\n'
             '${constraint.arguments.keys.isEmpty ? '' : '${constraint.arguments.keys.map((key) => '        ${constraint.argumentToPythonString(key)},').join('\n')}\n'}'
-            '        node=${constraint.nodes.toPythonString()},\n'
-            '${constraint.quadratic == true ? '' : '        quadratic=${constraint.quadratic.toPythonString()},\n'}'
-            '${constraint.expand == true ? '' : '        expand=${constraint.expand.toPythonString()},\n'}'
-            '${constraint.target == 'None' ? '' : '        target=${constraint.target == 'None' ? 'None' : 'np.array([${constraint.target}])'},\n'}'
-            '${constraint.derivative == false ? '' : '        derivative=${constraint.derivative.toPythonString()},\n'}'
-            '${constraint.quadratureRules == QuadratureRules.rectangleLeft ? '' : '        integration_rule=${constraint.quadratureRules.toPythonString()},\n'}'
-            '${constraint.multiThread == false ? '' : '        multi_thread=${constraint.multiThread.toPythonString()},\n'}'
+            // '        node=${constraint.nodes.toPythonString()},\n'
+            // '${constraint.quadratic == true ? '' : '        quadratic=${constraint.quadratic.toPythonString()},\n'}'
+            // '${constraint.expand == true ? '' : '        expand=${constraint.expand.toPythonString()},\n'}'
+            // '${constraint.target == 'None' ? '' : '        target=${constraint.target == 'None' ? 'None' : 'np.array([${constraint.target}])'},\n'}'
+            // '${constraint.derivative == false ? '' : '        derivative=${constraint.derivative.toPythonString()},\n'}'
+            // '${constraint.quadratureRules == QuadratureRules.rectangleLeft ? '' : '        integration_rule=${constraint.quadratureRules.toPythonString()},\n'}'
+            // '${constraint.multiThread == false ? '' : '        multi_thread=${constraint.multiThread.toPythonString()},\n'}'
             '${generic.nbSomersaults == 1 ? '' : '        phase=$phaseIndex,\n'}'
             '${generic.nbSomersaults == 1 ? '' : '        phase=$phaseIndex,\n'}'
             '    )\n',
@@ -280,43 +275,43 @@ class AcrobaticsOCPProgram {
         '        # Intermediate bounds, same for every phase\n'
         '        x_bounds[phase]["q"].min[:, 1] = intermediate_min_bounds\n'
         '        x_bounds[phase]["q"].min[3, 1] = '
-        '${somersaultDirection == SomersaultDirection.forward ? '2 * np.pi * phase\n' : '-(2 * np.pi * (phase + 1))\n'}'
+        // '${somersaultDirection == SomersaultDirection.forward ? '2 * np.pi * phase\n' : '-(2 * np.pi * (phase + 1))\n'}'
         '        x_bounds[phase]["q"].min[5, 1] = '
-        '${generic.preferredTwistSide == PreferredTwistSide.left ? 'np.pi * sum(n_half_twist[:phase]) - 0.2\n' : '-(np.pi * sum(n_half_twist[: phase + 1])) - 0.2\n'}'
+        // '${generic.preferredTwistSide == PreferredTwistSide.left ? 'np.pi * sum(n_half_twist[:phase]) - 0.2\n' : '-(np.pi * sum(n_half_twist[: phase + 1])) - 0.2\n'}'
         '\n'
         '        x_bounds[phase]["q"].max[:, 1] = intermediate_max_bounds\n'
         '        x_bounds[phase]["q"].max[3, 1] = '
-        '${somersaultDirection == SomersaultDirection.forward ? '2 * np.pi * (phase + 1)\n' : '-(2 * np.pi * phase)\n'}'
+        // '${somersaultDirection == SomersaultDirection.forward ? '2 * np.pi * (phase + 1)\n' : '-(2 * np.pi * phase)\n'}'
         '        x_bounds[phase]["q"].max[5, 1] = '
-        '${generic.preferredTwistSide == PreferredTwistSide.left ? 'np.pi * sum(n_half_twist[: phase + 1]) + 0.2\n' : '-(np.pi * sum(n_half_twist[:phase])) + 0.2\n'}'
+        // '${generic.preferredTwistSide == PreferredTwistSide.left ? 'np.pi * sum(n_half_twist[: phase + 1]) + 0.2\n' : '-(np.pi * sum(n_half_twist[:phase])) + 0.2\n'}'
         '\n'
         '        # Final bounds, used for next phase initial bounds\n'
         '        x_bounds[phase]["q"].min[:, 2] = intermediate_min_bounds\n'
         '        x_bounds[phase]["q"].min[3, 2] = '
-        '${somersaultDirection == SomersaultDirection.forward ? '2 * np.pi * (phase + 1)\n' : '-2 * np.pi * (phase + 1)\n'}'
+        // '${somersaultDirection == SomersaultDirection.forward ? '2 * np.pi * (phase + 1)\n' : '-2 * np.pi * (phase + 1)\n'}'
         '        x_bounds[phase]["q"].min[5, 2] = '
-        '${generic.preferredTwistSide == PreferredTwistSide.left ? 'np.pi * sum(n_half_twist[: phase + 1]) - 0.2\n' : '-(np.pi * sum(n_half_twist[: phase + 1])) - 0.2\n'}'
+        // '${generic.preferredTwistSide == PreferredTwistSide.left ? 'np.pi * sum(n_half_twist[: phase + 1]) - 0.2\n' : '-(np.pi * sum(n_half_twist[: phase + 1])) - 0.2\n'}'
         '\n'
         '        x_bounds[phase]["q"].max[:, 2] = intermediate_max_bounds\n'
         '        x_bounds[phase]["q"].max[3, 2] = '
-        '${somersaultDirection == SomersaultDirection.forward ? '2 * np.pi * (phase + 1)\n' : '-2 * np.pi * (phase + 1)\n'}'
+        // '${somersaultDirection == SomersaultDirection.forward ? '2 * np.pi * (phase + 1)\n' : '-2 * np.pi * (phase + 1)\n'}'
         '        x_bounds[phase]["q"].max[5, 2] = '
-        '${generic.preferredTwistSide == PreferredTwistSide.left ? 'np.pi * sum(n_half_twist[: phase + 1]) + 0.2\n' : '-(np.pi * sum(n_half_twist[: phase + 1])) + 0.2\n'}'
+        // '${generic.preferredTwistSide == PreferredTwistSide.left ? 'np.pi * sum(n_half_twist[: phase + 1]) + 0.2\n' : '-(np.pi * sum(n_half_twist[: phase + 1])) + 0.2\n'}'
         '\n'
         '    # Final and last bounds\n'
         '    x_bounds[n_somersault - 1]["q"].min[:, 2] = (\n'
         '        np.array([-0.9, -0.9, 0, 0, 0, 2.9, 0, 0, 0, -2.9]) - 0.1\n'
         '    )\n'
         '    x_bounds[n_somersault - 1]["q"].min[3, 2] = '
-        '${somersaultDirection == SomersaultDirection.forward ? '2 * np.pi * n_somersault - 0.1\n' : '-2 * np.pi * n_somersault - 0.1\n'}'
+        // '${somersaultDirection == SomersaultDirection.forward ? '2 * np.pi * n_somersault - 0.1\n' : '-2 * np.pi * n_somersault - 0.1\n'}'
         '    x_bounds[n_somersault - 1]["q"].min[5, 2] = '
-        '${generic.preferredTwistSide == PreferredTwistSide.left ? 'np.pi * sum(n_half_twist) - 0.1\n' : '-np.pi * sum(n_half_twist) - 0.1\n'}'
+        // '${generic.preferredTwistSide == PreferredTwistSide.left ? 'np.pi * sum(n_half_twist) - 0.1\n' : '-np.pi * sum(n_half_twist) - 0.1\n'}'
         '\n'
         '    x_bounds[n_somersault - 1]["q"].max[:, 2] = np.array([0.9, 0.9, 0, 0, 0, 2.9, 0, 0, 0, -2.9]) + 0.1\n'
         '    x_bounds[n_somersault - 1]["q"].max[3, 2] = '
-        '${somersaultDirection == SomersaultDirection.forward ? '2 * np.pi * n_somersault + 0.1\n' : '-2 * np.pi * n_somersault + 0.1\n'}'
+        // '${somersaultDirection == SomersaultDirection.forward ? '2 * np.pi * n_somersault + 0.1\n' : '-2 * np.pi * n_somersault + 0.1\n'}'
         '    x_bounds[n_somersault - 1]["q"].max[5, 2] = '
-        '${generic.preferredTwistSide == PreferredTwistSide.left ? 'np.pi * sum(n_half_twist) + 0.1\n' : '-np.pi * sum(n_half_twist) + 0.1\n'}'
+        // '${generic.preferredTwistSide == PreferredTwistSide.left ? 'np.pi * sum(n_half_twist) + 0.1\n' : '-np.pi * sum(n_half_twist) + 0.1\n'}'
         '\n'
         '    vzinit = (\n'
         '        9.81 / 2 * phase_time[0]\n'
@@ -327,13 +322,13 @@ class AcrobaticsOCPProgram {
         '    x_bounds[0]["qdot"].min[:2, 0] = -0.5\n'
         '    x_bounds[0]["qdot"].min[2, 0] = vzinit - 2\n'
         '    x_bounds[0]["qdot"].min[3, 0] = '
-        '${somersaultDirection == SomersaultDirection.forward ? '0.5' : '-20'}'
+        // '${somersaultDirection == SomersaultDirection.forward ? '0.5' : '-20'}'
         '\n'
         '\n'
         '    x_bounds[0]["qdot"].max[:, 0] = -x_bounds[0]["qdot"].min[:, 0]\n'
         '    x_bounds[0]["qdot"].max[2, 0] = vzinit + 2\n'
         '    x_bounds[0]["qdot"].max[3, 0] = '
-        '${somersaultDirection == SomersaultDirection.forward ? '20' : '-0.5'}'
+        // '${somersaultDirection == SomersaultDirection.forward ? '20' : '-0.5'}'
         '\n'
         '\n'
         '    for phase in range(n_somersault):\n'
@@ -346,13 +341,13 @@ class AcrobaticsOCPProgram {
         '        x_bounds[phase]["qdot"].min[:, 1] = [-100] * n_qdot\n'
         '        x_bounds[phase]["qdot"].min[:2, 1] = -10\n'
         '        x_bounds[phase]["qdot"].min[3, 1] = '
-        '${somersaultDirection == SomersaultDirection.forward ? '0.5' : '-20'}'
+        // '${somersaultDirection == SomersaultDirection.forward ? '0.5' : '-20'}'
         '\n'
         '\n'
         '        x_bounds[phase]["qdot"].max[:, 1] = [100] * n_qdot\n'
         '        x_bounds[phase]["qdot"].max[:2, 1] = 10\n'
         '        x_bounds[phase]["qdot"].max[3, 1] = '
-        '${somersaultDirection == SomersaultDirection.forward ? '20' : '-0.5'}'
+        // '${somersaultDirection == SomersaultDirection.forward ? '20' : '-0.5'}'
         '\n'
         '\n'
         '        # Final bounds, same as intermediate\n'
@@ -368,10 +363,10 @@ class AcrobaticsOCPProgram {
         '            x_inits[phase][0] = x_inits[phase - 1][1]\n'
         '\n'
         '        x_inits[phase][1][3] = '
-        '${somersaultDirection == SomersaultDirection.forward ? '2 * np.pi * (phase + 1)\n' : '-2 * np.pi * (phase + 1)\n'}'
+        // '${somersaultDirection == SomersaultDirection.forward ? '2 * np.pi * (phase + 1)\n' : '-2 * np.pi * (phase + 1)\n'}'
         '\n'
         '        x_inits[phase][1][5] = '
-        '${generic.preferredTwistSide == PreferredTwistSide.left ? 'np.pi * sum(n_half_twist[: phase + 1])\n' : '-np.pi * sum(n_half_twist[: phase + 1])\n'}'
+        // '${generic.preferredTwistSide == PreferredTwistSide.left ? 'np.pi * sum(n_half_twist[: phase + 1])\n' : '-np.pi * sum(n_half_twist[: phase + 1])\n'}'
         '\n'
         '        x_inits[phase][1][[7, 9]] = 2.9, -2.9\n'
         '\n'

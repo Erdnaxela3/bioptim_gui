@@ -1,7 +1,5 @@
 import 'package:bioptim_gui/models/objective_type.dart';
 import 'package:bioptim_gui/models/minimize_maximize.dart';
-import 'package:bioptim_gui/models/nodes.dart';
-import 'package:bioptim_gui/models/quadrature_rules.dart';
 
 enum PenaltyArgumentType {
   integer,
@@ -841,13 +839,7 @@ abstract class Penalty {
   final PenaltyFcn fcn;
   final Map<String, dynamic> arguments;
 
-  final Nodes nodes;
-  final bool quadratic;
-  final bool expand;
   String target;
-  final bool derivative;
-  final QuadratureRules quadratureRules;
-  final bool multiThread;
 
   String argumentToPythonString(String key) {
     final argument = arguments[key] ?? 'to_be_specified';
@@ -873,15 +865,7 @@ abstract class Penalty {
     }
   }
 
-  Penalty(this.fcn,
-      {required this.nodes,
-      required this.quadratic,
-      required this.expand,
-      required this.target,
-      required this.derivative,
-      required this.multiThread,
-      required this.quadratureRules,
-      required this.arguments}) {
+  Penalty(this.fcn, {required this.target, required this.arguments}) {
     final argumentNames = fcn.mandatoryArguments.map((e) => e.name);
 
     // Do not allow non mandatory arguments
@@ -908,13 +892,7 @@ class Objective extends Penalty {
 
   Objective.generic(
       {ObjectiveFcn fcn = LagrangeFcn.minimizeControls,
-      super.nodes = Nodes.all,
-      super.quadratureRules = QuadratureRules.rectangleLeft,
-      super.quadratic = true,
-      super.expand = true,
       super.target = 'None',
-      super.derivative = false,
-      super.multiThread = false,
       this.weight = 1,
       this.minimizeOrMaximize = MinMax.minimize,
       this.objectiveType = ObjectiveType.lagrange,
@@ -924,13 +902,7 @@ class Objective extends Penalty {
 
   Objective.acrobaticGenericLagrangeMinimizeControls(
       {ObjectiveFcn fcn = LagrangeFcn.minimizeControls,
-      super.nodes = Nodes.allShooting,
-      super.quadratureRules = QuadratureRules.rectangleLeft,
-      super.quadratic = true,
-      super.expand = true,
       super.target = 'None',
-      super.derivative = false,
-      super.multiThread = false,
       this.weight = 100,
       this.minimizeOrMaximize = MinMax.minimize,
       this.objectiveType = ObjectiveType.lagrange,
@@ -944,13 +916,7 @@ class Objective extends Penalty {
 
   Objective.acrobaticGenericMayerMinimizeTime(
       {ObjectiveFcn fcn = MayerFcn.minimizeTime,
-      super.nodes = Nodes.end,
-      super.quadratureRules = QuadratureRules.rectangleLeft,
-      super.quadratic = true,
-      super.expand = true,
       super.target = 'None',
-      super.derivative = false,
-      super.multiThread = false,
       this.weight = 1,
       this.minimizeOrMaximize = MinMax.minimize,
       this.objectiveType = ObjectiveType.mayer,
@@ -966,13 +932,7 @@ class Objective extends Penalty {
                 });
 
   Objective.lagrange(LagrangeFcn fcn,
-      {super.nodes = Nodes.allShooting,
-      super.quadratureRules = QuadratureRules.rectangleLeft,
-      super.quadratic = true,
-      super.expand = true,
-      super.target = 'None',
-      super.derivative = false,
-      super.multiThread = false,
+      {super.target = 'None',
       this.weight = 1,
       this.minimizeOrMaximize = MinMax.minimize,
       this.objectiveType = ObjectiveType.lagrange,
@@ -981,13 +941,7 @@ class Objective extends Penalty {
       : super(fcn, arguments: arguments ?? {});
 
   Objective.mayer(MayerFcn fcn,
-      {super.nodes = Nodes.end,
-      super.quadratureRules = QuadratureRules.rectangleLeft,
-      super.quadratic = true,
-      super.expand = true,
-      super.target = 'None',
-      super.derivative = false,
-      super.multiThread = false,
+      {super.target = 'None',
       this.weight = 1,
       this.minimizeOrMaximize = MinMax.minimize,
       this.objectiveType = ObjectiveType.mayer,
@@ -999,13 +953,7 @@ class Objective extends Penalty {
 class Constraint extends Penalty {
   Constraint.generic(
       {ConstraintFcn fcn = ConstraintFcn.timeConstraint,
-      super.nodes = Nodes.end,
-      super.quadratureRules = QuadratureRules.rectangleLeft,
-      super.quadratic = true,
-      super.expand = true,
       super.target = 'None',
-      super.derivative = false,
-      super.multiThread = false,
       Map<String, dynamic>? arguments})
       : super(fcn, arguments: arguments ?? {});
 }

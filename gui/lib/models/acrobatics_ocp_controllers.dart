@@ -1,10 +1,6 @@
 import 'dart:math';
 
 import 'package:bioptim_gui/models/acrobatics_ocp.dart';
-import 'package:bioptim_gui/models/acrobatics_position.dart';
-import 'package:bioptim_gui/models/acrobatics_sport_type.dart';
-import 'package:bioptim_gui/models/acrobatics_twist_side.dart';
-import 'package:bioptim_gui/models/bio_model.dart';
 import 'package:bioptim_gui/models/optimal_control_program.dart';
 import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
 import 'package:bioptim_gui/models/penalty.dart';
@@ -48,7 +44,9 @@ class AcrobaticsOCPControllers {
   /// All methods related to controlling the number of somersaults
   late final nbSomersaultsController = TextEditingController(text: '1')
     ..addListener(_nbSomersaultsControllerListener);
+
   int get nbSomersaults => _ocp.generic.nbSomersaults;
+
   void setNbSomersaults(int value) {
     _ocp.generic.nbSomersaults = value;
     _ocp.updateSomersaults();
@@ -68,22 +66,6 @@ class AcrobaticsOCPControllers {
     final tp = int.tryParse(nbSomersaultsController.text);
     if (tp == null || tp < 1 || tp == nbSomersaults) return;
     setNbSomersaults(tp);
-  }
-
-  ///
-  /// All the methods related to the dynamic model
-  BioModel getBioModel() => _ocp.generic.bioModel;
-  void setBioModel(BioModel value) {
-    _ocp.generic.bioModel = value;
-    _notifyListeners();
-  }
-
-  ///
-  /// All the methods related to the model path
-  String getModelPath() => _ocp.generic.modelPath;
-  void setModelPath(String value) {
-    _ocp.generic.modelPath = value;
-    _notifyListeners();
   }
 
   ///
@@ -188,30 +170,6 @@ class AcrobaticsOCPControllers {
           {required int somersaultIndex}) =>
       setSomersaultDuration(double.tryParse(value) ?? -1.0,
           somersaultIndex: somersaultIndex);
-
-  ///
-  /// All methods related to controlling the acrobatics position
-  AcrobaticsPosition get position => _ocp.generic.position;
-  void setPosition(AcrobaticsPosition value) {
-    _ocp.generic.position = value;
-    _notifyListeners();
-  }
-
-  ///
-  /// All methods related to controlling the sport type
-  AcrobaticsSportType get sportType => _ocp.generic.sportType;
-  void setSportType(AcrobaticsSportType value) {
-    _ocp.generic.sportType = value;
-    _notifyListeners();
-  }
-
-  ///
-  /// All methods related to controlling the twist side
-  PreferredTwistSide get preferredTwistSide => _ocp.generic.preferredTwistSide;
-  void setPreferredTwistSide(PreferredTwistSide value) {
-    _ocp.generic.preferredTwistSide = value;
-    _notifyListeners();
-  }
 
   ///
   /// Here are some generic methods for penalties (declared later)

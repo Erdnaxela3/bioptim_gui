@@ -1,11 +1,8 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:bioptim_gui/models/acrobatics_ocp_config.dart';
-import 'package:bioptim_gui/models/api_config.dart';
 import 'package:bioptim_gui/models/global.dart';
 import 'package:bioptim_gui/models/penalty.dart';
-import 'package:http/http.dart' as http;
 
 class _Somersault {
   int somersaultIndex;

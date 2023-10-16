@@ -1,10 +1,21 @@
+import 'package:bioptim_gui/models/api_config.dart';
+import 'package:bioptim_gui/widgets/acrobatics/acrobatic_bio_model_chooser.dart';
+import 'package:bioptim_gui/widgets/acrobatics/acrobatic_information.dart';
+import 'package:bioptim_gui/widgets/acrobatics/acrobatic_position_chooser.dart';
+import 'package:bioptim_gui/widgets/acrobatics/acrobatic_sport_type_chooser.dart';
+import 'package:bioptim_gui/widgets/acrobatics/acrobatic_twist_side_chooser.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class LoadExisting extends StatefulWidget {
-  const LoadExisting({super.key});
+  const LoadExisting({
+    super.key,
+    required this.width,
+  });
+
+  final double width;
 
   @override
   LoadExistingState createState() => LoadExistingState();
@@ -14,7 +25,7 @@ class LoadExistingState extends State<LoadExisting> {
   final Map<String, TextEditingController> acrobaticsControllers = {};
 
   Future<void> fetchData() async {
-    final url = Uri.parse('http://localhost:8000/acrobatics/');
+    final url = Uri.parse('${APIConfig.url}/acrobatics/');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -31,10 +42,10 @@ class LoadExistingState extends State<LoadExisting> {
   }
 
   Future<void> updateField(String fieldName, String newValue) async {
-    final url = Uri.parse('http://localhost:8000/acrobatics/$fieldName');
+    final url = Uri.parse('${APIConfig.url}/acrobatics/$fieldName');
+    final headers = {'Content-Type': 'application/json'};
     final body = json.encode({fieldName: newValue});
-    final response = await http
-        .put(url, body: body, headers: {'Content-Type': 'application/json'});
+    final response = await http.put(url, body: body, headers: headers);
 
     if (response.statusCode == 200) {
       if (kDebugMode) {
@@ -63,32 +74,53 @@ class LoadExistingState extends State<LoadExisting> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        children: acrobaticsControllers.keys.map((fieldName) {
-          final controller = acrobaticsControllers[fieldName];
+      child: Column(children: [
+        AcrobaticSportTypeChooser(width: widget.width),
+        const SizedBox(height: 12),
+        AcrobaticBioModelChooser(width: widget.width),
+        const SizedBox(height: 12),
+        AcrobaticInformation(width: widget.width),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            SizedBox(
+              width: widget.width / 2 - 6,
+              child: AcrobaticTwistSideChooser(width: widget.width),
+            ),
+            const SizedBox(width: 12),
+            SizedBox(
+              width: widget.width / 2 - 6,
+              child: AcrobaticPositionChooser(width: widget.width),
+            ),
+          ],
+        ),
+        Column(
+          children: acrobaticsControllers.keys.map((fieldName) {
+            final controller = acrobaticsControllers[fieldName];
 
-          return Column(
-            children: [
-              ListTile(
-                title: Text(fieldName),
-                subtitle: TextField(
-                  controller: controller,
-                  decoration: const InputDecoration(
-                    labelText: 'New Value',
+            return Column(
+              children: [
+                ListTile(
+                  title: Text(fieldName),
+                  subtitle: TextField(
+                    controller: controller,
+                    decoration: const InputDecoration(
+                      labelText: 'New Value',
+                    ),
+                    onSubmitted: (newValue) {
+                      if (newValue.isNotEmpty) {
+                        controller?.text = newValue;
+                        updateField(fieldName, newValue);
+                      }
+                    },
                   ),
-                  onSubmitted: (newValue) {
-                    if (newValue.isNotEmpty) {
-                      controller?.text = newValue;
-                      updateField(fieldName, newValue);
-                    }
-                  },
                 ),
-              ),
-              const Divider(),
-            ],
-          );
-        }).toList(),
-      ),
+                const Divider(),
+              ],
+            );
+          }).toList(),
+        ),
+      ]),
     );
   }
 }

@@ -9,9 +9,11 @@ class AcrobaticBioModelChooser extends StatefulWidget {
   const AcrobaticBioModelChooser({
     super.key,
     this.width,
+    this.defaultValue = '',
   });
 
   final double? width;
+  final String defaultValue;
 
   @override
   AcrobaticBioModelChooserState createState() =>
@@ -20,6 +22,12 @@ class AcrobaticBioModelChooser extends StatefulWidget {
 
 class AcrobaticBioModelChooserState extends State<AcrobaticBioModelChooser> {
   String modelPath = '';
+
+  @override
+  void initState() {
+    modelPath = widget.defaultValue;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

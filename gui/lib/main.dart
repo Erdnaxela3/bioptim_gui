@@ -48,7 +48,9 @@ class _SideMenuNavigationState extends State<SideMenuNavigation> {
   final List<Widget> _pages = [
     const GenerateCode(),
     const GenerateModel(),
-    const LoadExisting(),
+    const LoadExisting(
+      width: 600,
+    ),
   ];
 
   final List<String> _pageTitles = [

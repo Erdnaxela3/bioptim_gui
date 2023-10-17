@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 
 import 'package:bioptim_gui/models/api_config.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +45,10 @@ class RemoteBooleanSwitchState extends State<RemoteBooleanSwitch> {
       setState(() {
         switchValue = value;
       });
+
+    if (kDebugMode) {
+        print('${widget.leftText} switch updated to $value');
+      }
     }
   }
 

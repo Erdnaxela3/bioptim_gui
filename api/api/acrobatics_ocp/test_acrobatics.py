@@ -455,7 +455,7 @@ def test_put_shooting_points():
     assert data["nb_shooting_points"] == 24
 
     response = client.put(
-        "/acrobatics/somersaults_info/0/shooting_points",
+        "/acrobatics/somersaults_info/0/nb_shooting_points",
         json={"nb_shooting_points": 10},
     )
     assert response.status_code == 200, response
@@ -468,13 +468,13 @@ def test_put_shooting_points():
 
 def test_put_shooting_points_wrong():
     response = client.put(
-        "/acrobatics/somersaults_info/0/shooting_points",
+        "/acrobatics/somersaults_info/0/nb_shooting_points",
         json={"nb_shooting_points": -10},
     )
     assert response.status_code == 400, response
 
     response = client.put(
-        "/acrobatics/somersaults_info/0/shooting_points",
+        "/acrobatics/somersaults_info/0/nb_shooting_points",
         json={"nb_shooting_points": 0},
     )
     assert response.status_code == 400, response
@@ -482,7 +482,7 @@ def test_put_shooting_points_wrong():
 
 def test_put_shooting_points_wrong_type():
     response = client.put(
-        "/acrobatics/somersaults_info/0/shooting_points",
+        "/acrobatics/somersaults_info/0/nb_shooting_points",
         json={"nb_shooting_points": "wrong"},
     )
     assert response.status_code == 422, response
@@ -496,7 +496,7 @@ def test_put_shooting_points_unchanged_other_somersaults():
     assert response.status_code == 200, response
 
     response = client.put(
-        "/acrobatics/somersaults_info/0/shooting_points",
+        "/acrobatics/somersaults_info/0/nb_shooting_points",
         json={"nb_shooting_points": 10},
     )
     assert response.status_code == 200, response

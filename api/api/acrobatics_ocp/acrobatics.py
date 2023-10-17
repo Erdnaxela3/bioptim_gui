@@ -325,7 +325,7 @@ def get_somersaults_info(somersault_index: int):
 
 
 @router.put(
-    "/somersaults_info/{somersault_index}/shooting_points",
+    "/somersaults_info/{somersault_index}/nb_shooting_points",
     response_model=NbShootingPointsResponse,
 )
 def put_nb_shooting_points(

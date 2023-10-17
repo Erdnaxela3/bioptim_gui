@@ -46,7 +46,7 @@ class RemoteBooleanSwitchState extends State<RemoteBooleanSwitch> {
         switchValue = value;
       });
 
-    if (kDebugMode) {
+      if (kDebugMode) {
         print('${widget.leftText} switch updated to $value');
       }
     }

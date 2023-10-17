@@ -9,9 +9,12 @@ import 'package:bioptim_gui/screens/generate_code_page/generic/generate_phases.d
 import 'package:bioptim_gui/screens/generate_code_page/generic/generic_header.dart';
 import 'package:bioptim_gui/widgets/console_out.dart';
 import 'package:bioptim_gui/widgets/optimal_control_program_type_chooser.dart';
+import 'package:bioptim_gui/models/api_config.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LoadExisting extends StatefulWidget {
   const LoadExisting({super.key, this.columnWidth = 400.0});
@@ -24,7 +27,9 @@ class LoadExisting extends StatefulWidget {
 
 class _LoadExistingState extends State<LoadExisting> {
   final _verticalScroll = ScrollController();
-  final _trailingKey = GlobalKey<_BuildTraillingState>();
+
+//
+// function that calls http request to localhost:8000/acribatics and return the response json
 
   @override
   void dispose() {
@@ -35,14 +40,20 @@ class _LoadExistingState extends State<LoadExisting> {
   @override
   void initState() {
     super.initState();
-    PythonInterface.instance.registerToStatusChanged((status) => forceRedraw());
-    OptimalControlProgramControllers.instance
-        .registerToStatusChanged(forceRedraw);
+    _fetchData();
     AcrobaticsOCPControllers.instance.registerToStatusChanged(forceRedraw);
   }
 
+  Future<void> _fetchData() async {
+    final url = Uri.parse('${APIConfig.url}/acrobatics');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+    }
+  }
+
   void forceRedraw() {
-    _trailingKey.currentState?.setState(() {});
     setState(() {});
   }
 
@@ -66,11 +77,6 @@ class _LoadExistingState extends State<LoadExisting> {
               const Divider(),
               const SizedBox(height: 12),
               _PhaseBuilder(width: widget.columnWidth),
-              const SizedBox(height: 12),
-              const Divider(),
-              const SizedBox(height: 12),
-              _BuildTrailling(key: _trailingKey),
-              const SizedBox(height: 50),
             ],
           ),
         ),
@@ -88,21 +94,14 @@ class _HeaderBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controllers = OptimalControlProgramControllers.instance;
-
     return Center(
       child: SizedBox(
         width: width,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            OptimalControlProgramTypeChooser(width: width),
             const SizedBox(height: 12),
-            if (controllers.ocpType == OptimalControlProgramType.ocp)
-              GenericOCPHeaderBuilder(width: width)
-            else if (controllers.ocpType ==
-                OptimalControlProgramType.abrobaticsOCP)
-              AcrobaticsHeaderBuilder(width: width),
+            AcrobaticsHeaderBuilder(width: width),
           ],
         ),
       ),
@@ -144,137 +143,9 @@ class _PhaseBuilderState extends State<_PhaseBuilder> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (controllers.ocpType == OptimalControlProgramType.ocp)
-                PhaseGenerationMenu(width: widget.width),
-              if (controllers.ocpType ==
-                  OptimalControlProgramType.abrobaticsOCP)
-                SomersaultGenerationMenu(width: widget.width),
+              SomersaultGenerationMenu(width: widget.width),
             ]),
       ),
     );
-  }
-}
-
-class _BuildTrailling extends StatefulWidget {
-  const _BuildTrailling({super.key});
-
-  @override
-  State<_BuildTrailling> createState() => _BuildTraillingState();
-}
-
-class _BuildTraillingState extends State<_BuildTrailling> {
-  String? _scriptPath;
-  Stream<String>? _output;
-  Stream<String>? _outputError;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _buildExportOrRunScriptButton(),
-        const SizedBox(height: 12),
-        _buildOutputScreens(),
-      ],
-    );
-  }
-
-  Widget _buildExportOrRunScriptButton() {
-    final controllers = OptimalControlProgramControllers.instance;
-    final acrobaticsControllers = AcrobaticsOCPControllers.instance;
-
-    if ((controllers.ocpType == OptimalControlProgramType.ocp &&
-            controllers.mustExport) ||
-        (controllers.ocpType == OptimalControlProgramType.abrobaticsOCP &&
-            acrobaticsControllers.mustExport) ||
-        _scriptPath == null) {
-      return ElevatedButton(
-          onPressed: _onExportFile, child: const Text('Export script'));
-    }
-
-    final status = PythonInterface.instance.status;
-
-    final scriptName = basename(_scriptPath!);
-    switch (status) {
-      case PythonInterfaceStatus.uninitialized:
-      case PythonInterfaceStatus.initializing:
-        return Tooltip(
-          message: 'Waiting for python to be ready.\n'
-              'This can take some time if it is the first time.',
-          child:
-              ElevatedButton(onPressed: null, child: Text('Run $scriptName')),
-        );
-
-      case PythonInterfaceStatus.failedAlreadyInitializing:
-      case PythonInterfaceStatus.failedCreatingEnvironment:
-      case PythonInterfaceStatus.failedInstallingBioptim:
-      case PythonInterfaceStatus.failedMissingAnaconda:
-      case PythonInterfaceStatus.failedUnknown:
-        return Tooltip(
-          message: 'Failed to load python.',
-          child:
-              ElevatedButton(onPressed: null, child: Text('Run $scriptName')),
-        );
-      case PythonInterfaceStatus.ready:
-        return Tooltip(
-          message: 'Run the prepared program.',
-          child: ElevatedButton(
-              onPressed: _onRunScript, child: Text('Run $scriptName')),
-        );
-      case PythonInterfaceStatus.isRunning:
-        return Tooltip(
-          message: 'Currently optimizing, please wait until it is finished.',
-          child: ElevatedButton(
-              onPressed: null, child: Text('Running $scriptName')),
-        );
-    }
-  }
-
-  Widget _buildOutputScreens() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        if (_output != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 12.0),
-            child: ConsoleOut(output: _output!),
-          ),
-        if (_outputError != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 12.0),
-            child: ConsoleOut(output: _outputError!, textColor: Colors.red),
-          ),
-      ],
-    );
-  }
-
-  void _onExportFile() async {
-    final controllers = OptimalControlProgramControllers.instance;
-    final acrobaticsControllers = AcrobaticsOCPControllers.instance;
-
-    _scriptPath = await FilePicker.platform.saveFile(
-      allowedExtensions: ['py'],
-      type: FileType.custom,
-    );
-    if (_scriptPath == null) return;
-
-    if (controllers.ocpType == OptimalControlProgramType.ocp) {
-      controllers.exportScript(_scriptPath!);
-    } else if (controllers.ocpType == OptimalControlProgramType.abrobaticsOCP) {
-      acrobaticsControllers.exportScript(_scriptPath!);
-    } else {
-      throw Exception('Unknown OCP type');
-    }
-
-    setState(() {});
-  }
-
-  void _onRunScript() async {
-    final process = await PythonInterface.instance.runFile(_scriptPath!);
-    if (process == null) return;
-
-    setState(() {
-      _output = process.stdout.transform(utf8.decoder);
-      _outputError = process.stderr.transform(utf8.decoder);
-    });
   }
 }

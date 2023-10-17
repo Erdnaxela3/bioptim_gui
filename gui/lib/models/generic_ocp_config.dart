@@ -8,7 +8,7 @@ class GenericOptimalControlProgram {
   Solver solver;
 
   GenericOptimalControlProgram({
-    this.ocpType = OptimalControlProgramType.ocp,
+    this.ocpType = OptimalControlProgramType.abrobaticsOCP,
     this.nbPhases = 1,
     this.solver = const Solver(type: SolverType.ipopt),
     this.useSx = true,

@@ -102,7 +102,7 @@ class _HeaderBuilder extends StatelessWidget {
               GenericOCPHeaderBuilder(width: width)
             else if (controllers.ocpType ==
                 OptimalControlProgramType.abrobaticsOCP)
-              AcrobaticsHeaderBuilder(width: width),
+              AcrobaticsHeaderBuilder(width: width, data: const {}),
           ],
         ),
       ),
@@ -148,7 +148,10 @@ class _PhaseBuilderState extends State<_PhaseBuilder> {
                 PhaseGenerationMenu(width: widget.width),
               if (controllers.ocpType ==
                   OptimalControlProgramType.abrobaticsOCP)
-                SomersaultGenerationMenu(width: widget.width),
+                SomersaultGenerationMenu(
+                  width: widget.width,
+                  somersaultsInfo: const [],
+                ),
             ]),
       ),
     );

@@ -6,7 +6,7 @@ class PositiveIntegerTextField extends StatefulWidget {
     super.key,
     this.label,
     required this.controller,
-    this.onSubmitted = null,
+    this.onSubmitted,
     this.onChanged,
     this.enabled = true,
     this.allowZero = false,

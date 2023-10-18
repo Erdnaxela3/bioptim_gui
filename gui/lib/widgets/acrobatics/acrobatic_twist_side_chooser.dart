@@ -5,16 +5,18 @@ class AcrobaticTwistSideChooser extends StatelessWidget {
   const AcrobaticTwistSideChooser({
     super.key,
     required this.width,
+    this.defaultValue = "Left",
   });
 
   final double width;
+  final String defaultValue;
 
   @override
   Widget build(BuildContext context) {
     return CustomHttpDropdown(
       title: "Preferred twist side *",
       width: width,
-      defaultValue: "Left",
+      defaultValue: defaultValue,
       getEndpoint: "/acrobatics/preferred_twist_side",
       putEndpoint: "/acrobatics/preferred_twist_side",
       requestKey: "preferred_twist_side",

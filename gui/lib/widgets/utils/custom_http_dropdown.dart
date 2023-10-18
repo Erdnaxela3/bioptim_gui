@@ -1,5 +1,6 @@
 import 'package:bioptim_gui/models/api_config.dart';
 import 'package:bioptim_gui/widgets/utils/custom_dropdown_button.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -69,6 +70,10 @@ class CustomHttpDropdownState extends State<CustomHttpDropdown> {
       setState(() {
         _selectedValue = value;
       });
+
+      if (kDebugMode) {
+        print('${widget.title} changed to value $value');
+      }
     }
   }
 

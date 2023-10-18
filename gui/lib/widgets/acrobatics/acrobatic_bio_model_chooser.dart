@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:bioptim_gui/models/api_config.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -82,6 +83,10 @@ class AcrobaticBioModelChooserState extends State<AcrobaticBioModelChooser> {
       setState(() {
         modelPath = modelPathValue;
       });
+
+      if (kDebugMode) {
+        print('Model path set to : $modelPathValue');
+      }
     }
   }
 }

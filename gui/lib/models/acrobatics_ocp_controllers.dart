@@ -47,7 +47,7 @@ class AcrobaticsOCPControllers {
 
   int get nbSomersaults => _ocp.generic.nbSomersaults;
 
-  Future<void> setNbSomersaults(int value) async {
+  void setNbSomersaults(int value) {
     _ocp.generic.nbSomersaults = value;
     _ocp.updateSomersaults();
     _nbSomersaultsMax = max(nbSomersaults, _nbSomersaultsMax);
@@ -70,36 +70,25 @@ class AcrobaticsOCPControllers {
 
   ///
   /// All the methods related to the final time margin
-  late final finalTimeMarginController = TextEditingController(text: '0.1')
-    ..addListener(_finalTimeMarginControllerListener);
+  late final finalTimeMarginController = TextEditingController(text: '0.1');
+
   double get finalTimeMargin => _ocp.generic.finalTimeMargin;
+
   void setFinalTimeMargin(double value) {
     _ocp.generic.finalTimeMargin = value;
-    // Wait for one frame so the the UI is updated
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _updateAllControllers();
-      _notifyListeners();
-    });
-  }
-
-  void _finalTimeMarginControllerListener() {
-    final tp = double.tryParse(finalTimeMarginController.text);
-    if (tp == null) return;
-    setFinalTimeMargin(tp);
+    finalTimeMarginController.text = value.toString();
   }
 
   ///
   /// All the methods related to the final time
   late final finalTimeController = TextEditingController(text: '1.0')
     ..addListener(_finalTimeControllerListener);
+
   double get finalTime => _ocp.generic.finalTime;
+
   void setFinalTime(double value) {
     _ocp.generic.finalTime = value;
-    // Wait for one frame so the the UI is updated
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _updateAllControllers();
-      _notifyListeners();
-    });
+    finalTimeController.text = value.toString();
   }
 
   void _finalTimeControllerListener() {

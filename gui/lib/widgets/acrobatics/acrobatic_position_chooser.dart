@@ -5,9 +5,11 @@ class AcrobaticPositionChooser extends StatelessWidget {
   const AcrobaticPositionChooser({
     super.key,
     required this.width,
+    this.defaultValue = "Straight",
   });
 
   final double width;
+  final String defaultValue;
 
   @override
   Widget build(BuildContext context) {

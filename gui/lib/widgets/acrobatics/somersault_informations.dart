@@ -12,18 +12,18 @@ class SomersaultInformation extends StatelessWidget {
     super.key,
     required this.somersaultIndex,
     required this.width,
+    required this.somersaultInfo,
   });
 
   final int somersaultIndex;
   final double width;
+  final Map<String, dynamic> somersaultInfo;
 
   @override
   Widget build(BuildContext context) {
-    final controllers = AcrobaticsOCPControllers.instance;
-
     Future<void> updateField(String fieldName, String newValue) async {
       final url = Uri.parse(
-          '${APIConfig.url}/acrobatics/somersaults_info/${somersaultIndex}/$fieldName');
+          '${APIConfig.url}/acrobatics/somersaults_info/$somersaultIndex/$fieldName');
       final headers = {'Content-Type': 'application/json'};
       final body = json.encode({fieldName: newValue});
       final response = await http.put(url, body: body, headers: headers);
@@ -47,7 +47,8 @@ class SomersaultInformation extends StatelessWidget {
           width: width / 2 - 6,
           child: PositiveIntegerTextField(
             label: 'Number of half twists *',
-            controller: controllers.nbHalfTwistsControllers[somersaultIndex],
+            controller: TextEditingController(
+                text: somersaultInfo["nb_half_twists"].toString()),
             color: Colors.red,
             onSubmitted: (newValue) {
               if (newValue.isNotEmpty) {
@@ -63,8 +64,8 @@ class SomersaultInformation extends StatelessWidget {
               width: width / 2 - 6,
               child: PositiveIntegerTextField(
                 label: 'Number of shooting points',
-                controller:
-                    controllers.nbShootingPointsControllers[somersaultIndex],
+                controller: TextEditingController(
+                    text: somersaultInfo["nb_shooting_points"].toString()),
                 onSubmitted: (newValue) {
                   if (newValue.isNotEmpty) {
                     updateField("nb_shooting_points", newValue);
@@ -75,8 +76,8 @@ class SomersaultInformation extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: TextField(
-                controller:
-                    controllers.somersaultDurationControllers[somersaultIndex],
+                controller: TextEditingController(
+                    text: somersaultInfo["duration"].toString()),
                 decoration: const InputDecoration(
                     labelText: 'Phase time (s)', border: OutlineInputBorder()),
                 inputFormatters: [

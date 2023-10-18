@@ -8,9 +8,14 @@ import 'dart:convert';
 import 'package:bioptim_gui/models/api_config.dart';
 
 class AcrobaticInformation extends StatelessWidget {
-  const AcrobaticInformation({super.key, required this.width});
+  const AcrobaticInformation({
+    super.key,
+    required this.width,
+    required this.data,
+  });
 
   final double width;
+  final Map<String, dynamic> data;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +60,8 @@ class AcrobaticInformation extends StatelessWidget {
             SizedBox(
               width: width / 2 - 6,
               child: TextField(
-                controller: controllers.finalTimeController,
+                controller:
+                    TextEditingController(text: data["final_time"].toString()),
                 decoration: const InputDecoration(
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.red),
@@ -79,7 +85,8 @@ class AcrobaticInformation extends StatelessWidget {
             SizedBox(
               width: width / 2 - 6,
               child: TextField(
-                controller: controllers.finalTimeMarginController,
+                controller: TextEditingController(
+                    text: data["final_time_margin"].toString()),
                 decoration: const InputDecoration(
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.red),

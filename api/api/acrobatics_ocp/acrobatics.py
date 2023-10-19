@@ -2,7 +2,7 @@ import inspect
 import json
 
 import bioptim
-from bioptim import ObjectiveFcn
+from bioptim import ObjectiveFcn, ConstraintFcn
 from fastapi import APIRouter, HTTPException
 
 from acrobatics_ocp.acrobatics_responses import *
@@ -37,7 +37,7 @@ default_constraint = {
     "derivative": False,
     "integration_rule": "rectangle_left",
     "multi_thread": False,
-    "arguments": {},
+    "arguments": [],
 }
 
 default_somersaults_info = {
@@ -56,9 +56,9 @@ default_somersaults_info = {
             "integration_rule": "rectangle_left",
             "multi_thread": False,
             "weight": 100.0,
-            "arguments": {
-                "key": {"value": "tau", "type": "string"},
-            },
+            "arguments": [
+                {"name": "key", "value": "tau", "type": "string"},
+            ],
         },
         {
             "objective_type": "mayer",
@@ -71,17 +71,42 @@ default_somersaults_info = {
             "integration_rule": "rectangle_left",
             "multi_thread": False,
             "weight": 1.0,
-            "arguments": {
-                "min_bound": {"value": 0.9, "type": "float"},
-                "max_bound": {"value": 1.1, "type": "float"},
-            },
+            "arguments": [
+                {"name": "min_bound", "value": 0.9, "type": "float"},
+                {"name": "max_bound", "value": 1.1, "type": "float"},
+            ],
         },
     ],
     "constraints": [],
 }
 
 
-def obj_arguments(objective_type: str, penalty_type: str) -> dict:
+def get_args(penalty_fcn) -> list:
+    penalty_fcn = penalty_fcn.value[0]
+    # arguments
+    arg_specs = inspect.getfullargspec(penalty_fcn)
+    defaults = arg_specs.defaults
+    arguments = arg_specs.annotations
+
+    formatted_arguments = [
+        {"name": k, "value": None, "type": str(v)} for k, v in arguments.items()
+    ]
+
+    if defaults:
+        l_defaults = len(defaults)
+        for i in range(l_defaults):
+            formatted_arguments[i]["value"] = defaults[i]
+
+    formatted_arguments = [
+        arg
+        for arg in formatted_arguments
+        if arg["name"] not in ("_", "penalty", "controller")
+    ]
+
+    return formatted_arguments
+
+
+def obj_arguments(objective_type: str, penalty_type: str) -> list:
     penalty_type = penalty_type.upper().replace(" ", "_")
     if objective_type == "mayer":
         penalty_fcn = getattr(ObjectiveFcn.Mayer, penalty_type)
@@ -90,57 +115,19 @@ def obj_arguments(objective_type: str, penalty_type: str) -> dict:
     else:
         raise HTTPException(404, f"{objective_type} not found")
 
-    penalty_fcn = penalty_fcn.value[0]
-
-    # arguments
-    arg_specs = inspect.getfullargspec(penalty_fcn)
-    defaults = arg_specs.defaults
-    arguments = arg_specs.annotations
-
-    formatted_arguments = {
-        k: {"value": None, "type": str(v)} for k, v in arguments.items()
-    }
-
-    if defaults:
-        l_defaults = len(defaults)
-        for i in range(l_defaults):
-            formatted_arguments[arg_specs.args[-l_defaults + i]]["value"] = defaults[i]
-
-    for key_to_delete in ["_", "penalty", "controller"]:
-        if key_to_delete in formatted_arguments:
-            del formatted_arguments[key_to_delete]
-
-    return formatted_arguments
+    arguments = get_args(penalty_fcn)
+    return arguments
 
 
-def constraint_arguments(penalty_type: str) -> dict:
+def constraint_arguments(penalty_type: str) -> list:
     penalty_type = penalty_type.upper().replace(" ", "_")
     try:
         penalty_fcn = getattr(bioptim.ConstraintFcn, penalty_type)
     except AttributeError:
         raise HTTPException(404, f"{penalty_type} not found")
 
-    penalty_fcn = penalty_fcn.value[0]
-
-    # arguments
-    arg_specs = inspect.getfullargspec(penalty_fcn)
-    defaults = arg_specs.defaults
-    arguments = arg_specs.annotations
-
-    formatted_arguments = {
-        k: {"value": None, "type": str(v)} for k, v in arguments.items()
-    }
-
-    if defaults:
-        l_defaults = len(defaults)
-        for i in range(l_defaults):
-            formatted_arguments[arg_specs.args[-l_defaults + i]]["value"] = defaults[i]
-
-    for key_to_delete in ["_", "penalty", "controller"]:
-        if key_to_delete in formatted_arguments:
-            del formatted_arguments[key_to_delete]
-
-    return formatted_arguments
+    arguments = get_args(penalty_fcn)
+    return arguments
 
 
 def add_somersault_info(n: int = 1) -> None:
@@ -396,6 +383,26 @@ def add_objective(somersault_index: int):
     return objectives
 
 
+@router.get(
+    "/somersaults_info/{somersault_index}/objectives/{objective_index}",
+    response_model=list,
+)
+def get_objective_dropdown_list(somersault_index: int, objective_index: int):
+    somersaults_info = read_acrobatics_data("somersaults_info")
+    objective = somersaults_info[somersault_index]["objectives"][objective_index]
+    objective_type = objective["objective_type"]
+    if objective_type == "mayer":
+        enum = ObjectiveFcn.Mayer
+    elif objective_type == "lagrange":
+        enum = ObjectiveFcn.Lagrange
+    else:
+        raise HTTPException(
+            status_code=400, detail="objective_type has to be mayer or lagrange"
+        )
+
+    return [e.name for e in enum]
+
+
 @router.delete(
     "/somersaults_info/{somersault_index}/objectives/{objective_index}",
     response_model=list,
@@ -596,15 +603,16 @@ def get_objective_arguments(somersault_index: int, objective_index: int, key: st
         "arguments"
     ]
 
-    try:
-        return ArgumentResponse(
-            key=key, type=arguments[key]["type"], value=arguments[key]["value"]
-        )
-    except KeyError:
-        raise HTTPException(
-            status_code=404,
-            detail=f"{key} not found in arguments of objective {objective_index}",
-        )
+    for argument in arguments:
+        if argument["name"] == key:
+            return ArgumentResponse(
+                key=key, type=argument["type"], value=argument["value"]
+            )
+
+    raise HTTPException(
+        status_code=404,
+        detail=f"{key} not found in arguments of objective {objective_index}",
+    )
 
 
 @router.put(
@@ -620,23 +628,23 @@ def put_objective_arguments(
         "arguments"
     ]
 
-    try:
-        arguments[key]["type"] = argument_req.type
-        arguments[key]["value"] = argument_req.value
+    for argument in arguments:
+        if argument["name"] == key:
+            argument["type"] = argument_req.type
+            argument["value"] = argument_req.value
 
-        somersaults_info[somersault_index]["objectives"][objective_index][
-            "arguments"
-        ] = arguments
+            somersaults_info[somersault_index]["objectives"][objective_index][
+                "arguments"
+            ] = arguments
+            update_acrobatics_data("somersaults_info", somersaults_info)
 
-        update_acrobatics_data("somersaults_info", somersaults_info)
-        return ArgumentResponse(
-            key=key, type=arguments[key]["type"], value=arguments[key]["value"]
-        )
-    except KeyError:
-        raise HTTPException(
-            status_code=404,
-            detail=f"{key} not found in arguments of objective {objective_index}",
-        )
+            return ArgumentResponse(
+                key=key, type=argument["type"], value=argument["value"]
+            )
+    raise HTTPException(
+        status_code=404,
+        detail=f"{key} not found in arguments of objective {objective_index}",
+    )
 
 
 # constraints endpoints
@@ -657,6 +665,14 @@ def add_constraint(somersault_index: int):
     somersaults_info[somersault_index]["constraints"] = constraints
     update_acrobatics_data("somersaults_info", somersaults_info)
     return constraints
+
+
+@router.get(
+    "/somersaults_info/{somersault_index}/constraints/{constraint_index}",
+    response_model=list,
+)
+def get_constraints_dropdown_list():
+    return [e.name for e in ConstraintFcn]
 
 
 @router.delete(
@@ -814,15 +830,16 @@ def get_constraint_arguments(somersault_index: int, constraint_index: int, key: 
         "arguments"
     ]
 
-    try:
-        return ArgumentResponse(
-            key=key, type=arguments[key]["type"], value=arguments[key]["value"]
-        )
-    except KeyError:
-        raise HTTPException(
-            status_code=404,
-            detail=f"{key} not found in arguments of constraint {constraint_index}",
-        )
+    for argument in arguments:
+        if argument["name"] == key:
+            return ArgumentResponse(
+                key=key, type=argument["type"], value=argument["value"]
+            )
+
+    raise HTTPException(
+        status_code=404,
+        detail=f"{key} not found in arguments of constraint {constraint_index}",
+    )
 
 
 @router.put(
@@ -840,20 +857,20 @@ def put_constraint_arguments(
         "arguments"
     ]
 
-    try:
-        arguments[key]["type"] = argument_req.type
-        arguments[key]["value"] = argument_req.value
+    for argument in arguments:
+        if argument["name"] == key:
+            argument["type"] = argument_req.type
+            argument["value"] = argument_req.value
 
-        somersaults_info[somersault_index]["constraints"][constraint_index][
-            "arguments"
-        ] = arguments
-        update_acrobatics_data("somersaults_info", somersaults_info)
+            somersaults_info[somersault_index]["constraints"][constraint_index][
+                "arguments"
+            ] = arguments
+            update_acrobatics_data("somersaults_info", somersaults_info)
 
-        return ArgumentResponse(
-            key=key, type=arguments[key]["type"], value=arguments[key]["value"]
-        )
-    except KeyError:
-        raise HTTPException(
-            status_code=404,
-            detail=f"{key} not found in arguments of constraint {constraint_index}",
-        )
+            return ArgumentResponse(
+                key=key, type=argument["type"], value=argument["value"]
+            )
+    raise HTTPException(
+        status_code=404,
+        detail=f"{key} not found in arguments of constraint {constraint_index}",
+    )

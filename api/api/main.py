@@ -26,44 +26,44 @@ def startup_event():
         "preferred_twist_side": "left",
         "somersaults_info": [
             {
-                "nb_shooting_points": 24,
-                "nb_half_twists": 0,
-                "duration": 1,
-                "objectives": [
-                    {
-                        "objective_type": "lagrange",
-                        "penalty_type": "MINIMIZE_CONTROL",
-                        "nodes": "all_shooting",
-                        "quadratic": True,
-                        "expand": True,
-                        "target": None,
-                        "derivative": False,
-                        "integration_rule": "rectangle_left",
-                        "multi_thread": False,
-                        "weight": 100.0,
-                        "arguments": {
-                            "key": {"value": "tau", "type": "string"},
-                        },
-                    },
-                    {
-                        "objective_type": "mayer",
-                        "penalty_type": "MINIMIZE_TIME",
-                        "nodes": "end",
-                        "quadratic": True,
-                        "expand": True,
-                        "target": None,
-                        "derivative": False,
-                        "integration_rule": "rectangle_left",
-                        "multi_thread": False,
-                        "weight": 1.0,
-                        "arguments": {
-                            "min_bound": {"value": 0.9, "type": "float"},
-                            "max_bound": {"value": 1.1, "type": "float"},
-                        },
-                    },
-                ],
-                "constraints": [],
-            }
+    "nb_shooting_points": 24,
+    "nb_half_twists": 0,
+    "duration": 1,
+    "objectives": [
+        {
+            "objective_type": "lagrange",
+            "penalty_type": "MINIMIZE_CONTROL",
+            "nodes": "all_shooting",
+            "quadratic": True,
+            "expand": True,
+            "target": None,
+            "derivative": False,
+            "integration_rule": "rectangle_left",
+            "multi_thread": False,
+            "weight": 100.0,
+            "arguments": [
+                {"name" :"key", "value": "tau", "type": "string"},
+            ],
+        },
+        {
+            "objective_type": "mayer",
+            "penalty_type": "MINIMIZE_TIME",
+            "nodes": "end",
+            "quadratic": True,
+            "expand": True,
+            "target": None,
+            "derivative": False,
+            "integration_rule": "rectangle_left",
+            "multi_thread": False,
+            "weight": 1.0,
+            "arguments": [
+                {"name": "min_bound" ,"value": 0.9, "type": "float"},
+                {"name": "max_bound", "value": 1.1, "type": "float"},
+            ],
+        },
+    ],
+    "constraints": [],
+}
         ],
     }
 

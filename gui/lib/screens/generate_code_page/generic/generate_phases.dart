@@ -10,7 +10,10 @@ import 'package:bioptim_gui/widgets/utils/animated_expanding_widget.dart';
 import 'package:flutter/material.dart';
 
 class PhaseGenerationMenu extends StatelessWidget {
-  const PhaseGenerationMenu({super.key, required this.width});
+  const PhaseGenerationMenu({
+    super.key,
+    required this.width,
+  });
 
   final double width;
 
@@ -75,12 +78,14 @@ class PhaseGenerationMenu extends StatelessWidget {
             penaltyType: ObjectiveFcn,
             phaseIndex: phaseIndex,
             width: width,
+            penalties: [],
           ),
           const Divider(),
           PenaltyExpander(
             penaltyType: ConstraintFcn,
             phaseIndex: phaseIndex,
             width: width,
+            penalties: [],
           ),
         ],
       ),

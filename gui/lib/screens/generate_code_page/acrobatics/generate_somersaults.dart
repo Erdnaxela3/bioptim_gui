@@ -1,5 +1,7 @@
 import 'package:bioptim_gui/models/acrobatics_ocp_controllers.dart';
+import 'package:bioptim_gui/models/penalty.dart';
 import 'package:bioptim_gui/widgets/acrobatics/somersault_informations.dart';
+import 'package:bioptim_gui/widgets/penalties/penalty_expander.dart';
 import 'package:bioptim_gui/widgets/utils/animated_expanding_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -62,12 +64,13 @@ class SomersaultGenerationMenu extends StatelessWidget {
             somersaultInfo: somersaultInfo,
           ),
           const SizedBox(height: 12),
-          // const Divider(),
-          // PenaltyExpander(
-          //   penaltyType: ObjectiveFcn,
-          //   phaseIndex: somersaultIndex,
-          //   width: width,
-          // ),
+          const Divider(),
+          PenaltyExpander(
+            penaltyType: ObjectiveFcn,
+            phaseIndex: somersaultIndex,
+            width: width,
+            penalties: somersaultsInfo[somersaultIndex]["objectives"],
+          ),
           // const Divider(),
           // PenaltyExpander(
           //   penaltyType: ConstraintFcn,

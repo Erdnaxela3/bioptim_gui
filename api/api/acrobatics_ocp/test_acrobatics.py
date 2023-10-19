@@ -1,8 +1,8 @@
-from fastapi import FastAPI
-from fastapi.testclient import TestClient
+import json
 
 import pytest
-import json
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
 
 from acrobatics_ocp.acrobatics import router
 
@@ -41,9 +41,9 @@ def run_for_all():
                         "integration_rule": "rectangle_left",
                         "multi_thread": False,
                         "weight": 100.0,
-                        "arguments": {
-                            "key": {"value": "tau", "type": "string"},
-                        },
+                        "arguments": [
+                            {"name": "key", "value": "tau", "type": "string"},
+                        ],
                     },
                     {
                         "objective_type": "mayer",
@@ -56,10 +56,10 @@ def run_for_all():
                         "integration_rule": "rectangle_left",
                         "multi_thread": False,
                         "weight": 1.0,
-                        "arguments": {
-                            "min_bound": {"value": 0.9, "type": "float"},
-                            "max_bound": {"value": 1.1, "type": "float"},
-                        },
+                        "arguments": [
+                            {"name": "min_bound", "value": 0.9, "type": "float"},
+                            {"name": "max_bound", "value": 1.1, "type": "float"},
+                        ],
                     },
                 ],
                 "constraints": [],
@@ -969,6 +969,8 @@ def test_add_objective_check_arguments_changing_penalty_type():
     assert data[0]["penalty_type"] == "PROPORTIONAL_STATE"
     assert data[0]["nodes"] == "all_shooting"
     assert len(data[0]["arguments"]) == 6
+
+    arg_names = [arg["name"] for arg in data[0]["arguments"]]
     for arg in (
         "key",
         "first_dof",
@@ -977,14 +979,7 @@ def test_add_objective_check_arguments_changing_penalty_type():
         "first_dof_intercept",
         "second_dof_intercept",
     ):
-        assert arg in data[0]["arguments"].keys()
-
-    assert data[0]["arguments"]["key"]["value"] is None
-    assert data[0]["arguments"]["first_dof"]["value"] is None
-    assert data[0]["arguments"]["second_dof"]["value"] is None
-    assert data[0]["arguments"]["coef"]["value"] is None
-    assert data[0]["arguments"]["first_dof_intercept"]["value"] == 0
-    assert data[0]["arguments"]["second_dof_intercept"]["value"] == 0
+        assert arg in arg_names
 
 
 def test_add_objective_check_arguments_changing_objective_type():
@@ -1067,7 +1062,7 @@ def test_add_constraints_check_arguments_changing_penalty_type():
     data = response.json()
     assert len(data) == 1
     assert len(data[0]["arguments"]) == 1
-    assert "key_control" in data[0]["arguments"].keys()
+    assert "key_control" in [arg["name"] for arg in data[0]["arguments"]]
 
 
 def test_get_arguments():
@@ -1171,3 +1166,28 @@ def test_put_arguments_constraint_bad():
         json={"type": "list", "value": [1, 2, 3]},
     )
     assert response.status_code == 404, response
+
+
+def test_get_objective_fcn():
+    response = client.get("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data[0]["objective_type"] == "lagrange"
+    assert data[1]["objective_type"] == "mayer"
+
+    response = client.get("/acrobatics/somersaults_info/0/objectives/0")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert type(data) is list
+    assert len(data) != 0
+
+
+def test_get_constraints_fcn():
+    response = client.post("/acrobatics/somersaults_info/0/constraints")
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info/0/constraints/0")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert type(data) is list
+    assert len(data) != 0

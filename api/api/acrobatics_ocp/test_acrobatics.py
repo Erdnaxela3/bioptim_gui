@@ -19,7 +19,7 @@ def run_for_all():
     base_data = {
         "nb_somersaults": 1,
         "model_path": "",
-        "final_time": 1,
+        "final_time": 1.0,
         "final_time_margin": 0.1,
         "position": "straight",
         "sport_type": "trampoline",

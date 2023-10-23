@@ -1,5 +1,6 @@
 import 'package:bioptim_gui/models/api_config.dart';
 import 'package:bioptim_gui/widgets/utils/custom_dropdown_button.dart';
+import 'package:bioptim_gui/widgets/utils/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -51,7 +52,10 @@ class CustomHttpDropdownState extends State<CustomHttpDropdown> {
 
     if (response.statusCode == 200) {
       final List<dynamic> responseData = json.decode(response.body);
-      final values = responseData.map((value) => value.toString()).toList();
+      final values = responseData
+          .map((value) =>
+              value.toString().replaceAll("_", " ").toLowerCase().capitalize())
+          .toList();
       setState(() {
         _availableValues = values;
       });
@@ -59,10 +63,10 @@ class CustomHttpDropdownState extends State<CustomHttpDropdown> {
   }
 
   Future<void> _updateValue(String value) async {
+    final requestValue = widget.customStringFormatting(value);
     final url = Uri.parse('${APIConfig.url}${widget.putEndpoint}');
     final headers = {'Content-Type': 'application/json'};
-    final body =
-        json.encode({widget.requestKey: widget.customStringFormatting(value)});
+    final body = json.encode({widget.requestKey: requestValue});
 
     final response = await http.put(url, headers: headers, body: body);
 
@@ -72,7 +76,11 @@ class CustomHttpDropdownState extends State<CustomHttpDropdown> {
       });
 
       if (kDebugMode) {
-        print('${widget.title} changed to value $value');
+        print('${widget.title} changed to value $requestValue');
+      }
+    } else {
+      if (kDebugMode) {
+        print('Error while changing ${widget.title} to value $requestValue');
       }
     }
   }

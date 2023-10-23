@@ -43,7 +43,7 @@ default_constraint = {
 default_somersaults_info = {
     "nb_shooting_points": 24,
     "nb_half_twists": 0,
-    "duration": 1,
+    "duration": 1.0,
     "objectives": [
         {
             "objective_type": "lagrange",
@@ -591,6 +591,42 @@ def put_objective_weight(
     ] = weight.weight
     update_acrobatics_data("somersaults_info", somersaults_info)
     return WeightResponse(weight=weight.weight)
+
+
+@router.put(
+    "/somersaults_info/{somersault_index}/objectives/{objective_index}/weight/maximize",
+    response_model=WeightResponse,
+)
+def put_objective_weight_maximize(somersault_index: int, objective_index: int):
+    somersaults_info = read_acrobatics_data("somersaults_info")
+    old_weight = somersaults_info[somersault_index]["objectives"][objective_index][
+        "weight"
+    ]
+    new_weight = -abs(old_weight)
+
+    somersaults_info[somersault_index]["objectives"][objective_index][
+        "weight"
+    ] = new_weight
+    update_acrobatics_data("somersaults_info", somersaults_info)
+    return WeightResponse(weight=new_weight)
+
+
+@router.put(
+    "/somersaults_info/{somersault_index}/objectives/{objective_index}/weight/minimize",
+    response_model=WeightResponse,
+)
+def put_objective_weight_minimize(somersault_index: int, objective_index: int):
+    somersaults_info = read_acrobatics_data("somersaults_info")
+    old_weight = somersaults_info[somersault_index]["objectives"][objective_index][
+        "weight"
+    ]
+    new_weight = abs(old_weight)
+
+    somersaults_info[somersault_index]["objectives"][objective_index][
+        "weight"
+    ] = new_weight
+    update_acrobatics_data("somersaults_info", somersaults_info)
+    return WeightResponse(weight=new_weight)
 
 
 @router.get(

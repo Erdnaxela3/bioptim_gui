@@ -69,12 +69,13 @@ class SomersaultGenerationMenu extends StatelessWidget {
             width: width,
             penalties: somersaultsInfo[somersaultIndex].objectives,
           ),
-          // const Divider(),
-          // PenaltyExpander(
-          //   penaltyType: ConstraintFcn,
-          //   phaseIndex: somersaultIndex,
-          //   width: width,
-          // ),
+          const Divider(),
+          PenaltyExpander(
+            penaltyType: Constraint,
+            phaseIndex: somersaultIndex,
+            width: width,
+            penalties: somersaultsInfo[somersaultIndex].constraints,
+          ),
         ],
       ),
     );

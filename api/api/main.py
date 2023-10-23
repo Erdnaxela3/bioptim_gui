@@ -28,7 +28,7 @@ def startup_event():
             {
                 "nb_shooting_points": 24,
                 "nb_half_twists": 0,
-                "duration": 1,
+                "duration": 1.0,
                 "objectives": [
                     {
                         "objective_type": "lagrange",

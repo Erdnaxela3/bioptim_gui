@@ -1,3 +1,5 @@
+import 'package:bioptim_gui/widgets/utils/extensions.dart';
+
 class AcrobaticsData {
   int nbSomersaults;
   String modelPath;
@@ -16,10 +18,10 @@ class AcrobaticsData {
         position = data["position"],
         sportType = data["sport_type"],
         preferredTwistSide = data["preferred_twist_side"],
-        somersaultInfo = [];
-  // data["somersaults_info"].map((somersault) {
-  //   return Somersault.fromMap(somersault);
-  // }).toList();
+        somersaultInfo =
+            (data["somersaults_info"] as List<dynamic>).map((somersault) {
+          return Somersault.fromMap(somersault);
+        }).toList();
 }
 
 class Somersault {
@@ -33,10 +35,12 @@ class Somersault {
       : nbShootingPoints = somersaultData["nb_shooting_points"],
         nbHalfTwists = somersaultData["nb_half_twists"],
         duration = somersaultData["duration"],
-        objectives = somersaultData["objectives"].map((objective) {
+        objectives =
+            (somersaultData["objectives"] as List<dynamic>).map((objective) {
           return Objective.fromMap(objective);
         }).toList(),
-        constraints = somersaultData["constraints"].map((constraint) {
+        constraints =
+            (somersaultData["constraints"] as List<dynamic>).map((constraint) {
           return Constraint.fromMap(constraint);
         }).toList();
 }
@@ -58,9 +62,13 @@ abstract class Penalty {
         expand = penaltyData["expand"],
         multiThread = penaltyData["multi_thread"],
         derivative = penaltyData["derivative"],
-        arguments = penaltyData["arguments"].map((argument) {
+        arguments = (penaltyData["arguments"] as List<dynamic>).map((argument) {
           return Argument.fromMap(argument);
         }).toList();
+
+  String penaltyTypeToString() {
+    return "";
+  }
 }
 
 class Argument {
@@ -71,7 +79,7 @@ class Argument {
   Argument.fromMap(Map<String, dynamic> argumentData)
       : name = argumentData["name"],
         type = argumentData["type"],
-        value = argumentData["value"];
+        value = argumentData["value"].toString();
 }
 
 class Objective extends Penalty {
@@ -82,9 +90,17 @@ class Objective extends Penalty {
       : objectiveType = objectiveData["objective_type"],
         weight = objectiveData["weight"],
         super.fromMap(objectiveData);
+
+  String penaltyTypeToString() {
+    return objectiveType.capitalize();
+  }
 }
 
 class Constraint extends Penalty {
   Constraint.fromMap(Map<String, dynamic> constraintData)
       : super.fromMap(constraintData);
+
+  String penaltyTypeToString() {
+    return "Constraint";
+  }
 }

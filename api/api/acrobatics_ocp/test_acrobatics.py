@@ -28,7 +28,7 @@ def run_for_all():
             {
                 "nb_shooting_points": 24,
                 "nb_half_twists": 0,
-                "duration": 1,
+                "duration": 1.0,
                 "objectives": [
                     {
                         "objective_type": "lagrange",
@@ -795,6 +795,70 @@ def test_put_objective_common_argument(key, default_value, new_value):
     assert response.status_code == 200, response
     data = response.json()
     assert data[0][key] == new_value
+
+
+def test_put_weight_minmax():
+    response = client.get("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data[0]["weight"] == 100.0
+
+    response = client.put(
+        f"/acrobatics/somersaults_info/0/objectives/0/weight/maximize",
+    )
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data[0]["weight"] == -100.0
+
+    response = client.put(
+        f"/acrobatics/somersaults_info/0/objectives/0/weight/minimize",
+    )
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data[0]["weight"] == 100.0
+
+
+def test_put_weight_minmax_no_change():
+    response = client.get("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data[0]["weight"] == 100.0
+
+    response = client.put(
+        f"/acrobatics/somersaults_info/0/objectives/0/weight/minimize",
+    )
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data[0]["weight"] == 100.0
+
+    response = client.put(
+        f"/acrobatics/somersaults_info/0/objectives/0/weight/maximize",
+    )
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data[0]["weight"] == -100.0
+
+    response = client.put(
+        f"/acrobatics/somersaults_info/0/objectives/0/weight/maximize",
+    )
+    assert response.status_code == 200, response
+
+    response = client.get("/acrobatics/somersaults_info/0/objectives")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data[0]["weight"] == -100.0
 
 
 @pytest.mark.parametrize(

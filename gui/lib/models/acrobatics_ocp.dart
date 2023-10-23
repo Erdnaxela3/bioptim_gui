@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:bioptim_gui/models/acrobatics_ocp_config.dart';
 import 'package:bioptim_gui/models/global.dart';
 
 class _Somersault {
@@ -36,25 +35,8 @@ class AcrobaticsOCPProgram {
   void notifyThatModelHasChanged() => _hasPendingChangesToBeExported = true;
   bool get mustExport => _hasPendingChangesToBeExported;
 
-  AcrobaticsOptimalControlProgram generic = AcrobaticsOptimalControlProgram();
-
   final somersaults = <_Somersault>[];
   Future<void> updateSomersaults() async {
-    if (somersaults.length < generic.nbSomersaults) {
-      for (int i = somersaults.length; i < generic.nbSomersaults; i++) {
-        somersaults.add(_Somersault(
-          somersaultIndex: i,
-          duration: 1.0,
-          nbShootingPoints: 50,
-          nbHalfTwists: 0,
-        ));
-      }
-    } else {
-      // Do not change anything if we already have the right number of somersaults
-
-      // Do not remove the somersaults if they are removed from the GUI, so it can
-      // be reinstated prefilled with previous data
-    }
     _hasPendingChangesToBeExported = true;
   }
 
@@ -113,9 +95,9 @@ class AcrobaticsOCPProgram {
         mode: FileMode.append);
 
     // Write the Generic section
-    final nSomersaults = generic.nbSomersaults;
+    const nSomersaults = 1; // generic.nbSomersaults;
     final nSomersaultsAsString = nSomersaults.toString();
-    final finalTimeMarginAsString = generic.finalTimeMargin.toString();
+    const finalTimeMarginAsString = 1.0; // generic.finalTimeMargin.toString();
 
     // final bioModelAsString =
     // '[${generic.bioModel.toPythonString()}(r"${generic.modelPath}") for _ in range(n_somersault)]';
@@ -203,15 +185,15 @@ class AcrobaticsOCPProgram {
         '    # Declaration of the dynamics function used during integration\n'
         '    dynamics = DynamicsList()\n'
         '\n'
-        '${generic.nbSomersaults == 1 ? '    dynamics.add(\n'
-            '        DynamicsFcn.TORQUE_DRIVEN,\n'
-            '        expand=True,\n'
-            '    )\n' : '    for phase in range(n_somersault):\n'
-            '        dynamics.add(\n'
-            '            DynamicsFcn.TORQUE_DRIVEN,\n'
-            '            expand=True,\n'
-            '            phase=phase,  # don\'t need it, but keep it for clarity\n'
-            '        )\n'}'
+        // '${generic.nbSomersaults == 1 ? '    dynamics.add(\n'
+        //     '        DynamicsFcn.TORQUE_DRIVEN,\n'
+        //     '        expand=True,\n'
+        //     '    )\n' : '    for phase in range(n_somersault):\n'
+        //     '        dynamics.add(\n'
+        //     '            DynamicsFcn.TORQUE_DRIVEN,\n'
+        //     '            expand=True,\n'
+        //     '            phase=phase,  # don\'t need it, but keep it for clarity\n'
+        //     '        )\n'}'
         '\n'
         '    # Define control path constraint\n'
         '    tau_min, tau_max, tau_init = -100, 100, 0\n'

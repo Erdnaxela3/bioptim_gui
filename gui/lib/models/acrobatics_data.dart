@@ -91,6 +91,7 @@ class Objective extends Penalty {
         weight = objectiveData["weight"],
         super.fromMap(objectiveData);
 
+  @override
   String penaltyTypeToString() {
     return objectiveType.capitalize();
   }
@@ -100,6 +101,7 @@ class Constraint extends Penalty {
   Constraint.fromMap(Map<String, dynamic> constraintData)
       : super.fromMap(constraintData);
 
+  @override
   String penaltyTypeToString() {
     return "Constraint";
   }

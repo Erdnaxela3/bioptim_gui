@@ -1,4 +1,5 @@
 import 'package:bioptim_gui/widgets/utils/custom_http_dropdown.dart';
+import 'package:bioptim_gui/widgets/utils/extensions.dart';
 import 'package:flutter/material.dart';
 
 class IntegrationRuleChooser extends StatelessWidget {
@@ -18,7 +19,8 @@ class IntegrationRuleChooser extends StatelessWidget {
     return CustomHttpDropdown(
       title: "Integration rule",
       width: width,
-      defaultValue: defaultValue,
+      defaultValue:
+          defaultValue.toLowerCase().capitalize().replaceAll("_", " "),
       getEndpoint: "/penalties/integration_rules",
       putEndpoint: putEndpoint,
       requestKey: "integration_rule",

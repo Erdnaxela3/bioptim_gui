@@ -1,5 +1,7 @@
 from typing import Union
 
+from bioptim import Axis
+
 from acrobatics_ocp.acrobatics_requests import *
 
 
@@ -94,4 +96,4 @@ class ObjectiveFcnResponse(ObjectiveFcnRequest):
 class ArgumentResponse(BaseModel):
     key: str
     type: str
-    value: Union[int, float, str, list, None]
+    value: Union[int, float, str, list, None, Axis]

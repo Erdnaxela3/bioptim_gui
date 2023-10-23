@@ -2,12 +2,15 @@ import 'dart:convert';
 
 import 'package:bioptim_gui/models/acrobatics_data.dart';
 import 'package:bioptim_gui/models/api_config.dart';
+import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
+import 'package:bioptim_gui/models/optimal_control_program_type.dart';
 import 'package:bioptim_gui/widgets/penalties/integration_rule_chooser.dart';
 import 'package:bioptim_gui/widgets/penalties/maximize_minimize_radio.dart';
 import 'package:bioptim_gui/widgets/penalties/nodes_chooser.dart';
 import 'package:bioptim_gui/widgets/penalties/objective_type_radio.dart';
 import 'package:bioptim_gui/widgets/penalties/penalty_chooser.dart';
 import 'package:bioptim_gui/widgets/utils/animated_expanding_widget.dart';
+import 'package:bioptim_gui/widgets/utils/extensions.dart';
 import 'package:bioptim_gui/widgets/utils/remote_boolean_switch.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +39,12 @@ class PenaltyExpanderState extends State<PenaltyExpander> {
   List<Penalty> penalties = [];
   double width = 0;
 
+  final String endpointPrefix =
+      OptimalControlProgramControllers.instance.ocpType ==
+              OptimalControlProgramType.ocp
+          ? '/generic/phases_info' // TODO
+          : '/acrobatics/somersaults_info';
+
   @override
   void initState() {
     penalties = widget.penalties;
@@ -54,12 +63,12 @@ class PenaltyExpanderState extends State<PenaltyExpander> {
     }
   }
 
-  String _penaltyTypeToEndpoint() {
+  String _penaltyTypeToEndpoint({required bool plural}) {
     switch (widget.penaltyType) {
       case Objective:
-        return 'objectives';
+        return plural ? 'objectives' : 'objective';
       case Constraint:
-        return 'constraints';
+        return plural ? 'constraints' : 'constraint';
       default:
         throw 'Wrong penalty type';
     }
@@ -67,7 +76,7 @@ class PenaltyExpanderState extends State<PenaltyExpander> {
 
   Future<void> _createPenalties() async {
     final url = Uri.parse(
-        '${APIConfig.url}/acrobatics/somersaults_info/${widget.phaseIndex}/${_penaltyTypeToEndpoint()}');
+        '${APIConfig.url}$endpointPrefix/${widget.phaseIndex}/${_penaltyTypeToEndpoint(plural: true)}');
 
     final response = await http.post(url);
 
@@ -102,15 +111,16 @@ class PenaltyExpanderState extends State<PenaltyExpander> {
           ),
           const SizedBox(height: 24),
           ...penalties.asMap().keys.map((index) => Padding(
-                padding: const EdgeInsets.only(bottom: 24.0),
-                child: _PathTile(
-                    key: ObjectKey(penalties[index]),
-                    phaseIndex: widget.phaseIndex,
-                    penaltyIndex: index,
-                    width: width,
-                    penaltyType: widget.penaltyType,
-                    penalty: penalties[index]),
-              )),
+              padding: const EdgeInsets.only(bottom: 24.0),
+              child: _PathTile(
+                key: ObjectKey(penalties[index]),
+                phaseIndex: widget.phaseIndex,
+                penaltyIndex: index,
+                width: width,
+                penaltyType: widget.penaltyType,
+                penalty: penalties[index],
+                endpointPrefix: endpointPrefix,
+              ))),
           const SizedBox(height: 26),
         ],
       ),
@@ -153,6 +163,7 @@ class _PathTile extends StatelessWidget {
     required this.penaltyType,
     required this.width,
     required this.penalty,
+    required this.endpointPrefix,
   });
 
   final int phaseIndex;
@@ -160,17 +171,7 @@ class _PathTile extends StatelessWidget {
   final Type penaltyType;
   final double width;
   final Penalty penalty;
-
-  String _penaltyTypeToEndpoint() {
-    switch (penaltyType) {
-      case Objective:
-        return 'objectives';
-      case Constraint:
-        return 'constraints';
-      default:
-        throw 'Wrong penalty type';
-    }
-  }
+  final String endpointPrefix;
 
   String _penaltyTypeToString({required bool plural}) {
     switch (penaltyType) {
@@ -183,15 +184,26 @@ class _PathTile extends StatelessWidget {
     }
   }
 
+  String _penaltyTypeToEndpoint({required bool plural}) {
+    switch (penaltyType) {
+      case Objective:
+        return plural ? 'objectives' : 'objective';
+      case Constraint:
+        return plural ? 'constraints' : 'constraint';
+      default:
+        throw 'Wrong penalty type';
+    }
+  }
+
   Future<void> _deletePenalties() async {
     final url = Uri.parse(
-        '${APIConfig.url}/acrobatics/somersaults_info/$phaseIndex/${_penaltyTypeToEndpoint()}/$penaltyIndex');
+        '${APIConfig.url}$endpointPrefix/$phaseIndex/${_penaltyTypeToEndpoint(plural: true)}/$penaltyIndex');
 
     final response = await http.delete(url);
 
     if (response.statusCode == 200) {
       if (kDebugMode) {
-        print('Created a penalty (${_penaltyTypeToEndpoint()})');
+        print('Created a penalty (${_penaltyTypeToEndpoint(plural: true)})');
       }
     } else {
       throw Exception("Fetch error");
@@ -217,9 +229,9 @@ class _PathTile extends StatelessWidget {
               width: width,
               defaultValue: penalty.penaltyType,
               getEndpoint:
-                  '/acrobatics/somersaults_info/$phaseIndex/${_penaltyTypeToEndpoint()}/$penaltyIndex',
+                  '$endpointPrefix/$phaseIndex/${_penaltyTypeToEndpoint(plural: true)}/$penaltyIndex',
               putEndpoint:
-                  '/acrobatics/somersaults_info/$phaseIndex/${_penaltyTypeToEndpoint()}/$penaltyIndex/penalty_type',
+                  '$endpointPrefix/$phaseIndex/${_penaltyTypeToEndpoint(plural: true)}/$penaltyIndex/penalty_type',
             ),
           ),
           if (penaltyType == Objective)
@@ -246,6 +258,15 @@ class _PathTile extends StatelessWidget {
                               'Argument: ${argument.name} (${argument.type})'),
                           border: const OutlineInputBorder()),
                       // inputFormatters: [FilteringTextInputFormatter.allow()],
+                      onSubmitted: (value) => {
+                        http.put(
+                          Uri.parse(
+                              '${APIConfig.url}$endpointPrefix/$phaseIndex/${_penaltyTypeToEndpoint(plural: true)}/$penaltyIndex/arguments/${argument.name}'),
+                          headers: {'Content-Type': 'application/json'},
+                          body: json
+                              .encode({"type": argument.type, "value": value}),
+                        )
+                      },
                     ),
                   ),
                 ],
@@ -257,9 +278,9 @@ class _PathTile extends StatelessWidget {
                 width: (penaltyType == Objective) ? width / 2 - 3 : width,
                 child: NodesChooser(
                   width: width,
-                  putEndpoint: (penaltyType == Objective)
-                      ? '/acrobatics/somersaults_info/$phaseIndex/objectives/$penaltyIndex/nodes'
-                      : '/acrobatics/somersaults_info/$phaseIndex/constraints/$penaltyIndex/nodes',
+                  putEndpoint:
+                      '$endpointPrefix/$phaseIndex/${_penaltyTypeToEndpoint(plural: true)}/$penaltyIndex/nodes',
+                  defaultValue: penalty.nodes,
                 )),
             if (penaltyType == Objective)
               SizedBox(
@@ -276,9 +297,10 @@ class _PathTile extends StatelessWidget {
                   onSubmitted: (value) => {
                     http.put(
                       Uri.parse(
-                          '${APIConfig.url}/acrobatics/somersaults_info/$phaseIndex/objectives/$penaltyIndex/weight'),
+                          '${APIConfig.url}$endpointPrefix/$phaseIndex/${_penaltyTypeToEndpoint(plural: true)}/$penaltyIndex/weight'),
                       headers: {'Content-Type': 'application/json'},
-                      body: json.encode({"weight": double.parse(value)}),
+                      body:
+                          json.encode({"weight": double.tryParse(value) ?? 0}),
                     )
                   },
                 ),
@@ -298,13 +320,22 @@ class _PathTile extends StatelessWidget {
           children: [
             Expanded(
               child: TextField(
-                  controller:
-                      TextEditingController(text: penalty.target.toString()),
-                  decoration: const InputDecoration(
-                      label: Text('Target'), border: OutlineInputBorder()),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'[0-9\.,]'))
-                  ]),
+                controller:
+                    TextEditingController(text: penalty.target.toString()),
+                decoration: const InputDecoration(
+                    label: Text('Target'), border: OutlineInputBorder()),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9\.,\[\]]'))
+                ],
+                onSubmitted: (value) => {
+                  http.put(
+                    Uri.parse(
+                        '${APIConfig.url}$endpointPrefix/$phaseIndex/${_penaltyTypeToEndpoint(plural: true)}/$penaltyIndex/target'),
+                    headers: {'Content-Type': 'application/json'},
+                    body: json.encode({"target": value.tryParseDoubleList()}),
+                  )
+                },
+              ),
             ),
           ],
         ),
@@ -320,9 +351,9 @@ class _PathTile extends StatelessWidget {
                 width: width,
                 child: IntegrationRuleChooser(
                   width: width,
-                  putEndpoint: (penaltyType == Objective)
-                      ? '/acrobatics/somersaults_info/$phaseIndex/objectives/$penaltyIndex/integration_rule'
-                      : '/acrobatics/somersaults_info/$phaseIndex/constraints/$penaltyIndex/integration_rule',
+                  putEndpoint:
+                      '$endpointPrefix/$phaseIndex/${_penaltyTypeToEndpoint(plural: true)}/$penaltyIndex/integration_rule',
+                  defaultValue: penalty.integrationRule,
                 ),
               ),
             ],
@@ -332,16 +363,16 @@ class _PathTile extends StatelessWidget {
           children: [
             RemoteBooleanSwitch(
                 endpoint:
-                    '/acrobatics/somersaults_info/$phaseIndex/objectives/$penaltyIndex/quadratic',
-                defaultValue: true,
+                    '$endpointPrefix/$phaseIndex/${_penaltyTypeToEndpoint(plural: true)}/$penaltyIndex/quadratic',
+                defaultValue: penalty.quadratic,
                 leftText: "Quadratic",
                 width: width / 2 - 6,
                 requestKey: "quadratic"),
             const SizedBox(width: 12),
             RemoteBooleanSwitch(
                 endpoint:
-                    '/acrobatics/somersaults_info/$phaseIndex/objectives/$penaltyIndex/expand',
-                defaultValue: true,
+                    '$endpointPrefix/$phaseIndex/${_penaltyTypeToEndpoint(plural: true)}/$penaltyIndex/expand',
+                defaultValue: penalty.expand,
                 leftText: "Expand",
                 width: width / 2 - 6,
                 requestKey: "expand"),
@@ -352,16 +383,16 @@ class _PathTile extends StatelessWidget {
           children: [
             RemoteBooleanSwitch(
                 endpoint:
-                    '/acrobatics/somersaults_info/$phaseIndex/objectives/$penaltyIndex/multi_thread',
-                defaultValue: false,
+                    '$endpointPrefix/$phaseIndex/${_penaltyTypeToEndpoint(plural: true)}/$penaltyIndex/multi_thread',
+                defaultValue: penalty.multiThread,
                 leftText: "MultiThread",
                 width: width / 2 - 6,
                 requestKey: "multi_thread"),
             const SizedBox(width: 12),
             RemoteBooleanSwitch(
                 endpoint:
-                    '/acrobatics/somersaults_info/$phaseIndex/objectives/$penaltyIndex/derivative',
-                defaultValue: false,
+                    '$endpointPrefix/$phaseIndex/${_penaltyTypeToEndpoint(plural: true)}/$penaltyIndex/derivative',
+                defaultValue: penalty.derivative,
                 leftText: "Derivative",
                 width: width / 2 - 6,
                 requestKey: "derivative"),
@@ -380,7 +411,7 @@ class _PathTile extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Remove ${penalty is Objective ? 'objective' : 'constraint'}',
+                    'Remove ${_penaltyTypeToEndpoint(plural: false)}',
                     style: const TextStyle(color: Colors.red),
                   ),
                   const SizedBox(width: 8),

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from bioptim import QuadratureRule, Node
 from pydantic import BaseModel
 
@@ -62,7 +64,7 @@ class ExpandRequest(BaseModel):
 
 
 class TargetRequest(BaseModel):
-    target: list = None
+    target: Optional[list] = None
 
 
 class DerivativeRequest(BaseModel):

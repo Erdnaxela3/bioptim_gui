@@ -1,4 +1,5 @@
 import 'package:bioptim_gui/widgets/utils/custom_http_dropdown.dart';
+import 'package:bioptim_gui/widgets/utils/extensions.dart';
 import 'package:flutter/material.dart';
 
 class NodesChooser extends StatelessWidget {
@@ -18,7 +19,8 @@ class NodesChooser extends StatelessWidget {
     return CustomHttpDropdown(
       title: "Nodes to apply",
       width: width,
-      defaultValue: defaultValue,
+      defaultValue:
+          defaultValue.toLowerCase().replaceAll("_", " ").capitalize(),
       getEndpoint: "/penalties/nodes",
       putEndpoint: putEndpoint,
       requestKey: "nodes",

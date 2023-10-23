@@ -53,6 +53,7 @@ abstract class Penalty {
   bool multiThread;
   bool derivative;
   dynamic target;
+  String integrationRule;
   List<Argument> arguments;
 
   Penalty.fromMap(Map<String, dynamic> penaltyData)
@@ -62,6 +63,8 @@ abstract class Penalty {
         expand = penaltyData["expand"],
         multiThread = penaltyData["multi_thread"],
         derivative = penaltyData["derivative"],
+        target = penaltyData["target"],
+        integrationRule = penaltyData["integration_rule"],
         arguments = (penaltyData["arguments"] as List<dynamic>).map((argument) {
           return Argument.fromMap(argument);
         }).toList();

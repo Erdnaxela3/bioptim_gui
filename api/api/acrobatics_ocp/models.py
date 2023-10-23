@@ -1,3 +1,5 @@
+from typing import Optional
+
 from bioptim import Node, QuadratureRule
 from pydantic import BaseModel
 
@@ -9,7 +11,7 @@ class Penalty(BaseModel):
     nodes: Node
     quadratic: bool = True
     expand: bool = True
-    target: list = None
+    target: Optional[list] = None
     derivative: bool = False
     integration_rule: QuadratureRule = QuadratureRule.RECTANGLE_LEFT
     multi_thread: bool = False

@@ -2,8 +2,6 @@ import 'dart:math';
 
 import 'package:bioptim_gui/models/acrobatics_ocp.dart';
 import 'package:bioptim_gui/models/optimal_control_program.dart';
-import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
-import 'package:bioptim_gui/models/penalty.dart';
 import 'package:flutter/material.dart';
 
 ///
@@ -161,146 +159,6 @@ class AcrobaticsOCPControllers {
           somersaultIndex: somersaultIndex);
 
   ///
-  /// Here are some generic methods for penalties (declared later)
-  void _createPenalty(
-    Penalty penalty, {
-    required List<_PenaltyTextEditingControllers> controllers,
-    required List<Penalty> penalties,
-  }) {
-    penalties.add(penalty);
-    controllers.add(_PenaltyTextEditingControllers(penalties.last));
-    controllers.last._updateWeight();
-    controllers.last._updateTarget();
-    controllers.last._updateArguments();
-    _notifyListeners();
-  }
-
-  void _updatePenalty(
-    Penalty penalty, {
-    required List<_PenaltyTextEditingControllers> controllers,
-    required List<Penalty> penalties,
-    required int penaltyIndex,
-  }) {
-    penalties[penaltyIndex] = penalty;
-    controllers[penaltyIndex]._penalty = penalty;
-    controllers[penaltyIndex]._updateWeight();
-    controllers[penaltyIndex]._updateTarget();
-    controllers[penaltyIndex]._updateArguments();
-    _notifyListeners();
-  }
-
-  void _removePenalty({
-    required List<_PenaltyTextEditingControllers> controllers,
-    required List<Penalty> penalties,
-    required int penaltyIndex,
-  }) {
-    penalties.removeAt(penaltyIndex);
-    controllers[penaltyIndex].dispose();
-    controllers.removeAt(penaltyIndex);
-    _notifyListeners();
-  }
-
-  ///
-  /// Here are the objective function methods
-  final List<List<_PenaltyTextEditingControllers>> _objectiveControllers = [];
-
-  List<TextEditingController> getObjectiveArgumentsControllers(
-          {required int penaltyIndex, required int somersaultIndex}) =>
-      _objectiveControllers[somersaultIndex][penaltyIndex].arguments;
-
-  PenaltyInterface objectives({required int somersaultIndex}) =>
-      PenaltyInterface(
-          create: () => _createObjective(somersaultIndex: somersaultIndex),
-          fetch: ({required penaltyIndex}) =>
-              _getObjectives(somersaultIndex: somersaultIndex)[penaltyIndex],
-          fetchAll: () => _getObjectives(somersaultIndex: somersaultIndex),
-          update: (penalty, {required penaltyIndex}) => _updateObjective(
-              penalty,
-              penaltyIndex: penaltyIndex,
-              somersaultIndex: somersaultIndex),
-          remove: ({required penaltyIndex}) => _removeObjective(
-              penaltyIndex: penaltyIndex, somersaultIndex: somersaultIndex),
-          weightController: ({required penaltyIndex}) =>
-              _objectiveControllers[somersaultIndex][penaltyIndex].weight,
-          targetController: ({required penaltyIndex}) =>
-              _objectiveControllers[somersaultIndex][penaltyIndex].target,
-          argumentController: (
-                  {required penaltyIndex, required argumentIndex}) =>
-              _objectiveControllers[somersaultIndex][penaltyIndex]
-                  .arguments[argumentIndex]);
-
-  List<Penalty> _getObjectives({required int somersaultIndex}) =>
-      _ocp.somersaults[somersaultIndex].objectives;
-
-  void _createObjective({required int somersaultIndex}) =>
-      _createPenalty(Objective.generic(),
-          controllers: _objectiveControllers[somersaultIndex],
-          penalties: _ocp.somersaults[somersaultIndex].objectives);
-
-  void _updateObjective(Penalty penalty,
-          {required int penaltyIndex, required int somersaultIndex}) =>
-      _updatePenalty(penalty,
-          controllers: _objectiveControllers[somersaultIndex],
-          penalties: _ocp.somersaults[somersaultIndex].objectives,
-          penaltyIndex: penaltyIndex);
-
-  void _removeObjective(
-          {required int penaltyIndex, required int somersaultIndex}) =>
-      _removePenalty(
-          controllers: _objectiveControllers[somersaultIndex],
-          penalties: _ocp.somersaults[somersaultIndex].objectives,
-          penaltyIndex: penaltyIndex);
-
-  ///
-  /// Here are all the constraint methods
-  final List<List<_PenaltyTextEditingControllers>> _constraintControllers = [];
-
-  List<TextEditingController> getConstraintArgumentsControllers(
-          {required int penaltyIndex, required int somersaultIndex}) =>
-      _constraintControllers[somersaultIndex][penaltyIndex].arguments;
-
-  PenaltyInterface constraints({required int somersaultIndex}) =>
-      PenaltyInterface(
-          create: () => _createConstraint(somersaultIndex: somersaultIndex),
-          fetch: ({required penaltyIndex}) =>
-              _getConstraints(somersaultIndex: somersaultIndex)[penaltyIndex],
-          fetchAll: () => _getConstraints(somersaultIndex: somersaultIndex),
-          update: (penalty, {required penaltyIndex}) => _updateConstraint(
-              penalty,
-              penaltyIndex: penaltyIndex,
-              somersaultIndex: somersaultIndex),
-          remove: ({required penaltyIndex}) => _removeConstraint(
-              penaltyIndex: penaltyIndex, somersaultIndex: somersaultIndex),
-          targetController: ({required penaltyIndex}) =>
-              _constraintControllers[somersaultIndex][penaltyIndex].target,
-          argumentController: (
-                  {required penaltyIndex, required argumentIndex}) =>
-              _constraintControllers[somersaultIndex][penaltyIndex]
-                  .arguments[argumentIndex]);
-
-  List<Penalty> _getConstraints({required int somersaultIndex}) =>
-      _ocp.somersaults[somersaultIndex].constraints;
-
-  void _createConstraint({required int somersaultIndex}) =>
-      _createPenalty(Constraint.generic(),
-          controllers: _constraintControllers[somersaultIndex],
-          penalties: _ocp.somersaults[somersaultIndex].constraints);
-
-  void _updateConstraint(Penalty penalty,
-          {required int penaltyIndex, required int somersaultIndex}) =>
-      _updatePenalty(penalty,
-          controllers: _constraintControllers[somersaultIndex],
-          penalties: _ocp.somersaults[somersaultIndex].constraints,
-          penaltyIndex: penaltyIndex);
-
-  void _removeConstraint(
-          {required int penaltyIndex, required int somersaultIndex}) =>
-      _removePenalty(
-          controllers: _constraintControllers[somersaultIndex],
-          penalties: _ocp.somersaults[somersaultIndex].constraints,
-          penaltyIndex: penaltyIndex);
-
-  ///
   /// Here are the internal methods that ensures all the controllers are sane
   void _updateAllControllers() {
     _updateTextControllers(
@@ -318,9 +176,6 @@ class AcrobaticsOCPControllers {
       initialValue: _somersaultDurationInitialValues,
       onChanged: _somersaultDurationListener,
     );
-
-    _updatePenaltyControllers(_objectiveControllers);
-    _updatePenaltyControllers(_constraintControllers);
   }
 
   void _updateTextControllers(List<TextEditingController> controllers,
@@ -344,43 +199,6 @@ class AcrobaticsOCPControllers {
     }
   }
 
-  void _updatePenaltyControllers(
-      List<List<_PenaltyTextEditingControllers>> controllers) {
-    if (controllers.length < nbSomersaults) {
-      // For each of the new somersaults, declare all the required variables
-      for (int i = controllers.length; i < nbSomersaults; i++) {
-        controllers.add([]);
-
-        // adding default penalties, that will be added for each somersault
-        if (_objectiveControllers[i].isEmpty) {
-          _createPenalty(Objective.acrobaticGenericLagrangeMinimizeControls(),
-              controllers: _objectiveControllers[i],
-              penalties: _ocp.somersaults[i].objectives);
-
-          _createPenalty(
-              Objective.acrobaticGenericMayerMinimizeTime(
-                  minBound:
-                      double.parse(somersaultDurationControllers[i].text) -
-                          finalTimeMargin,
-                  maxBound:
-                      double.parse(somersaultDurationControllers[i].text) +
-                          finalTimeMargin),
-              controllers: _objectiveControllers[i],
-              penalties: _ocp.somersaults[i].objectives);
-        }
-      }
-    } else if (controllers.length > nbSomersaults) {
-      for (int i = controllers.length - 1; i >= nbSomersaults; i--) {
-        for (final controller in controllers[i]) {
-          controller.dispose();
-        }
-        controllers.removeAt(i);
-      }
-    } else {
-      // Do not change anything if we already have the right number of somersaults
-    }
-  }
-
   void dispose() {
     nbSomersaultsController.dispose();
     for (final controller in nbShootingPointsControllers) {
@@ -391,76 +209,5 @@ class AcrobaticsOCPControllers {
       controller.dispose();
     }
     somersaultDurationControllers.clear();
-  }
-}
-
-class _PenaltyTextEditingControllers {
-  final weight = TextEditingController(text: '1.0');
-  final target = TextEditingController(text: 'None');
-  Penalty _penalty;
-  final arguments = <TextEditingController>[];
-
-  _PenaltyTextEditingControllers(this._penalty) {
-    weight.addListener(() {
-      if (_penalty.runtimeType != Objective) return;
-      final newWeight = double.tryParse(weight.text);
-      if (newWeight == null || newWeight == (_penalty as Objective).weight) {
-        return;
-      }
-
-      (_penalty as Objective).weight = newWeight;
-      AcrobaticsOCPControllers.instance._notifyListeners();
-    });
-
-    target.addListener(() {
-      final newTarget = target.text;
-      if (newTarget == _penalty.target) {
-        return;
-      }
-
-      _penalty.target = newTarget;
-      AcrobaticsOCPControllers.instance._notifyListeners();
-    });
-
-    _updateArguments();
-  }
-
-  void _updateWeight() {
-    if (_penalty.runtimeType != Objective) return;
-    weight.text = (_penalty as Objective).weight.toString();
-  }
-
-  void _updateTarget() {
-    target.text = _penalty.target.toString();
-  }
-
-  void _updateArguments() {
-    _disposeArguments();
-    final names = _penalty.arguments.keys.toList();
-    for (int i = 0; i < _penalty.arguments.length; i++) {
-      final name = names[i];
-
-      arguments.add(TextEditingController(
-          text: _penalty.arguments[name]?.toString() ?? ''));
-      arguments[i].addListener(() {
-        final value = arguments[i].text;
-        if (value == _penalty.arguments[name].toString()) return;
-        _penalty.arguments[name] = value;
-        AcrobaticsOCPControllers.instance._notifyListeners();
-      });
-    }
-  }
-
-  void _disposeArguments() {
-    for (final controller in arguments) {
-      controller.dispose();
-    }
-    arguments.clear();
-  }
-
-  void dispose() {
-    weight.dispose();
-    target.dispose();
-    _disposeArguments();
   }
 }

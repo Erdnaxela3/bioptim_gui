@@ -100,9 +100,9 @@ class _HeaderBuilder extends StatelessWidget {
             const SizedBox(height: 12),
             if (controllers.ocpType == OptimalControlProgramType.ocp)
               GenericOCPHeaderBuilder(width: width)
-            else if (controllers.ocpType ==
-                OptimalControlProgramType.abrobaticsOCP)
-              AcrobaticsHeaderBuilder(width: width, data: const {}),
+            // else if (controllers.ocpType ==
+            // OptimalControlProgramType.abrobaticsOCP)
+            // AcrobaticsHeaderBuilder(width: width, data: const {}),
           ],
         ),
       ),

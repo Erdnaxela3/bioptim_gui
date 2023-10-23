@@ -2,16 +2,12 @@ import 'dart:io';
 
 import 'package:bioptim_gui/models/acrobatics_ocp_config.dart';
 import 'package:bioptim_gui/models/global.dart';
-import 'package:bioptim_gui/models/penalty.dart';
 
 class _Somersault {
   int somersaultIndex;
   int nbShootingPoints;
   int nbHalfTwists;
   double duration;
-
-  final List<Objective> objectives = [];
-  final List<Constraint> constraints = [];
 
   _Somersault({
     required this.somersaultIndex,
@@ -165,42 +161,42 @@ class AcrobaticsOCPProgram {
         '    constraints = ConstraintList()\n'
         '    objective_functions = ObjectiveList()\n',
         mode: FileMode.append);
-    for (int phaseIndex = 0; phaseIndex < generic.nbSomersaults; phaseIndex++) {
-      for (final objective in somersaults[phaseIndex].objectives) {
-        file.writeAsStringSync(
-            '    objective_functions.add(\n'
-            '        objective=${objective.fcn.toPythonString()},\n'
-            '${objective.arguments.keys.isEmpty ? '' : '${objective.arguments.keys.map((key) => '        ${objective.argumentToPythonString(key)},').join('\n')}\n'}'
-            // '        node=${objective.nodes.toPythonString()},\n'
-            // '${objective.quadratic == true ? '' : '        quadratic=${objective.quadratic.toPythonString()},\n'}'
-            // '${objective.expand == true ? '' : '        expand=${objective.expand.toPythonString()},\n'}'
-            // '${objective.target == 'None' ? '' : '        target=${objective.target == 'None' ? 'None' : 'np.array([${objective.target}])'},\n'}'
-            // '${objective.derivative == false ? '' : '        derivative=${objective.derivative.toPythonString()},\n'}'
-            // '${objective.objectiveType == ObjectiveType.mayer ? '' : objective.quadratureRules == QuadratureRules.rectangleLeft ? '' : '        integration_rule=${objective.quadratureRules.toPythonString()},\n'}'
-            // '${objective.multiThread == false ? '' : '        multi_thread=${objective.multiThread.toPythonString()},\n'}'
-            '${generic.nbSomersaults == 1 ? '' : '        phase=$phaseIndex,\n'}'
-            '        weight=${objective.minimizeOrMaximize.toPythonString()}${objective.weight},\n'
-            '    )\n',
-            mode: FileMode.append);
-      }
-      for (final constraint in somersaults[phaseIndex].constraints) {
-        file.writeAsStringSync(
-            '    constraints.add(\n'
-            '        constraint=${constraint.fcn.toPythonString()},\n'
-            '${constraint.arguments.keys.isEmpty ? '' : '${constraint.arguments.keys.map((key) => '        ${constraint.argumentToPythonString(key)},').join('\n')}\n'}'
-            // '        node=${constraint.nodes.toPythonString()},\n'
-            // '${constraint.quadratic == true ? '' : '        quadratic=${constraint.quadratic.toPythonString()},\n'}'
-            // '${constraint.expand == true ? '' : '        expand=${constraint.expand.toPythonString()},\n'}'
-            // '${constraint.target == 'None' ? '' : '        target=${constraint.target == 'None' ? 'None' : 'np.array([${constraint.target}])'},\n'}'
-            // '${constraint.derivative == false ? '' : '        derivative=${constraint.derivative.toPythonString()},\n'}'
-            // '${constraint.quadratureRules == QuadratureRules.rectangleLeft ? '' : '        integration_rule=${constraint.quadratureRules.toPythonString()},\n'}'
-            // '${constraint.multiThread == false ? '' : '        multi_thread=${constraint.multiThread.toPythonString()},\n'}'
-            '${generic.nbSomersaults == 1 ? '' : '        phase=$phaseIndex,\n'}'
-            '${generic.nbSomersaults == 1 ? '' : '        phase=$phaseIndex,\n'}'
-            '    )\n',
-            mode: FileMode.append);
-      }
-    }
+    // for (int phaseIndex = 0; phaseIndex < generic.nbSomersaults; phaseIndex++) {
+    //   for (final objective in somersaults[phaseIndex].objectives) {
+    //     file.writeAsStringSync(
+    //         '    objective_functions.add(\n'
+    //         '        objective=${objective.fcn.toPythonString()},\n'
+    //         '${objective.arguments.keys.isEmpty ? '' : '${objective.arguments.keys.map((key) => '        ${objective.argumentToPythonString(key)},').join('\n')}\n'}'
+    //         // '        node=${objective.nodes.toPythonString()},\n'
+    //         // '${objective.quadratic == true ? '' : '        quadratic=${objective.quadratic.toPythonString()},\n'}'
+    //         // '${objective.expand == true ? '' : '        expand=${objective.expand.toPythonString()},\n'}'
+    //         // '${objective.target == 'None' ? '' : '        target=${objective.target == 'None' ? 'None' : 'np.array([${objective.target}])'},\n'}'
+    //         // '${objective.derivative == false ? '' : '        derivative=${objective.derivative.toPythonString()},\n'}'
+    //         // '${objective.objectiveType == ObjectiveType.mayer ? '' : objective.quadratureRules == QuadratureRules.rectangleLeft ? '' : '        integration_rule=${objective.quadratureRules.toPythonString()},\n'}'
+    //         // '${objective.multiThread == false ? '' : '        multi_thread=${objective.multiThread.toPythonString()},\n'}'
+    //         '${generic.nbSomersaults == 1 ? '' : '        phase=$phaseIndex,\n'}'
+    //         '        weight=${objective.minimizeOrMaximize.toPythonString()}${objective.weight},\n'
+    //         '    )\n',
+    //         mode: FileMode.append);
+    //   }
+    //   for (final constraint in somersaults[phaseIndex].constraints) {
+    //     file.writeAsStringSync(
+    //         '    constraints.add(\n'
+    //         '        constraint=${constraint.fcn.toPythonString()},\n'
+    //         '${constraint.arguments.keys.isEmpty ? '' : '${constraint.arguments.keys.map((key) => '        ${constraint.argumentToPythonString(key)},').join('\n')}\n'}'
+    //         // '        node=${constraint.nodes.toPythonString()},\n'
+    //         // '${constraint.quadratic == true ? '' : '        quadratic=${constraint.quadratic.toPythonString()},\n'}'
+    //         // '${constraint.expand == true ? '' : '        expand=${constraint.expand.toPythonString()},\n'}'
+    //         // '${constraint.target == 'None' ? '' : '        target=${constraint.target == 'None' ? 'None' : 'np.array([${constraint.target}])'},\n'}'
+    //         // '${constraint.derivative == false ? '' : '        derivative=${constraint.derivative.toPythonString()},\n'}'
+    //         // '${constraint.quadratureRules == QuadratureRules.rectangleLeft ? '' : '        integration_rule=${constraint.quadratureRules.toPythonString()},\n'}'
+    //         // '${constraint.multiThread == false ? '' : '        multi_thread=${constraint.multiThread.toPythonString()},\n'}'
+    //         '${generic.nbSomersaults == 1 ? '' : '        phase=$phaseIndex,\n'}'
+    //         '${generic.nbSomersaults == 1 ? '' : '        phase=$phaseIndex,\n'}'
+    //         '    )\n',
+    //         mode: FileMode.append);
+    //   }
+    // }
     file.writeAsStringSync('\n', mode: FileMode.append);
 
     file.writeAsStringSync(

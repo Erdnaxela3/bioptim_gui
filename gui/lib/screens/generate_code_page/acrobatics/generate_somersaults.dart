@@ -1,7 +1,7 @@
+import 'package:bioptim_gui/models/acrobatics_data.dart';
 import 'package:bioptim_gui/models/acrobatics_ocp_controllers.dart';
-import 'package:bioptim_gui/models/penalty.dart';
 import 'package:bioptim_gui/widgets/acrobatics/somersault_informations.dart';
-import 'package:bioptim_gui/widgets/penalties/penalty_expander.dart';
+import 'package:bioptim_gui/widgets/penalties/test.dart';
 import 'package:bioptim_gui/widgets/utils/animated_expanding_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -13,17 +13,15 @@ class SomersaultGenerationMenu extends StatelessWidget {
   });
 
   final double width;
-  final List<dynamic> somersaultsInfo;
+  final List<Somersault> somersaultsInfo;
 
   @override
   Widget build(BuildContext context) {
-    final controllers = AcrobaticsOCPControllers.instance;
-
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        for (int i = 0; i < controllers.nbSomersaults; i++)
+        for (int i = 0; i < somersaultsInfo.length; i++)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 36),
             child: SizedBox(
@@ -40,7 +38,7 @@ class SomersaultGenerationMenu extends StatelessWidget {
   Widget _buildSomersault({
     required int somersaultIndex,
     required double width,
-    required Map<String, dynamic> somersaultInfo,
+    required Somersault somersaultInfo,
   }) {
     final controllers = AcrobaticsOCPControllers.instance;
 
@@ -66,10 +64,10 @@ class SomersaultGenerationMenu extends StatelessWidget {
           const SizedBox(height: 12),
           const Divider(),
           PenaltyExpander(
-            penaltyType: ObjectiveFcn,
+            penaltyType: Objective,
             phaseIndex: somersaultIndex,
             width: width,
-            penalties: somersaultsInfo[somersaultIndex]["objectives"],
+            penalties: somersaultsInfo[somersaultIndex].objectives,
           ),
           // const Divider(),
           // PenaltyExpander(

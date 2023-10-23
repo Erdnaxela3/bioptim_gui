@@ -1,3 +1,4 @@
+import 'package:bioptim_gui/models/acrobatics_data.dart';
 import 'package:bioptim_gui/models/acrobatics_ocp_controllers.dart';
 import 'package:bioptim_gui/widgets/utils/positive_integer_text_field.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class AcrobaticInformation extends StatelessWidget {
   });
 
   final double width;
-  final Map<String, dynamic> data;
+  final AcrobaticsData data;
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +62,7 @@ class AcrobaticInformation extends StatelessWidget {
               width: width / 2 - 6,
               child: TextField(
                 controller:
-                    TextEditingController(text: data["final_time"].toString()),
+                    TextEditingController(text: data.finalTime.toString()),
                 decoration: const InputDecoration(
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.red),
@@ -86,7 +87,7 @@ class AcrobaticInformation extends StatelessWidget {
               width: width / 2 - 6,
               child: TextField(
                 controller: TextEditingController(
-                    text: data["final_time_margin"].toString()),
+                    text: data.finalTimeMargin.toString()),
                 decoration: const InputDecoration(
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.red),

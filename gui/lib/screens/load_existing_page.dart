@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bioptim_gui/models/acrobatics_data.dart';
 import 'package:bioptim_gui/models/acrobatics_ocp_controllers.dart';
 import 'package:bioptim_gui/screens/generate_code_page/acrobatics/acrobatics_header.dart';
 import 'package:bioptim_gui/screens/generate_code_page/acrobatics/generate_somersaults.dart';
@@ -56,9 +57,10 @@ class _LoadExistingState extends State<LoadExisting> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          final data = snapshot.data;
+          final data = AcrobaticsData.fromMap(snapshot.data!);
+
           final controllers = AcrobaticsOCPControllers.instance;
-          controllers.setNbSomersaults(data!["nb_somersaults"]);
+          controllers.setNbSomersaults(data.nbSomersaults);
 
           return Scaffold(
             body: RawScrollbar(
@@ -99,7 +101,7 @@ class _HeaderBuilder extends StatelessWidget {
   });
 
   final double width;
-  final Map<String, dynamic> data;
+  final AcrobaticsData data;
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +127,7 @@ class _PhaseBuilder extends StatefulWidget {
   });
 
   final double width;
-  final Map<String, dynamic> data;
+  final AcrobaticsData data;
 
   @override
   State<_PhaseBuilder> createState() => _PhaseBuilderState();
@@ -157,7 +159,7 @@ class _PhaseBuilderState extends State<_PhaseBuilder> {
             children: [
               SomersaultGenerationMenu(
                 width: widget.width,
-                somersaultsInfo: widget.data["somersaults_info"],
+                somersaultsInfo: widget.data.somersaultInfo,
               ),
             ]),
       ),

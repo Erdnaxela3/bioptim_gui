@@ -1,3 +1,4 @@
+import 'package:bioptim_gui/models/acrobatics_data.dart';
 import 'package:bioptim_gui/widgets/utils/positive_integer_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,7 +17,7 @@ class SomersaultInformation extends StatelessWidget {
 
   final int somersaultIndex;
   final double width;
-  final Map<String, dynamic> somersaultInfo;
+  final Somersault somersaultInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +48,7 @@ class SomersaultInformation extends StatelessWidget {
           child: PositiveIntegerTextField(
             label: 'Number of half twists *',
             controller: TextEditingController(
-                text: somersaultInfo["nb_half_twists"].toString()),
+                text: somersaultInfo.nbHalfTwists.toString()),
             color: Colors.red,
             onSubmitted: (newValue) {
               if (newValue.isNotEmpty) {
@@ -64,7 +65,7 @@ class SomersaultInformation extends StatelessWidget {
               child: PositiveIntegerTextField(
                 label: 'Number of shooting points',
                 controller: TextEditingController(
-                    text: somersaultInfo["nb_shooting_points"].toString()),
+                    text: somersaultInfo.nbShootingPoints.toString()),
                 onSubmitted: (newValue) {
                   if (newValue.isNotEmpty) {
                     updateField("nb_shooting_points", newValue);
@@ -76,7 +77,7 @@ class SomersaultInformation extends StatelessWidget {
             Expanded(
               child: TextField(
                 controller: TextEditingController(
-                    text: somersaultInfo["duration"].toString()),
+                    text: somersaultInfo.duration.toString()),
                 decoration: const InputDecoration(
                     labelText: 'Phase time (s)', border: OutlineInputBorder()),
                 inputFormatters: [

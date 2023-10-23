@@ -1,3 +1,4 @@
+import 'package:bioptim_gui/models/acrobatics_data.dart';
 import 'package:bioptim_gui/widgets/acrobatics/acrobatic_bio_model_chooser.dart';
 import 'package:bioptim_gui/widgets/acrobatics/acrobatic_information.dart';
 import 'package:bioptim_gui/widgets/acrobatics/acrobatic_position_chooser.dart';
@@ -14,7 +15,7 @@ class AcrobaticsHeaderBuilder extends StatelessWidget {
   });
 
   final double width;
-  final Map<String, dynamic> data;
+  final AcrobaticsData data;
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +23,11 @@ class AcrobaticsHeaderBuilder extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AcrobaticSportTypeChooser(
-            width: width,
-            defaultValue: data["sport_type"].toString().capitalize()),
+            width: width, defaultValue: data.sportType.capitalize()),
         const SizedBox(height: 12),
         AcrobaticBioModelChooser(
           width: width,
-          defaultValue: data["model_path"] ?? "",
+          defaultValue: data.modelPath,
         ),
         const SizedBox(height: 12),
         AcrobaticInformation(
@@ -41,15 +41,14 @@ class AcrobaticsHeaderBuilder extends StatelessWidget {
                 width: width / 2 - 6,
                 child: AcrobaticTwistSideChooser(
                   width: width,
-                  defaultValue:
-                      data["preferred_twist_side"].toString().capitalize(),
+                  defaultValue: data.preferredTwistSide.capitalize(),
                 )),
             const SizedBox(width: 12),
             SizedBox(
                 width: width / 2 - 6,
                 child: AcrobaticPositionChooser(
                   width: width,
-                  defaultValue: data["position"].toString().capitalize(),
+                  defaultValue: data.position.capitalize(),
                 )),
           ],
         ),

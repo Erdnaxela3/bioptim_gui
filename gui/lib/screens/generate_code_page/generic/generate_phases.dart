@@ -1,6 +1,6 @@
+import 'package:bioptim_gui/models/acrobatics_data.dart';
 import 'package:bioptim_gui/models/decision_variables.dart';
 import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
-import 'package:bioptim_gui/models/penalty.dart';
 import 'package:bioptim_gui/widgets/decision_variable_expander.dart';
 import 'package:bioptim_gui/widgets/dynamics_chooser.dart';
 import 'package:bioptim_gui/widgets/generic_ocp/bio_model_chooser.dart';
@@ -74,19 +74,19 @@ class PhaseGenerationMenu extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           const Divider(),
-          PenaltyExpander(
-            penaltyType: ObjectiveFcn,
-            phaseIndex: phaseIndex,
-            width: width,
-            penalties: [],
-          ),
-          const Divider(),
-          PenaltyExpander(
-            penaltyType: ConstraintFcn,
-            phaseIndex: phaseIndex,
-            width: width,
-            penalties: [],
-          ),
+          // PenaltyExpander(
+          //   penaltyType: Objective,
+          //   phaseIndex: phaseIndex,
+          //   width: width,
+          //   penalties: [],
+          // ),
+          // const Divider(),
+          // PenaltyExpander(
+          //   penaltyType: Constraint,
+          //   phaseIndex: phaseIndex,
+          //   width: width,
+          //   penalties: [],
+          // ),
         ],
       ),
     );

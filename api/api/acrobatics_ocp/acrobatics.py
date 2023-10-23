@@ -2,7 +2,7 @@ import inspect
 import json
 
 import bioptim
-from bioptim import ObjectiveFcn, ConstraintFcn
+from bioptim import ObjectiveFcn
 from fastapi import APIRouter, HTTPException
 
 from acrobatics_ocp.acrobatics_responses import *
@@ -26,6 +26,7 @@ default_objective = {
     "integration_rule": "rectangle_left",
     "multi_thread": False,
     "weight": 1.0,
+    "arguments": [],
 }
 
 default_constraint = {
@@ -400,7 +401,30 @@ def get_objective_dropdown_list(somersault_index: int, objective_index: int):
             status_code=400, detail="objective_type has to be mayer or lagrange"
         )
 
-    return [e.name for e in enum]
+    # we don't implement all the objective functions for now
+    return [
+        "MINIMIZE_ANGULAR_MOMENTUM",
+        "MINIMIZE_COM_POSITION",
+        "MINIMIZE_COM_VELOCITY",
+        "MINIMIZE_CONTROL",
+        "MINIMIZE_LINEAR_MOMENTUM",
+        "MINIMIZE_MARKERS",
+        "MINIMIZE_MARKERS_ACCELERATION",
+        "MINIMIZE_MARKERS_VELOCITY",
+        "MINIMIZE_POWER",
+        "MINIMIZE_QDDOT",
+        "MINIMIZE_SEGMENT_ROTATION",
+        "MINIMIZE_SEGMENT_VELOCITY",
+        "MINIMIZE_STATE",
+        "MINIMIZE_TIME",
+        "PROPORTIONAL_CONTROL",
+        "PROPORTIONAL_STATE",
+        "SUPERIMPOSE_MARKERS",
+        "TRACK_MARKER_WITH_SEGMENT_AXIS",
+        "TRACK_SEGMENT_WITH_CUSTOM_RT",
+        "TRACK_VECTOR_ORIENTATIONS_FROM_MARKERS",
+    ]
+    # return [e.name for e in enum]
 
 
 @router.delete(
@@ -708,7 +732,13 @@ def add_constraint(somersault_index: int):
     response_model=list,
 )
 def get_constraints_dropdown_list():
-    return [e.name for e in ConstraintFcn]
+    # we don't use all the available constraints for now
+    return [
+        "CONTINUITY",
+        "TIME_CONSTRAINT",
+    ]
+    # if all constraints have to be implemented
+    # return [e.name for e in ConstraintFcn]
 
 
 @router.delete(

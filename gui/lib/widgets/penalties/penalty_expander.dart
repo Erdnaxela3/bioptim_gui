@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bioptim_gui/models/acrobatics_data.dart';
 import 'package:bioptim_gui/models/api_config.dart';
 import 'package:bioptim_gui/widgets/penalties/integration_rule_chooser.dart';
@@ -12,7 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
-class PenaltyExpander extends StatelessWidget {
+class PenaltyExpander extends StatefulWidget {
   const PenaltyExpander({
     super.key,
     required this.penaltyType,
@@ -26,8 +28,23 @@ class PenaltyExpander extends StatelessWidget {
   final double width;
   final List<Penalty> penalties;
 
+  @override
+  PenaltyExpanderState createState() => PenaltyExpanderState();
+}
+
+class PenaltyExpanderState extends State<PenaltyExpander> {
+  List<Penalty> penalties = [];
+  double width = 0;
+
+  @override
+  void initState() {
+    penalties = widget.penalties;
+    width = widget.width;
+    super.initState();
+  }
+
   String _penaltyTypeToString({required bool plural}) {
-    switch (penaltyType) {
+    switch (widget.penaltyType) {
       case Objective:
         return plural ? 'Objective functions' : 'Objective function';
       case Constraint:
@@ -38,7 +55,7 @@ class PenaltyExpander extends StatelessWidget {
   }
 
   String _penaltyTypeToEndpoint() {
-    switch (penaltyType) {
+    switch (widget.penaltyType) {
       case Objective:
         return 'objectives';
       case Constraint:
@@ -50,14 +67,12 @@ class PenaltyExpander extends StatelessWidget {
 
   Future<void> _createPenalties() async {
     final url = Uri.parse(
-        '${APIConfig.url}/acrobatics/somersaults_info/$phaseIndex/${_penaltyTypeToEndpoint()}');
+        '${APIConfig.url}/acrobatics/somersaults_info/${widget.phaseIndex}/${_penaltyTypeToEndpoint()}');
 
     final response = await http.post(url);
 
     if (response.statusCode == 200) {
-      if (kDebugMode) {
-        print("Created a penalty");
-      }
+      if (kDebugMode) print("Created a penalty");
     } else {
       throw Exception("Fetch error");
     }
@@ -90,10 +105,10 @@ class PenaltyExpander extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 24.0),
                 child: _PathTile(
                     key: ObjectKey(penalties[index]),
-                    phaseIndex: phaseIndex,
+                    phaseIndex: widget.phaseIndex,
                     penaltyIndex: index,
                     width: width,
-                    penaltyType: penaltyType,
+                    penaltyType: widget.penaltyType,
                     penalty: penalties[index]),
               )),
           const SizedBox(height: 26),
@@ -250,13 +265,23 @@ class _PathTile extends StatelessWidget {
               SizedBox(
                 width: width / 4 - 3,
                 child: TextField(
-                    controller: TextEditingController(
-                        text: (penalty as Objective).weight.abs().toString()),
-                    decoration: const InputDecoration(
-                        label: Text('Weight'), border: OutlineInputBorder()),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
-                    ]),
+                  controller: TextEditingController(
+                    text: (penalty as Objective).weight.abs().toString(),
+                  ),
+                  decoration: const InputDecoration(
+                      label: Text('Weight'), border: OutlineInputBorder()),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]')),
+                  ],
+                  onSubmitted: (value) => {
+                    http.put(
+                      Uri.parse(
+                          '${APIConfig.url}/acrobatics/somersaults_info/$phaseIndex/objectives/$penaltyIndex/weight'),
+                      headers: {'Content-Type': 'application/json'},
+                      body: json.encode({"weight": double.parse(value)}),
+                    )
+                  },
+                ),
               ),
             if (penaltyType == Objective)
               SizedBox(

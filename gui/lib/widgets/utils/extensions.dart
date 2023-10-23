@@ -9,9 +9,3 @@ extension StringExtension on String {
     return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
   }
 }
-
-extension ObjectExtension on Object {
-  String capitalize() {
-    return toString().capitalize();
-  }
-}

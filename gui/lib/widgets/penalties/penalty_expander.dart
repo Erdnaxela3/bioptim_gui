@@ -39,11 +39,11 @@ class PenaltyExpanderState extends State<PenaltyExpander> {
   List<Penalty> penalties = [];
   double width = 0;
 
-  final String endpointPrefix =
-      OptimalControlProgramControllers.instance.ocpType ==
-              OptimalControlProgramType.ocp
-          ? '/generic/phases_info' // TODO
-          : '/acrobatics/somersaults_info';
+  final String endpointPrefix = OptimalControlProgramControllers
+              .instance.ocpType ==
+          OptimalControlProgramType.ocp
+      ? '/generic/phases_info' // TODO change when api for generic is implemented
+      : '/acrobatics/somersaults_info';
 
   @override
   void initState() {
@@ -203,7 +203,7 @@ class _PathTile extends StatelessWidget {
 
     if (response.statusCode == 200) {
       if (kDebugMode) {
-        print('Created a penalty (${_penaltyTypeToEndpoint(plural: true)})');
+        print('Removed a penalty (${_penaltyTypeToEndpoint(plural: true)})');
       }
     } else {
       throw Exception("Fetch error");

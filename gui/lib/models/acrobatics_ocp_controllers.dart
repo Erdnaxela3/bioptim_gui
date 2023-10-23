@@ -37,4 +37,9 @@ class AcrobaticsOCPControllers {
   late final nbSomersaultsController = TextEditingController(text: '1');
 
   int get nbSomersaults => int.parse(nbSomersaultsController.text);
+
+  void setNbSomersaults(int value) {
+    nbSomersaultsController.text = value.toString();
+    _notifyListeners();
+  }
 }

@@ -60,6 +60,14 @@ class ObjectiveTypeRadioState extends State<ObjectiveTypeRadio> {
   @override
   Widget build(BuildContext context) {
     return Consumer<AcrobaticsData>(builder: (context, acrobaticsData, child) {
+      void updatePenalty(newValue) async {
+        final response = await _updateValue(newValue!);
+        final Penalty newObjective = Objective.fromJson(
+            json.decode(response.body) as Map<String, dynamic>);
+        acrobaticsData.updatePenalty(widget.phaseIndex, "objective",
+            widget.objectiveIndex, newObjective);
+      }
+
       return Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -69,11 +77,7 @@ class ObjectiveTypeRadioState extends State<ObjectiveTypeRadio> {
                 value: "mayer",
                 groupValue: _selectedValue,
                 onChanged: (newValue) async {
-                  final response = await _updateValue(newValue!);
-                  final Penalty newObjective = Objective.fromJson(
-                      json.decode(response.body) as Map<String, dynamic>);
-                  acrobaticsData.updatePenalty(widget.phaseIndex, "objective",
-                      widget.objectiveIndex, newObjective);
+                  updatePenalty(newValue);
                 },
               ),
               const Text("\u2133"), // German mark M
@@ -85,11 +89,7 @@ class ObjectiveTypeRadioState extends State<ObjectiveTypeRadio> {
                 value: "lagrange",
                 groupValue: _selectedValue,
                 onChanged: (newValue) async {
-                  final response = await _updateValue(newValue!);
-                  final Penalty newObjective = Objective.fromJson(
-                      json.decode(response.body) as Map<String, dynamic>);
-                  acrobaticsData.updatePenalty(widget.phaseIndex, "objective",
-                      widget.objectiveIndex, newObjective);
+                  updatePenalty(newValue);
                 },
               ),
               const Text("\u2112"), // Laplace L

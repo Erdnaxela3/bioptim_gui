@@ -51,7 +51,6 @@ class AcrobaticsData extends ChangeNotifier {
       somersaultInfo[somersaultIndex].constraints =
           penalties as List<Constraint>;
     }
-
     notifyListeners();
   }
 
@@ -69,7 +68,7 @@ class AcrobaticsData extends ChangeNotifier {
   }
 }
 
-class Somersault extends ChangeNotifier {
+class Somersault {
   int nbShootingPoints;
   int nbHalfTwists;
   double duration;
@@ -90,8 +89,8 @@ class Somersault extends ChangeNotifier {
         }).toList();
 }
 
-abstract class Penalty extends ChangeNotifier {
-  String _penaltyType;
+abstract class Penalty {
+  String penaltyType;
   String nodes;
   bool quadratic;
   bool expand;
@@ -99,10 +98,10 @@ abstract class Penalty extends ChangeNotifier {
   bool derivative;
   dynamic target;
   String integrationRule;
-  List<Argument> _arguments;
+  List<Argument> arguments;
 
   Penalty.fromJson(Map<String, dynamic> penaltyData)
-      : _penaltyType = penaltyData["penalty_type"],
+      : penaltyType = penaltyData["penalty_type"],
         nodes = penaltyData["nodes"],
         quadratic = penaltyData["quadratic"],
         expand = penaltyData["expand"],
@@ -110,25 +109,12 @@ abstract class Penalty extends ChangeNotifier {
         derivative = penaltyData["derivative"],
         target = penaltyData["target"],
         integrationRule = penaltyData["integration_rule"],
-        _arguments =
-            (penaltyData["arguments"] as List<dynamic>).map((argument) {
+        arguments = (penaltyData["arguments"] as List<dynamic>).map((argument) {
           return Argument.fromJson(argument);
         }).toList();
 
   String penaltyTypeToString() {
     return "";
-  }
-
-  String get penaltyType => _penaltyType;
-  set penaltyType(String value) {
-    _penaltyType = value;
-    notifyListeners();
-  }
-
-  List<Argument> get arguments => _arguments;
-  set arguments(List<Argument> value) {
-    _arguments = value;
-    notifyListeners();
   }
 }
 

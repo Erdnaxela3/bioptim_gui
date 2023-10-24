@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:bioptim_gui/models/acrobatics_data.dart';
 import 'package:bioptim_gui/models/api_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class ObjectiveTypeRadio extends StatefulWidget {
   const ObjectiveTypeRadio({
@@ -30,7 +32,7 @@ class ObjectiveTypeRadioState extends State<ObjectiveTypeRadio> {
     _selectedValue = widget.value;
   }
 
-  Future<void> _updateValue(String value) async {
+  Future<http.Response> _updateValue(String value) async {
     final url = Uri.parse(
         '${APIConfig.url}/acrobatics/somersaults_info/${widget.phaseIndex}/objectives/${widget.objectiveIndex}/objective_type');
     final headers = {'Content-Type': 'application/json'};
@@ -47,44 +49,54 @@ class ObjectiveTypeRadioState extends State<ObjectiveTypeRadio> {
         print(
             'somersault ${widget.phaseIndex}\'s objective ${widget.objectiveIndex} changed to value $value');
       }
+
+      return response;
     } else {
-      if (kDebugMode) {
-        print(
-            'Error while changing somersault ${widget.phaseIndex}\'s objective ${widget.objectiveIndex} to value $value');
-      }
+      throw Exception(
+          'Error while changing somersault ${widget.phaseIndex}\'s objective ${widget.objectiveIndex} to value $value');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Radio<String>(
-              value: "mayer",
-              groupValue: _selectedValue,
-              onChanged: (newValue) {
-                _updateValue(newValue!);
-              },
-            ),
-            const Text("\u2133"), // German mark M
-          ],
-        ),
-        Row(
-          children: [
-            Radio<String>(
-              value: "lagrange",
-              groupValue: _selectedValue,
-              onChanged: (newValue) {
-                _updateValue(newValue!);
-              },
-            ),
-            const Text("\u2112"), // Laplace L
-          ],
-        ),
-      ],
-    );
+    return Consumer<AcrobaticsData>(builder: (context, acrobaticsData, child) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Radio<String>(
+                value: "mayer",
+                groupValue: _selectedValue,
+                onChanged: (newValue) async {
+                  final response = await _updateValue(newValue!);
+                  final Penalty newObjective = Objective.fromJson(
+                      json.decode(response.body) as Map<String, dynamic>);
+                  acrobaticsData.updatePenalty(widget.phaseIndex, "objective",
+                      widget.objectiveIndex, newObjective);
+                },
+              ),
+              const Text("\u2133"), // German mark M
+            ],
+          ),
+          Row(
+            children: [
+              Radio<String>(
+                value: "lagrange",
+                groupValue: _selectedValue,
+                onChanged: (newValue) async {
+                  final response = await _updateValue(newValue!);
+                  final Penalty newObjective = Objective.fromJson(
+                      json.decode(response.body) as Map<String, dynamic>);
+                  acrobaticsData.updatePenalty(widget.phaseIndex, "objective",
+                      widget.objectiveIndex, newObjective);
+                },
+              ),
+              const Text("\u2112"), // Laplace L
+            ],
+          ),
+        ],
+      );
+    });
   }
 }

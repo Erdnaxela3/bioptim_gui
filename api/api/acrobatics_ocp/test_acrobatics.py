@@ -101,7 +101,7 @@ def test_put_nb_somersault_zero():
 def test_put_nb_somersault():
     response = client.put("/acrobatics/nb_somersaults/", json={"nb_somersaults": 2})
     assert response.status_code == 200, response
-    assert response.json() == {"nb_somersaults": 2}
+    assert response.json()["nb_somersaults"] == 2
 
     data = json.load(open("acrobatics_data.json"))
     assert data["nb_somersaults"] == 2
@@ -270,7 +270,7 @@ def test_base_info():
 def test_add_somersault():
     response = client.put("/acrobatics/nb_somersaults/", json={"nb_somersaults": 2})
     assert response.status_code == 200, response
-    assert response.json() == {"nb_somersaults": 2}
+    assert response.json()["nb_somersaults"] == 2
 
     response = client.get("/acrobatics/")
     assert response.status_code == 200, response
@@ -295,7 +295,7 @@ def test_add_multiple_somersault():
     many = 10
     response = client.put("/acrobatics/nb_somersaults/", json={"nb_somersaults": many})
     assert response.status_code == 200, response
-    assert response.json() == {"nb_somersaults": many}
+    assert response.json()["nb_somersaults"] == many
 
     response = client.get("/acrobatics/")
     assert response.status_code == 200, response
@@ -317,7 +317,7 @@ def test_add_multiple_somersault():
 def test_remove_one_somersault_2to1():
     response = client.put("/acrobatics/nb_somersaults/", json={"nb_somersaults": 2})
     assert response.status_code == 200, response
-    assert response.json() == {"nb_somersaults": 2}
+    assert response.json()["nb_somersaults"] == 2
 
     response = client.get("/acrobatics/")
     assert response.status_code == 200, response
@@ -337,7 +337,7 @@ def test_remove_one_somersault_2to1():
 
     response = client.put("/acrobatics/nb_somersaults/", json={"nb_somersaults": 1})
     assert response.status_code == 200, response
-    assert response.json() == {"nb_somersaults": 1}
+    assert response.json()["nb_somersaults"] == 1
 
     response = client.get("/acrobatics/")
     assert response.status_code == 200, response
@@ -358,7 +358,7 @@ def test_remove_one_somersault_2to1():
 def test_remove_single_somersault():
     response = client.put("/acrobatics/nb_somersaults/", json={"nb_somersaults": 0})
     assert response.status_code == 200, response
-    assert response.json() == {"nb_somersaults": 0}
+    assert response.json()["nb_somersaults"] == 0
 
     response = client.get("/acrobatics/")
     assert response.status_code == 200, response
@@ -377,7 +377,7 @@ def test_add_and_remove_multiple_somersault():
     many = 10
     response = client.put("/acrobatics/nb_somersaults/", json={"nb_somersaults": many})
     assert response.status_code == 200, response
-    assert response.json() == {"nb_somersaults": many}
+    assert response.json()["nb_somersaults"] == many
 
     response = client.get("/acrobatics/")
     assert response.status_code == 200, response
@@ -397,7 +397,7 @@ def test_add_and_remove_multiple_somersault():
 
     response = client.put("/acrobatics/nb_somersaults/", json={"nb_somersaults": 1})
     assert response.status_code == 200, response
-    assert response.json() == {"nb_somersaults": 1}
+    assert response.json()["nb_somersaults"] == 1
 
     response = client.get("/acrobatics/")
     assert response.status_code == 200, response

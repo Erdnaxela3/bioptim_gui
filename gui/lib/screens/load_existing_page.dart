@@ -7,6 +7,7 @@ import 'package:bioptim_gui/models/api_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class LoadExisting extends StatefulWidget {
   const LoadExisting({super.key, this.columnWidth = 400.0});
@@ -19,6 +20,7 @@ class LoadExisting extends StatefulWidget {
 
 class _LoadExistingState extends State<LoadExisting> {
   final _verticalScroll = ScrollController();
+  late Future<AcrobaticsData> _data;
 
   @override
   void dispose() {
@@ -29,6 +31,7 @@ class _LoadExistingState extends State<LoadExisting> {
   @override
   void initState() {
     super.initState();
+    _data = _fetchData();
   }
 
   Future<AcrobaticsData> _fetchData() async {
@@ -36,9 +39,7 @@ class _LoadExistingState extends State<LoadExisting> {
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
-      if (kDebugMode) {
-        print("Data fetch success.");
-      }
+      if (kDebugMode) print("Data fetch success.");
 
       final data = json.decode(response.body);
       return AcrobaticsData.fromJson(data);
@@ -50,7 +51,7 @@ class _LoadExistingState extends State<LoadExisting> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<AcrobaticsData>(
-      future: _fetchData(),
+      future: _data,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
@@ -61,32 +62,33 @@ class _LoadExistingState extends State<LoadExisting> {
           final controllers = AcrobaticsOCPControllers.instance;
           controllers.setNbSomersaults(data.nbSomersaults);
 
-          return Scaffold(
-            body: RawScrollbar(
-              controller: _verticalScroll,
-              thumbVisibility: true,
-              thumbColor: Theme.of(context).colorScheme.secondary,
-              thickness: 8,
-              radius: const Radius.circular(25),
-              child: SingleChildScrollView(
-                controller: _verticalScroll,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 12),
-                    _HeaderBuilder(width: widget.columnWidth, data: data),
-                    const SizedBox(height: 12),
-                    const Divider(),
-                    const SizedBox(height: 12),
-                    _PhaseBuilder(
-                      width: widget.columnWidth,
-                      data: data,
+          return ChangeNotifierProvider<AcrobaticsData>(
+              create: (context) => data,
+              child: Scaffold(
+                body: RawScrollbar(
+                  controller: _verticalScroll,
+                  thumbVisibility: true,
+                  thumbColor: Theme.of(context).colorScheme.secondary,
+                  thickness: 8,
+                  radius: const Radius.circular(25),
+                  child: SingleChildScrollView(
+                    controller: _verticalScroll,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 12),
+                        _HeaderBuilder(width: widget.columnWidth),
+                        const SizedBox(height: 12),
+                        const Divider(),
+                        const SizedBox(height: 12),
+                        _PhaseBuilder(
+                          width: widget.columnWidth,
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          );
+              ));
         }
       },
     );
@@ -96,11 +98,9 @@ class _LoadExistingState extends State<LoadExisting> {
 class _HeaderBuilder extends StatelessWidget {
   const _HeaderBuilder({
     required this.width,
-    required this.data,
   });
 
   final double width;
-  final AcrobaticsData data;
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +111,7 @@ class _HeaderBuilder extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 12),
-            AcrobaticsHeaderBuilder(width: width, data: data),
+            AcrobaticsHeaderBuilder(width: width),
           ],
         ),
       ),
@@ -122,11 +122,9 @@ class _HeaderBuilder extends StatelessWidget {
 class _PhaseBuilder extends StatefulWidget {
   const _PhaseBuilder({
     required this.width,
-    required this.data,
   });
 
   final double width;
-  final AcrobaticsData data;
 
   @override
   State<_PhaseBuilder> createState() => _PhaseBuilderState();
@@ -158,7 +156,6 @@ class _PhaseBuilderState extends State<_PhaseBuilder> {
             children: [
               SomersaultGenerationMenu(
                 width: widget.width,
-                somersaultsInfo: widget.data.somersaultInfo,
               ),
             ]),
       ),

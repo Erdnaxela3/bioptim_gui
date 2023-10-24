@@ -1,17 +1,18 @@
 import 'package:bioptim_gui/widgets/utils/extensions.dart';
+import 'package:flutter/foundation.dart';
 
-class AcrobaticsData {
-  int nbSomersaults;
+class AcrobaticsData extends ChangeNotifier {
+  int _nbSomersaults;
   String modelPath;
   double finalTime;
   double finalTimeMargin;
   String position;
   String sportType;
   String preferredTwistSide;
-  List<Somersault> somersaultInfo;
+  List<Somersault> somersaultInfo = [];
 
   AcrobaticsData.fromJson(Map<String, dynamic> data)
-      : nbSomersaults = data["nb_somersaults"],
+      : _nbSomersaults = data["nb_somersaults"],
         modelPath = data["model_path"],
         finalTime = data["final_time"],
         finalTimeMargin = data["final_time_margin"],
@@ -22,9 +23,53 @@ class AcrobaticsData {
             (data["somersaults_info"] as List<dynamic>).map((somersault) {
           return Somersault.fromJson(somersault);
         }).toList();
+
+  int get nbSomersaults => _nbSomersaults;
+  set nbSomersaults(int value) {
+    _nbSomersaults = value;
+    notifyListeners();
+  }
+
+  void updateData(AcrobaticsData newData) {
+    nbSomersaults = newData.nbSomersaults;
+    modelPath = newData.modelPath;
+    finalTime = newData.finalTime;
+    finalTimeMargin = newData.finalTimeMargin;
+    position = newData.position;
+    sportType = newData.sportType;
+    preferredTwistSide = newData.preferredTwistSide;
+    somersaultInfo = List.from(newData.somersaultInfo);
+
+    notifyListeners();
+  }
+
+  void updatePenalties(
+      int somersaultIndex, String penaltyType, List<Penalty> penalties) {
+    if (penaltyType == "objective") {
+      somersaultInfo[somersaultIndex].objectives = penalties as List<Objective>;
+    } else {
+      somersaultInfo[somersaultIndex].constraints =
+          penalties as List<Constraint>;
+    }
+
+    notifyListeners();
+  }
+
+  void updatePenalty(int somersaultIndex, String penaltyType, int penaltyIndex,
+      Penalty penalty) {
+    if (penaltyType == "objective") {
+      somersaultInfo[somersaultIndex].objectives[penaltyIndex] =
+          penalty as Objective;
+    } else {
+      somersaultInfo[somersaultIndex].constraints[penaltyIndex] =
+          penalty as Constraint;
+    }
+
+    notifyListeners();
+  }
 }
 
-class Somersault {
+class Somersault extends ChangeNotifier {
   int nbShootingPoints;
   int nbHalfTwists;
   double duration;
@@ -45,8 +90,8 @@ class Somersault {
         }).toList();
 }
 
-abstract class Penalty {
-  String penaltyType;
+abstract class Penalty extends ChangeNotifier {
+  String _penaltyType;
   String nodes;
   bool quadratic;
   bool expand;
@@ -54,10 +99,10 @@ abstract class Penalty {
   bool derivative;
   dynamic target;
   String integrationRule;
-  List<Argument> arguments;
+  List<Argument> _arguments;
 
   Penalty.fromJson(Map<String, dynamic> penaltyData)
-      : penaltyType = penaltyData["penalty_type"],
+      : _penaltyType = penaltyData["penalty_type"],
         nodes = penaltyData["nodes"],
         quadratic = penaltyData["quadratic"],
         expand = penaltyData["expand"],
@@ -65,12 +110,25 @@ abstract class Penalty {
         derivative = penaltyData["derivative"],
         target = penaltyData["target"],
         integrationRule = penaltyData["integration_rule"],
-        arguments = (penaltyData["arguments"] as List<dynamic>).map((argument) {
+        _arguments =
+            (penaltyData["arguments"] as List<dynamic>).map((argument) {
           return Argument.fromJson(argument);
         }).toList();
 
   String penaltyTypeToString() {
     return "";
+  }
+
+  String get penaltyType => _penaltyType;
+  set penaltyType(String value) {
+    _penaltyType = value;
+    notifyListeners();
+  }
+
+  List<Argument> get arguments => _arguments;
+  set arguments(List<Argument> value) {
+    _arguments = value;
+    notifyListeners();
   }
 }
 

@@ -4,35 +4,36 @@ import 'package:bioptim_gui/widgets/acrobatics/somersault_informations.dart';
 import 'package:bioptim_gui/widgets/penalties/penalty_expander.dart';
 import 'package:bioptim_gui/widgets/utils/animated_expanding_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SomersaultGenerationMenu extends StatelessWidget {
   const SomersaultGenerationMenu({
     super.key,
     required this.width,
-    required this.somersaultsInfo,
   });
 
   final double width;
-  final List<Somersault> somersaultsInfo;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        for (int i = 0; i < somersaultsInfo.length; i++)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 36),
-            child: SizedBox(
-                width: width,
-                child: _buildSomersault(
-                    somersaultIndex: i,
-                    width: width,
-                    somersaultInfo: somersaultsInfo[i])),
-          ),
-      ],
-    );
+    return Consumer<AcrobaticsData>(builder: (context, acrobaticsData, child) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          for (int i = 0; i < acrobaticsData.somersaultInfo.length; i++)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 36),
+              child: SizedBox(
+                  width: width,
+                  child: _buildSomersault(
+                      somersaultIndex: i,
+                      width: width,
+                      somersaultInfo: acrobaticsData.somersaultInfo[i])),
+            ),
+        ],
+      );
+    });
   }
 
   Widget _buildSomersault({
@@ -59,7 +60,6 @@ class SomersaultGenerationMenu extends StatelessWidget {
           SomersaultInformation(
             somersaultIndex: somersaultIndex,
             width: width,
-            somersaultInfo: somersaultInfo,
           ),
           const SizedBox(height: 12),
           const Divider(),
@@ -67,14 +67,12 @@ class SomersaultGenerationMenu extends StatelessWidget {
             penaltyType: Objective,
             phaseIndex: somersaultIndex,
             width: width,
-            penalties: somersaultsInfo[somersaultIndex].objectives,
           ),
           const Divider(),
           PenaltyExpander(
             penaltyType: Constraint,
             phaseIndex: somersaultIndex,
             width: width,
-            penalties: somersaultsInfo[somersaultIndex].constraints,
           ),
         ],
       ),

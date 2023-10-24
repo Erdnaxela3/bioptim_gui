@@ -190,7 +190,7 @@ def get_acrobatics_data():
     return data
 
 
-@router.put("/nb_somersaults", response_model=NbSomersaultsResponse)
+@router.put("/nb_somersaults", response_model=dict)
 def update_nb_somersaults(nb_somersaults: NbSomersaultsRequest):
     old_value = read_acrobatics_data("nb_somersaults")
     new_value = nb_somersaults.nb_somersaults
@@ -203,7 +203,9 @@ def update_nb_somersaults(nb_somersaults: NbSomersaultsRequest):
         remove_somersault_info(old_value - new_value)
 
     update_acrobatics_data("nb_somersaults", new_value)
-    return NbSomersaultsResponse(nb_somersaults=new_value)
+
+    data = read_acrobatics_data()
+    return data
 
 
 @router.put("/model_path", response_model=ModelPathResponse)
@@ -442,7 +444,7 @@ def delete_objective(somersault_index: int, objective_index: int):
 
 @router.put(
     "/somersaults_info/{somersault_index}/objectives/{objective_index}/objective_type",
-    response_model=ObjectiveTypeResponse,
+    response_model=dict,
 )
 def put_objective_type(
     somersault_index: int, objective_index: int, objective_type: ObjectiveTypeRequest
@@ -463,7 +465,8 @@ def put_objective_type(
     ] = arguments
 
     update_acrobatics_data("somersaults_info", somersaults_info)
-    return ObjectiveTypeResponse(objective_type=objective_type.objective_type)
+    data = read_acrobatics_data()
+    return data["somersaults_info"][somersault_index]["objectives"][objective_index]
 
 
 # common arguments
@@ -471,7 +474,7 @@ def put_objective_type(
 
 @router.put(
     "/somersaults_info/{somersault_index}/objectives/{objective_index}/penalty_type",
-    response_model=PenaltyTypeResponse,
+    response_model=dict,
 )
 def put_objective_penalty_type(
     somersault_index: int, objective_index: int, penalty_type: ObjectiveFcnRequest
@@ -483,8 +486,11 @@ def put_objective_penalty_type(
         "penalty_type"
     ] = penalty_type_value
 
+    objective_type = somersaults_info[somersault_index]["objectives"][objective_index][
+        "objective_type"
+    ]
     arguments = obj_arguments(
-        objective_type="lagrange", penalty_type=penalty_type_value
+        objective_type=objective_type, penalty_type=penalty_type_value
     )
 
     somersaults_info[somersault_index]["objectives"][objective_index][
@@ -492,7 +498,9 @@ def put_objective_penalty_type(
     ] = arguments
 
     update_acrobatics_data("somersaults_info", somersaults_info)
-    return PenaltyTypeResponse(penalty_type=penalty_type_value)
+
+    data = read_acrobatics_data()
+    return data["somersaults_info"][somersault_index]["objectives"][objective_index]
 
 
 @router.put(
@@ -759,7 +767,7 @@ def delete_constraint(somersault_index: int, constraint_index: int):
 
 @router.put(
     "/somersaults_info/{somersault_index}/constraints/{constraint_index}/penalty_type",
-    response_model=PenaltyTypeResponse,
+    response_model=dict,
 )
 def put_constraint_penalty_type(
     somersault_index: int, constraint_index: int, penalty_type: ConstraintFcnRequest
@@ -776,7 +784,8 @@ def put_constraint_penalty_type(
     ] = arguments
 
     update_acrobatics_data("somersaults_info", somersaults_info)
-    return PenaltyTypeResponse(penalty_type=penalty_type_value)
+    data = read_acrobatics_data()
+    return data["somersaults_info"][somersault_index]["constraints"][constraint_index]
 
 
 @router.put(

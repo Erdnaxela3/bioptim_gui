@@ -17,6 +17,7 @@ class CustomHttpDropdown extends StatefulWidget {
     required this.requestKey,
     this.color = Colors.black,
     this.customStringFormatting = _defaultToString,
+    this.customCallBack,
   });
 
   final String title;
@@ -30,6 +31,8 @@ class CustomHttpDropdown extends StatefulWidget {
 
   final Function(String) customStringFormatting;
   static String _defaultToString(String s) => s.toString().toLowerCase();
+
+  final Function(http.Response)? customCallBack;
 
   @override
   CustomHttpDropdownState createState() => CustomHttpDropdownState();
@@ -78,6 +81,8 @@ class CustomHttpDropdownState extends State<CustomHttpDropdown> {
       if (kDebugMode) {
         print('${widget.title} changed to value $requestValue');
       }
+
+      widget.customCallBack!(response);
     } else {
       if (kDebugMode) {
         print('Error while changing ${widget.title} to value $requestValue');

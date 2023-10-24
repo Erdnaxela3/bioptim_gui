@@ -149,7 +149,6 @@ class _PhaseBuilderState extends State<_PhaseBuilder> {
                   OptimalControlProgramType.abrobaticsOCP)
                 SomersaultGenerationMenu(
                   width: widget.width,
-                  somersaultsInfo: const [],
                 ),
             ]),
       ),

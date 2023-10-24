@@ -127,6 +127,31 @@ max_to_originial_dict = {
         "ALIGN_MARKERS_WITH_VECTOR_PERPENDICULAR" : "TRACK_VECTOR_ORIENTATIONS_FROM_MARKERS",
 }
 
+min_to_max_dict = {
+        "MINIMIZE_ANGULAR_MOMENTUM": "MAXIMIZE_ANGULAR_MOMENTUM",
+        "MINIMIZE_COM_POSITION": "MAXIMIZE_COM_POSITION",
+        "MINIMIZE_COM_VELOCITY": "MAXIMIZE_COM_VELOCITY",
+        "MINIMIZE_CONTROL" : "MAXIMIZE_CONTROL",
+        "MINIMIZE_LINEAR_MOMENTUM" : "MAXIMIZE_LINEAR_MOMENTUM",
+        "MINIMIZE_MARKERS" : "MAXIMIZE_MARKERS",
+        "MINIMIZE_MARKERS_ACCELERATION" : "MAXIMIZE_MARKERS_ACCELERATION",
+        "MINIMIZE_MARKERS_VELOCITY" : "MAXIMIZE_MARKERS_VELOCITY",
+        "MINIMIZE_POWER" : "MAXIMIZE_POWER",
+        "MINIMIZE_QDDOT" : "MAXIMIZE_QDDOT",
+        "MINIMIZE_SEGMENT_ROTATION" : "MAXIMIZE_SEGMENT_ROTATION",
+        "MINIMIZE_SEGMENT_VELOCITY" : "MAXIMIZE_SEGMENT_VELOCITY",
+        "MINIMIZE_STATE": "MAXIMIZE_STATE",
+        "MINIMIZE_TIME" : "MAXIMIZE_TIME",
+        "PROPORTIONAL_CONTROL": "PROPORTIONAL_CONTROL",
+        "PROPORTIONAL_STATE": "PROPORTIONAL_STATE",
+        "MINIMIZE_MARKER_DISTANCE": "MAXIMIZE_MARKER_DISTANCE",
+        "ALIGN_MARKER_WITH_SEGMENT_AXIS":"MARKER_AWAY_FROM_SEGMENT_AXIS",
+        "ALIGN_SEGMENT_WITH_CUSTOM_RT":"SEGMENT_PERPENDICULAR_WITH_CUSTOM_RT",
+        "ALIGN_MARKERS_WITH_VECTOR" : "ALIGN_MARKERS_WITH_VECTOR_PERPENDICULAR",
+}
+
+max_to_min_dict = { v: k for k,v in min_to_max_dict.items()}
+
 def get_args(penalty_fcn) -> list:
     penalty_fcn = penalty_fcn.value[0]
     # arguments
@@ -447,6 +472,8 @@ def get_objective_dropdown_list(somersault_index: int, objective_index: int):
         raise HTTPException(
             status_code=400, detail="objective_type has to be mayer or lagrange"
         )
+    
+    # weight = objective["weight"]
 
     # we don't implement all the objective functions for now
     return [
@@ -673,7 +700,7 @@ def put_objective_weight(
 
 @router.put(
     "/somersaults_info/{somersault_index}/objectives/{objective_index}/weight/maximize",
-    response_model=WeightResponse,
+    response_model=dict,
 )
 def put_objective_weight_maximize(somersault_index: int, objective_index: int):
     somersaults_info = read_acrobatics_data("somersaults_info")
@@ -686,12 +713,12 @@ def put_objective_weight_maximize(somersault_index: int, objective_index: int):
         "weight"
     ] = new_weight
     update_acrobatics_data("somersaults_info", somersaults_info)
-    return WeightResponse(weight=new_weight)
+    return somersaults_info[somersault_index]["objectives"][objective_index]
 
 
 @router.put(
     "/somersaults_info/{somersault_index}/objectives/{objective_index}/weight/minimize",
-    response_model=WeightResponse,
+    response_model=dict,
 )
 def put_objective_weight_minimize(somersault_index: int, objective_index: int):
     somersaults_info = read_acrobatics_data("somersaults_info")
@@ -704,7 +731,7 @@ def put_objective_weight_minimize(somersault_index: int, objective_index: int):
         "weight"
     ] = new_weight
     update_acrobatics_data("somersaults_info", somersaults_info)
-    return WeightResponse(weight=new_weight)
+    return somersaults_info[somersault_index]["objectives"][objective_index]
 
 
 @router.get(

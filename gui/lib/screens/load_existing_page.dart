@@ -31,7 +31,7 @@ class _LoadExistingState extends State<LoadExisting> {
     super.initState();
   }
 
-  Future<Map<String, dynamic>> _fetchData() async {
+  Future<AcrobaticsData> _fetchData() async {
     final url = Uri.parse('${APIConfig.url}/acrobatics');
     final response = await http.get(url);
 
@@ -41,7 +41,7 @@ class _LoadExistingState extends State<LoadExisting> {
       }
 
       final data = json.decode(response.body);
-      return data;
+      return AcrobaticsData.fromJson(data);
     } else {
       throw Exception("Fetch error");
     }
@@ -49,7 +49,7 @@ class _LoadExistingState extends State<LoadExisting> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, dynamic>>(
+    return FutureBuilder<AcrobaticsData>(
       future: _fetchData(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -57,7 +57,7 @@ class _LoadExistingState extends State<LoadExisting> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          final data = AcrobaticsData.fromMap(snapshot.data!);
+          final data = snapshot.data!;
           final controllers = AcrobaticsOCPControllers.instance;
           controllers.setNbSomersaults(data.nbSomersaults);
 

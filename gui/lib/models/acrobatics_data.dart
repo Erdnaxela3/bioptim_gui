@@ -10,7 +10,7 @@ class AcrobaticsData {
   String preferredTwistSide;
   List<Somersault> somersaultInfo;
 
-  AcrobaticsData.fromMap(Map<String, dynamic> data)
+  AcrobaticsData.fromJson(Map<String, dynamic> data)
       : nbSomersaults = data["nb_somersaults"],
         modelPath = data["model_path"],
         finalTime = data["final_time"],
@@ -20,7 +20,7 @@ class AcrobaticsData {
         preferredTwistSide = data["preferred_twist_side"],
         somersaultInfo =
             (data["somersaults_info"] as List<dynamic>).map((somersault) {
-          return Somersault.fromMap(somersault);
+          return Somersault.fromJson(somersault);
         }).toList();
 }
 
@@ -31,17 +31,17 @@ class Somersault {
   List<Objective> objectives;
   List<Constraint> constraints;
 
-  Somersault.fromMap(Map<String, dynamic> somersaultData)
+  Somersault.fromJson(Map<String, dynamic> somersaultData)
       : nbShootingPoints = somersaultData["nb_shooting_points"],
         nbHalfTwists = somersaultData["nb_half_twists"],
         duration = somersaultData["duration"],
         objectives =
             (somersaultData["objectives"] as List<dynamic>).map((objective) {
-          return Objective.fromMap(objective);
+          return Objective.fromJson(objective);
         }).toList(),
         constraints =
             (somersaultData["constraints"] as List<dynamic>).map((constraint) {
-          return Constraint.fromMap(constraint);
+          return Constraint.fromJson(constraint);
         }).toList();
 }
 
@@ -56,7 +56,7 @@ abstract class Penalty {
   String integrationRule;
   List<Argument> arguments;
 
-  Penalty.fromMap(Map<String, dynamic> penaltyData)
+  Penalty.fromJson(Map<String, dynamic> penaltyData)
       : penaltyType = penaltyData["penalty_type"],
         nodes = penaltyData["nodes"],
         quadratic = penaltyData["quadratic"],
@@ -66,7 +66,7 @@ abstract class Penalty {
         target = penaltyData["target"],
         integrationRule = penaltyData["integration_rule"],
         arguments = (penaltyData["arguments"] as List<dynamic>).map((argument) {
-          return Argument.fromMap(argument);
+          return Argument.fromJson(argument);
         }).toList();
 
   String penaltyTypeToString() {
@@ -79,7 +79,7 @@ class Argument {
   String type;
   String value;
 
-  Argument.fromMap(Map<String, dynamic> argumentData)
+  Argument.fromJson(Map<String, dynamic> argumentData)
       : name = argumentData["name"],
         type = argumentData["type"],
         value = argumentData["value"].toString();
@@ -89,10 +89,10 @@ class Objective extends Penalty {
   String objectiveType;
   double weight;
 
-  Objective.fromMap(Map<String, dynamic> objectiveData)
+  Objective.fromJson(Map<String, dynamic> objectiveData)
       : objectiveType = objectiveData["objective_type"],
         weight = objectiveData["weight"],
-        super.fromMap(objectiveData);
+        super.fromJson(objectiveData);
 
   @override
   String penaltyTypeToString() {
@@ -101,8 +101,8 @@ class Objective extends Penalty {
 }
 
 class Constraint extends Penalty {
-  Constraint.fromMap(Map<String, dynamic> constraintData)
-      : super.fromMap(constraintData);
+  Constraint.fromJson(Map<String, dynamic> constraintData)
+      : super.fromJson(constraintData);
 
   @override
   String penaltyTypeToString() {

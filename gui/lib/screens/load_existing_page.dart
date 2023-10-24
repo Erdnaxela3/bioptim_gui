@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:bioptim_gui/models/acrobatics_data.dart';
-import 'package:bioptim_gui/models/acrobatics_ocp_controllers.dart';
 import 'package:bioptim_gui/screens/generate_code_page/acrobatics/acrobatics_header.dart';
 import 'package:bioptim_gui/screens/generate_code_page/acrobatics/generate_somersaults.dart';
 import 'package:bioptim_gui/models/api_config.dart';
@@ -59,8 +58,6 @@ class _LoadExistingState extends State<LoadExisting> {
           return Text('Error: ${snapshot.error}');
         } else {
           final data = snapshot.data!;
-          final controllers = AcrobaticsOCPControllers.instance;
-          controllers.setNbSomersaults(data.nbSomersaults);
 
           return ChangeNotifierProvider<AcrobaticsData>(
               create: (context) => data,

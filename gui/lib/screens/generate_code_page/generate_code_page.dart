@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:bioptim_gui/models/acrobatics_ocp_controllers.dart';
 import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
 import 'package:bioptim_gui/models/optimal_control_program_type.dart';
 import 'package:bioptim_gui/models/python_interface.dart';
@@ -37,7 +36,6 @@ class _GenerateCodeState extends State<GenerateCode> {
     PythonInterface.instance.registerToStatusChanged((status) => forceRedraw());
     OptimalControlProgramControllers.instance
         .registerToStatusChanged(forceRedraw);
-    AcrobaticsOCPControllers.instance.registerToStatusChanged(forceRedraw);
   }
 
   void forceRedraw() {
@@ -181,12 +179,10 @@ class _BuildTraillingState extends State<_BuildTrailling> {
 
   Widget _buildExportOrRunScriptButton() {
     final controllers = OptimalControlProgramControllers.instance;
-    final acrobaticsControllers = AcrobaticsOCPControllers.instance;
 
     if ((controllers.ocpType == OptimalControlProgramType.ocp &&
             controllers.mustExport) ||
-        (controllers.ocpType == OptimalControlProgramType.abrobaticsOCP &&
-            acrobaticsControllers.mustExport) ||
+        (controllers.ocpType == OptimalControlProgramType.abrobaticsOCP) ||
         _scriptPath == null) {
       return ElevatedButton(
           onPressed: _onExportFile, child: const Text('Export script'));
@@ -250,7 +246,6 @@ class _BuildTraillingState extends State<_BuildTrailling> {
 
   void _onExportFile() async {
     final controllers = OptimalControlProgramControllers.instance;
-    final acrobaticsControllers = AcrobaticsOCPControllers.instance;
 
     _scriptPath = await FilePicker.platform.saveFile(
       allowedExtensions: ['py'],
@@ -261,7 +256,6 @@ class _BuildTraillingState extends State<_BuildTrailling> {
     if (controllers.ocpType == OptimalControlProgramType.ocp) {
       controllers.exportScript(_scriptPath!);
     } else if (controllers.ocpType == OptimalControlProgramType.abrobaticsOCP) {
-      acrobaticsControllers.exportScript(_scriptPath!);
     } else {
       throw Exception('Unknown OCP type');
     }

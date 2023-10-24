@@ -1,5 +1,4 @@
 import 'package:bioptim_gui/models/acrobatics_data.dart';
-import 'package:bioptim_gui/models/acrobatics_ocp_controllers.dart';
 import 'package:bioptim_gui/widgets/acrobatics/somersault_informations.dart';
 import 'package:bioptim_gui/widgets/penalties/penalty_expander.dart';
 import 'package:bioptim_gui/widgets/utils/animated_expanding_widget.dart';
@@ -41,41 +40,41 @@ class SomersaultGenerationMenu extends StatelessWidget {
     required double width,
     required Somersault somersaultInfo,
   }) {
-    final controllers = AcrobaticsOCPControllers.instance;
-
-    return AnimatedExpandingWidget(
-      header: Center(
-        child: Text(
-          controllers.nbSomersaults > 1
-              ? 'Information on somersault ${somersaultIndex + 1}'
-              : 'Information on the somersault',
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    return Consumer<AcrobaticsData>(builder: (context, acrobaticsData, child) {
+      return AnimatedExpandingWidget(
+        header: Center(
+          child: Text(
+            acrobaticsData.nbSomersaults > 1
+                ? 'Information on somersault ${somersaultIndex + 1}'
+                : 'Information on the somersault',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
         ),
-      ),
-      initialExpandedState: true,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 24),
-          SomersaultInformation(
-            somersaultIndex: somersaultIndex,
-            width: width,
-          ),
-          const SizedBox(height: 12),
-          const Divider(),
-          PenaltyExpander(
-            penaltyType: Objective,
-            phaseIndex: somersaultIndex,
-            width: width,
-          ),
-          const Divider(),
-          PenaltyExpander(
-            penaltyType: Constraint,
-            phaseIndex: somersaultIndex,
-            width: width,
-          ),
-        ],
-      ),
-    );
+        initialExpandedState: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 24),
+            SomersaultInformation(
+              somersaultIndex: somersaultIndex,
+              width: width,
+            ),
+            const SizedBox(height: 12),
+            const Divider(),
+            PenaltyExpander(
+              penaltyType: Objective,
+              phaseIndex: somersaultIndex,
+              width: width,
+            ),
+            const Divider(),
+            PenaltyExpander(
+              penaltyType: Constraint,
+              phaseIndex: somersaultIndex,
+              width: width,
+            ),
+          ],
+        ),
+      );
+    });
   }
 }

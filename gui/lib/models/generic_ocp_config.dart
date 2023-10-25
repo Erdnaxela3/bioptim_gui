@@ -8,8 +8,7 @@ class GenericOptimalControlProgram {
   Solver solver;
 
   GenericOptimalControlProgram({
-    this.ocpType = OptimalControlProgramType
-        .abrobaticsOCP, // TODO reset to generic OCP after refactor
+    this.ocpType = OptimalControlProgramType.ocp,
     this.nbPhases = 1,
     this.solver = const Solver(type: SolverType.ipopt),
     this.useSx = true,

@@ -67,7 +67,6 @@ class _GenerateCodeState extends State<GenerateCode> {
                     children: [
                       OptimalControlProgramTypeChooser(
                           width: widget.columnWidth),
-                      const SizedBox(height: 12),
                     ],
                   ),
                 ),

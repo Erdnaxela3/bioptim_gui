@@ -64,7 +64,6 @@ class _GenericMenuState extends State<GenericMenu> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 12),
                 _HeaderBuilder(width: widget.columnWidth),
                 const SizedBox(height: 12),
                 const Divider(),

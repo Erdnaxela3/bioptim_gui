@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:bioptim_gui/models/bio_model.dart';
 import 'package:bioptim_gui/models/dynamics.dart';
 import 'package:bioptim_gui/models/matrix.dart';
@@ -16,9 +14,7 @@ class OptimalControlProgramControllers {
   static final OptimalControlProgramControllers _instance =
       OptimalControlProgramControllers._internal();
   static OptimalControlProgramControllers get instance => _instance;
-  OptimalControlProgramControllers._internal() {
-    _updateAllControllers();
-  }
+  OptimalControlProgramControllers._internal();
 
   Function(String path) get exportScript => _ocp.exportScript;
   bool get mustExport => _ocp.mustExport;
@@ -26,7 +22,6 @@ class OptimalControlProgramControllers {
   final _ocp = OptimalControlProgram();
   // This is to keep track of how many controllers we have because we don't
   // delete them if we reduce _nbPhases
-  int _nbPhasesMax = 1;
 
   ///
   /// This callback can be used so the UI is updated on any change
@@ -38,7 +33,6 @@ class OptimalControlProgramControllers {
   void Function()? _hasChanged;
   void registerToStatusChanged(Function() callback) {
     _hasChanged = callback;
-    _updateAllControllers();
     _notifyListeners();
   }
 
@@ -51,32 +45,6 @@ class OptimalControlProgramControllers {
   }
 
   ///
-  /// All methods related to controlling the number of phases
-  late final nbPhasesController = TextEditingController(text: '1')
-    ..addListener(_nbPhasesControllerListener);
-  int get nbPhases => _ocp.generic.nbPhases;
-  void setNbPhases(int value) {
-    _ocp.generic.nbPhases = value;
-    _ocp.updatePhases();
-    _nbPhasesMax = max(nbPhases, _nbPhasesMax);
-    if (nbPhasesController.text != nbPhases.toString()) {
-      // This if case is to ensure non recursive calls
-      nbPhasesController.text = nbPhases.toString();
-    }
-    // Wait for one frame so the the UI is updated
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _updateAllControllers();
-      _notifyListeners();
-    });
-  }
-
-  void _nbPhasesControllerListener() {
-    final tp = int.tryParse(nbPhasesController.text);
-    if (tp == null || tp < 1 || tp == nbPhases) return;
-    setNbPhases(tp);
-  }
-
-  ///
   /// All the methods related to the dynamic model
   BioModel getBioModel({required int phaseIndex}) =>
       _ocp.phases[phaseIndex].bioModel;
@@ -84,55 +52,6 @@ class OptimalControlProgramControllers {
     _ocp.phases[phaseIndex].bioModel = value;
     _notifyListeners();
   }
-
-  ///
-  /// All the methods related to the model path
-  String getModelPath({required int phaseIndex}) =>
-      _ocp.phases[phaseIndex].modelPath;
-  void setModelPath(String value, {required int phaseIndex}) {
-    _ocp.phases[phaseIndex].modelPath = value;
-    _notifyListeners();
-  }
-
-  ///
-  /// All methods related to the number of shooting points
-  final nbShootingPointsControllers = <TextEditingController>[];
-  int getNbShootingPoints({required int phaseIndex}) =>
-      _ocp.phases[phaseIndex].nbShootingPoints;
-
-  void setNbShootingPoints(int value, {required int phaseIndex}) {
-    if (value == _ocp.phases[phaseIndex].nbShootingPoints) return;
-
-    _ocp.phases[phaseIndex].nbShootingPoints = value;
-    _notifyListeners();
-  }
-
-  List<String> get _nbShootingPointsInitialValues => [
-        for (int i = 0; i < nbPhases; i++)
-          getNbShootingPoints(phaseIndex: i).toString()
-      ];
-  void _nbShootingPointsListener(String value, {required int phaseIndex}) =>
-      setNbShootingPoints(int.tryParse(value) ?? -1, phaseIndex: phaseIndex);
-
-  ///
-  /// All methods related to the phase duration
-  final phaseDurationControllers = <TextEditingController>[];
-  double getPhaseDuration({required int phaseIndex}) =>
-      _ocp.phases[phaseIndex].duration;
-  void setPhaseDuration(double value, {required int phaseIndex}) {
-    if (value == _ocp.phases[phaseIndex].duration) return;
-
-    _ocp.phases[phaseIndex].duration = value;
-    _notifyListeners();
-  }
-
-  List<String> get _phaseDurationInitialValues => [
-        for (int i = 0; i < nbPhases; i++)
-          getPhaseDuration(phaseIndex: i).toString()
-      ];
-
-  void _phaseDurationListener(String value, {required int phaseIndex}) =>
-      setPhaseDuration(double.tryParse(value) ?? -1.0, phaseIndex: phaseIndex);
 
   ///
   /// All methods related to the dynamics equation
@@ -275,66 +194,6 @@ class OptimalControlProgramControllers {
     _notifyListeners();
   }
 
-  ///
-  /// Here are the internal methods that ensures all the controllers are sane
-  void _updateAllControllers() {
-    _updateTextControllers(
-      nbShootingPointsControllers,
-      initialValue: _nbShootingPointsInitialValues,
-      onChanged: _nbShootingPointsListener,
-    );
-    _updateTextControllers(
-      phaseDurationControllers,
-      initialValue: _phaseDurationInitialValues,
-      onChanged: _phaseDurationListener,
-    );
-
-    _updateVariableController(_states, from: DecisionVariableType.state);
-    _updateVariableController(_controls, from: DecisionVariableType.control);
-  }
-
-  void _updateTextControllers(List<TextEditingController> controllers,
-      {required List<String> initialValue,
-      required Function(String value, {required int phaseIndex}) onChanged}) {
-    if (controllers.length < nbPhases) {
-      for (int i = controllers.length; i < nbPhases; i++) {
-        controllers.add(TextEditingController());
-        controllers[i].text = initialValue[i];
-        controllers[i]
-            .addListener(() => onChanged(controllers[i].text, phaseIndex: i));
-      }
-    } else if (controllers.length > nbPhases) {
-      for (int i = controllers.length - 1; i >= nbPhases; i--) {
-        controllers[i].dispose();
-        controllers.removeAt(i);
-      }
-    } else {
-      // Do not change anything if we already have the right number of phases
-    }
-  }
-
-  void _updateVariableController(
-    List<Map<String, _VariableTextEditingControllers>> controllers, {
-    required DecisionVariableType from,
-  }) {
-    if (controllers.length < nbPhases) {
-      // For each of the new phases, declare all the required variables
-      for (int i = controllers.length; i < nbPhases; i++) {
-        controllers.add({});
-        _createVariableControllers(controllers[i], from: from, phaseIndex: i);
-      }
-    } else if (controllers.length > nbPhases) {
-      for (int i = controllers.length - 1; i >= nbPhases; i--) {
-        for (final key in controllers[i].keys) {
-          controllers[i][key]!.dispose();
-        }
-        controllers.removeAt(i);
-      }
-    } else {
-      // Do not change anything if we already have the right number of phases
-    }
-  }
-
   void _createVariableControllers(
     Map<String, _VariableTextEditingControllers> controllers, {
     required DecisionVariableType from,
@@ -354,16 +213,6 @@ class OptimalControlProgramControllers {
   }
 
   void dispose() {
-    nbPhasesController.dispose();
-    for (final controller in nbShootingPointsControllers) {
-      controller.dispose();
-    }
-    nbShootingPointsControllers.clear();
-    for (final controller in phaseDurationControllers) {
-      controller.dispose();
-    }
-    phaseDurationControllers.clear();
-
     for (final phaseVariables in _states) {
       for (final key in phaseVariables.keys) {
         phaseVariables[key]!.dispose();

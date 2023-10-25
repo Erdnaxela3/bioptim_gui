@@ -2,9 +2,8 @@ import 'dart:convert';
 import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
 import 'package:bioptim_gui/models/optimal_control_program_type.dart';
 import 'package:bioptim_gui/models/python_interface.dart';
-import 'package:bioptim_gui/screens/generate_code_page/acrobatics/generate_somersaults.dart';
-import 'package:bioptim_gui/screens/generate_code_page/generic/generate_phases.dart';
-import 'package:bioptim_gui/screens/generate_code_page/generic/generic_header.dart';
+import 'package:bioptim_gui/screens/generate_code_page/acrobatics/acrobatics_menu.dart';
+import 'package:bioptim_gui/screens/generate_code_page/generic/generic_menu.dart';
 import 'package:bioptim_gui/widgets/console_out.dart';
 import 'package:bioptim_gui/widgets/generic_ocp/optimal_control_program_type_chooser.dart';
 import 'package:file_picker/file_picker.dart';
@@ -43,6 +42,8 @@ class _GenerateCodeState extends State<GenerateCode> {
     setState(() {});
   }
 
+  final controllers = OptimalControlProgramControllers.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,11 +59,24 @@ class _GenerateCodeState extends State<GenerateCode> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 12),
-              _HeaderBuilder(width: widget.columnWidth),
-              const SizedBox(height: 12),
-              const Divider(),
-              const SizedBox(height: 12),
-              _PhaseBuilder(width: widget.columnWidth),
+              Center(
+                child: SizedBox(
+                  width: widget.columnWidth,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      OptimalControlProgramTypeChooser(
+                          width: widget.columnWidth),
+                      const SizedBox(height: 12),
+                    ],
+                  ),
+                ),
+              ),
+              if (controllers.ocpType == OptimalControlProgramType.ocp)
+                GenericMenu(columnWidth: widget.columnWidth),
+              if (controllers.ocpType ==
+                  OptimalControlProgramType.abrobaticsOCP)
+                AcrobaticsMenu(columnWidth: widget.columnWidth),
               const SizedBox(height: 12),
               const Divider(),
               const SizedBox(height: 12),
@@ -71,84 +85,6 @@ class _GenerateCodeState extends State<GenerateCode> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _HeaderBuilder extends StatelessWidget {
-  const _HeaderBuilder({
-    required this.width,
-  });
-
-  final double width;
-
-  @override
-  Widget build(BuildContext context) {
-    final controllers = OptimalControlProgramControllers.instance;
-
-    return Center(
-      child: SizedBox(
-        width: width,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            OptimalControlProgramTypeChooser(width: width),
-            const SizedBox(height: 12),
-            if (controllers.ocpType == OptimalControlProgramType.ocp)
-              GenericOCPHeaderBuilder(width: width)
-            // else if (controllers.ocpType ==
-            // OptimalControlProgramType.abrobaticsOCP)
-            // AcrobaticsHeaderBuilder(width: width, data: const {}),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _PhaseBuilder extends StatefulWidget {
-  const _PhaseBuilder({required this.width});
-
-  final double width;
-
-  @override
-  State<_PhaseBuilder> createState() => _PhaseBuilderState();
-}
-
-class _PhaseBuilderState extends State<_PhaseBuilder> {
-  final _horizontalScroll = ScrollController();
-
-  @override
-  void dispose() {
-    _horizontalScroll.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final controllers = OptimalControlProgramControllers.instance;
-    return RawScrollbar(
-      controller: _horizontalScroll,
-      thumbVisibility: true,
-      thumbColor: Theme.of(context).colorScheme.secondary,
-      thickness: 8,
-      radius: const Radius.circular(25),
-      child: SingleChildScrollView(
-        controller: _horizontalScroll,
-        scrollDirection: Axis.horizontal,
-        child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (controllers.ocpType == OptimalControlProgramType.ocp)
-                PhaseGenerationMenu(width: widget.width),
-              if (controllers.ocpType ==
-                  OptimalControlProgramType.abrobaticsOCP)
-                SomersaultGenerationMenu(
-                  width: widget.width,
-                ),
-            ]),
       ),
     );
   }

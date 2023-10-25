@@ -8,16 +8,16 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
-class GenerateModel extends StatefulWidget {
-  const GenerateModel({super.key, this.columnWidth = 400.0});
+class GenericMenu extends StatefulWidget {
+  const GenericMenu({super.key, this.columnWidth = 400.0});
 
   final double columnWidth;
 
   @override
-  State<GenerateModel> createState() => _GenerateModelState();
+  State<GenericMenu> createState() => _GenericMenuState();
 }
 
-class _GenerateModelState extends State<GenerateModel> {
+class _GenericMenuState extends State<GenericMenu> {
   final _verticalScroll = ScrollController();
   late Future<GenericOcpData> _data;
 
@@ -60,32 +60,21 @@ class _GenerateModelState extends State<GenerateModel> {
           final data = snapshot.data!;
 
           return ChangeNotifierProvider<GenericOcpData>(
-              create: (context) => data,
-              child: Scaffold(
-                body: RawScrollbar(
-                  controller: _verticalScroll,
-                  thumbVisibility: true,
-                  thumbColor: Theme.of(context).colorScheme.secondary,
-                  thickness: 8,
-                  radius: const Radius.circular(25),
-                  child: SingleChildScrollView(
-                    controller: _verticalScroll,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 12),
-                        _HeaderBuilder(width: widget.columnWidth),
-                        const SizedBox(height: 12),
-                        const Divider(),
-                        const SizedBox(height: 12),
-                        _PhaseBuilder(
-                          width: widget.columnWidth,
-                        ),
-                      ],
-                    ),
-                  ),
+            create: (context) => data,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 12),
+                _HeaderBuilder(width: widget.columnWidth),
+                const SizedBox(height: 12),
+                const Divider(),
+                const SizedBox(height: 12),
+                _PhaseBuilder(
+                  width: widget.columnWidth,
                 ),
-              ));
+              ],
+            ),
+          );
         }
       },
     );

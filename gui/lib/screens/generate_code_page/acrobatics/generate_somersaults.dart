@@ -25,12 +25,13 @@ class SomersaultGenerationMenu extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 36),
               child: SizedBox(
+                width: width,
+                child: _buildSomersault(
+                  somersaultIndex: i,
                   width: width,
-                  child: _buildSomersault(
-                      somersaultIndex: i,
-                      width: width,
-                      somersaultInfo: acrobaticsData.somersaultInfo[i])),
-            ),
+                ),
+              ),
+            )
         ],
       );
     });
@@ -39,7 +40,6 @@ class SomersaultGenerationMenu extends StatelessWidget {
   Widget _buildSomersault({
     required int somersaultIndex,
     required double width,
-    required Somersault somersaultInfo,
   }) {
     return Consumer<AcrobaticsData>(builder: (context, acrobaticsData, child) {
       return AnimatedExpandingWidget(

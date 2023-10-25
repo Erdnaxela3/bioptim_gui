@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:bioptim_gui/models/acrobatics_data.dart';
 import 'package:bioptim_gui/models/api_config.dart';
+import 'package:bioptim_gui/models/generic_ocp_data.dart';
 import 'package:bioptim_gui/models/penalty.dart';
 import 'package:bioptim_gui/widgets/penalties/integration_rule_chooser.dart';
-import 'package:bioptim_gui/widgets/penalties/maximize_minimize_radio.dart';
+import 'package:bioptim_gui/widgets/penalties/maximize_minimize_radio_generic.dart';
 import 'package:bioptim_gui/widgets/penalties/nodes_chooser.dart';
-import 'package:bioptim_gui/widgets/penalties/objective_type_radio.dart';
-import 'package:bioptim_gui/widgets/penalties/penalty_chooser.dart';
+import 'package:bioptim_gui/widgets/penalties/objective_type_radio_generic.dart';
+import 'package:bioptim_gui/widgets/penalties/penalty_chooser_generic.dart';
 import 'package:bioptim_gui/widgets/utils/animated_expanding_widget.dart';
 import 'package:bioptim_gui/widgets/utils/extensions.dart';
 import 'package:bioptim_gui/widgets/utils/remote_boolean_switch.dart';
@@ -36,7 +36,7 @@ class PenaltyExpander extends StatefulWidget {
 class PenaltyExpanderState extends State<PenaltyExpander> {
   double width = 0;
 
-  final String endpointPrefix = '/acrobatics/somersaults_info';
+  final String endpointPrefix = '/generic_ocp/phases_info';
 
   @override
   void initState() {
@@ -83,10 +83,10 @@ class PenaltyExpanderState extends State<PenaltyExpander> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AcrobaticsData>(builder: (context, acrobaticsData, child) {
+    return Consumer<GenericOcpData>(builder: (context, data, child) {
       final penalties = (widget.penaltyType == Constraint)
-          ? acrobaticsData.somersaultInfo[widget.phaseIndex].constraints
-          : acrobaticsData.somersaultInfo[widget.phaseIndex].objectives;
+          ? data.phaseInfo[widget.phaseIndex].constraints
+          : data.phaseInfo[widget.phaseIndex].objectives;
 
       return AnimatedExpandingWidget(
         header: SizedBox(
@@ -127,8 +127,8 @@ class PenaltyExpanderState extends State<PenaltyExpander> {
     });
   }
 
-  Consumer<AcrobaticsData> _buildAddButton(String name) {
-    return Consumer<AcrobaticsData>(builder: (context, acrobaticsData, child) {
+  Consumer<GenericOcpData> _buildAddButton(String name) {
+    return Consumer<GenericOcpData>(builder: (context, data, child) {
       return Padding(
         padding: const EdgeInsets.only(right: 18.0, top: 12.0),
         child: InkWell(
@@ -141,7 +141,7 @@ class PenaltyExpanderState extends State<PenaltyExpander> {
                 : (json.decode(response.body) as List<dynamic>)
                     .map((o) => Objective.fromJson(o))
                     .toList();
-            acrobaticsData.updatePenalties(widget.phaseIndex,
+            data.updatePenalties(widget.phaseIndex,
                 _penaltyTypeToEndpoint(plural: false), newPenalties);
           },
           child: Container(
@@ -228,7 +228,7 @@ class _PathTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final arguments = penalty.arguments;
 
-    return Consumer<AcrobaticsData>(builder: (context, acrobaticsData, child) {
+    return Consumer<GenericOcpData>(builder: (context, data, child) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -254,7 +254,7 @@ class _PathTile extends StatelessWidget {
                       : Constraint.fromJson(
                           json.decode(response.body) as Map<String, dynamic>);
 
-                  acrobaticsData.updatePenalty(
+                  data.updatePenalty(
                       phaseIndex,
                       _penaltyTypeToEndpoint(plural: false),
                       penaltyIndex,
@@ -438,7 +438,7 @@ class _PathTile extends StatelessWidget {
                     : (json.decode(response.body) as List<dynamic>)
                         .map((o) => Objective.fromJson(o))
                         .toList();
-                acrobaticsData.updatePenalties(phaseIndex,
+                data.updatePenalties(phaseIndex,
                     _penaltyTypeToEndpoint(plural: false), newPenalties);
               },
               borderRadius: BorderRadius.circular(25),

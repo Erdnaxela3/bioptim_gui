@@ -4,19 +4,21 @@ from fastapi import FastAPI
 
 import acrobatics_ocp.acrobatics as acrobatics
 import penalty.penalty as penalty
+import generic_ocp.generic_ocp as generic_ocp
 
 
 app = FastAPI()
 
 app.include_router(acrobatics.router)
 app.include_router(penalty.router)
+app.include_router(generic_ocp.router)
 
 
 @app.on_event("startup")
 def startup_event():
-    datafile = "acrobatics_data.json"
+    acrobatics_datafile = "acrobatics_data.json"
 
-    base_data = {
+    base_acrobatics_data = {
         "nb_somersaults": 1,
         "model_path": "",
         "final_time": 1.0,
@@ -67,14 +69,33 @@ def startup_event():
         ],
     }
 
-    with open(datafile, "w") as f:
-        json.dump(base_data, f)
+    with open(acrobatics_datafile, "w") as f:
+        json.dump(base_acrobatics_data, f)
+
+    generic_datafile = "generic_ocp_data.json"
+
+    base_generic_data = {
+        "nb_phases": 1,
+        "model_path": "",
+        "phases_info": [
+            {
+                "nb_shooting_points": 24,
+                "duration": 1.0,
+                "objectives": [],
+                "constraints": [],
+            }
+        ],
+    }
+
+    with open(generic_datafile, "w") as f:
+        json.dump(base_generic_data, f)
 
 
 @app.on_event("shutdown")
 def startup_event():
-    datafile = "acrobatics_data.json"
+    datafiles = ["acrobatics_data.json", "generic_data.json"]
 
     import os
 
-    os.remove(datafile)
+    for datafile in datafiles:
+        os.remove(datafile)

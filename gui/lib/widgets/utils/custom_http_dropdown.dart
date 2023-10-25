@@ -82,7 +82,7 @@ class CustomHttpDropdownState extends State<CustomHttpDropdown> {
         print('${widget.title} changed to value $requestValue');
       }
 
-      widget.customCallBack!(response);
+      if (widget.customCallBack != null) widget.customCallBack!(response);
     } else {
       if (kDebugMode) {
         print('Error while changing ${widget.title} to value $requestValue');

@@ -1,9 +1,12 @@
+import 'package:bioptim_gui/models/decision_variables.dart';
 import 'package:bioptim_gui/models/generic_ocp_data.dart';
 import 'package:bioptim_gui/models/penalty.dart';
 import 'package:bioptim_gui/widgets/generic_ocp/bio_model_chooser.dart';
 import 'package:bioptim_gui/widgets/generic_ocp/phase_information.dart';
 import 'package:bioptim_gui/widgets/penalties/penalty_expander_generic.dart';
 import 'package:bioptim_gui/widgets/utils/animated_expanding_widget.dart';
+import 'package:bioptim_gui/widgets/variables/decision_variable_expander.dart';
+import 'package:bioptim_gui/widgets/variables/dynamics_chooser.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -52,23 +55,23 @@ class PhaseGenerationMenu extends StatelessWidget {
             const SizedBox(height: 12),
             PhaseInformation(phaseIndex: phaseIndex, width: width),
             const SizedBox(height: 12),
-            // DynamicsChooser(
-            //   phaseIndex: phaseIndex,
-            //   width: width,
-            // ),
-            // const SizedBox(height: 12),
-            // const Divider(),
-            // DecisionVariableExpander(
-            //     from: DecisionVariableType.state,
-            //     phaseIndex: phaseIndex,
-            //     width: width),
-            // const SizedBox(height: 12),
-            // const Divider(),
-            // DecisionVariableExpander(
-            //   from: DecisionVariableType.control,
-            //   phaseIndex: phaseIndex,
-            //   width: width,
-            // ),
+            DynamicsChooser(
+              phaseIndex: phaseIndex,
+              width: width,
+            ),
+            const SizedBox(height: 12),
+            const Divider(),
+            DecisionVariableExpander(
+                from: DecisionVariableType.state,
+                phaseIndex: phaseIndex,
+                width: width),
+            const SizedBox(height: 12),
+            const Divider(),
+            DecisionVariableExpander(
+              from: DecisionVariableType.control,
+              phaseIndex: phaseIndex,
+              width: width,
+            ),
             const SizedBox(height: 12),
             const Divider(),
             PenaltyExpander(

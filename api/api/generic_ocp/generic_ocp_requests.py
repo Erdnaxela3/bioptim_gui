@@ -23,6 +23,10 @@ class NbShootingPointsRequest(BaseModel):
     nb_shooting_points: int
 
 
+class DynamicsRequest(BaseModel):
+    dynamics: str
+
+
 class PhaseDurationRequest(BaseModel):
     duration: float
 
@@ -71,8 +75,26 @@ class ConstraintFcnRequest(BaseModel):
     penalty_type: str
 
 
+class VariableUpdateRequest(BaseModel):
+    x: int
+    y: int
+    value: float
+
+
 class ObjectiveFcnRequest(BaseModel):
     penalty_type: str
+
+
+class InterpolationTypeRequest(BaseModel):
+    interpolation_type: str
+
+
+class DynamicsRequest(BaseModel):
+    dynamics: str
+
+
+class DimensionRequest(BaseModel):
+    dimension: int
 
 
 class ArgumentRequest(BaseModel):

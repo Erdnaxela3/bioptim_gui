@@ -1,4 +1,5 @@
 import 'package:bioptim_gui/models/penalty.dart';
+import 'package:bioptim_gui/models/variables.dart';
 import 'package:flutter/foundation.dart';
 
 class GenericOcpData extends ChangeNotifier {
@@ -27,6 +28,17 @@ class GenericOcpData extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updatePhaseInfo(List<Phase> newData) {
+    phaseInfo = newData;
+
+    notifyListeners();
+  }
+
+  void updateBioModelPath(String newModelPath) {
+    modelPath = newModelPath;
+    notifyListeners();
+  }
+
   void updatePenalties(
       int phaseIndex, String penaltyType, List<Penalty> penalties) {
     if (penaltyType == "objective") {
@@ -52,12 +64,24 @@ class GenericOcpData extends ChangeNotifier {
 class Phase {
   int nbShootingPoints;
   double duration;
+  String dynamics;
+  List<Variable> stateVariables;
+  List<Variable> controlVariables;
   List<Objective> objectives;
   List<Constraint> constraints;
 
   Phase.fromJson(Map<String, dynamic> phaseData)
       : nbShootingPoints = phaseData["nb_shooting_points"],
         duration = phaseData["duration"],
+        dynamics = phaseData["dynamics"],
+        stateVariables =
+            (phaseData["state_variables"] as List<dynamic>).map((variable) {
+          return Variable.fromJson(variable);
+        }).toList(),
+        controlVariables =
+            (phaseData["control_variables"] as List<dynamic>).map((variable) {
+          return Variable.fromJson(variable);
+        }).toList(),
         objectives =
             (phaseData["objectives"] as List<dynamic>).map((objective) {
           return Objective.fromJson(objective);

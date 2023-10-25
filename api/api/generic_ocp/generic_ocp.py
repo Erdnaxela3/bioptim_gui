@@ -2,12 +2,13 @@ import inspect
 import json
 
 import bioptim
+import numpy as np
 from bioptim import ObjectiveFcn
 from fastapi import APIRouter, HTTPException
 
 from generic_ocp.generic_ocp_responses import *
 
-from generic_ocp.generic_ocp_requests import MultiThreadRequest
+from generic_ocp.generic_ocp_requests import *
 
 router = APIRouter(
     prefix="/generic_ocp",
@@ -45,9 +46,116 @@ default_constraint = {
     "arguments": [],
 }
 
+default_dummy_variables = {
+    "state_variables": [
+        {
+            "name": "coucou",
+            "dimension": 1,
+            "bounds_interpolation_type": "CONSTANT_WITH_FIRST_AND_LAST_DIFFERENT",
+            "bounds": {
+                "min_bounds": [[-1.0, -2.0, -3.0]],
+                "max_bounds": [[1.0, 2.0, 3.0]],
+            },
+            "initial_guess_interpolation_type": "CONSTANT",
+            "initial_guess": [[4.0]],
+        },
+    ],
+    "control_variables": [
+        {
+            "name": "tata",
+            "dimension": 1,
+            "bounds_interpolation_type": "CONSTANT_WITH_FIRST_AND_LAST_DIFFERENT",
+            "bounds": {
+                "min_bounds": [[-100.0, -200.0, -300.0]],
+                "max_bounds": [[100.0, 200.0, 300.0]],
+            },
+            "initial_guess_interpolation_type": "CONSTANT",
+            "initial_guess": [[400.0]],
+        },
+    ],
+}
+
+default_torque_driven_variables = {
+    "state_variables": [
+        {
+            "name": "q",
+            "dimension": 1,
+            "bounds_interpolation_type": "CONSTANT_WITH_FIRST_AND_LAST_DIFFERENT",
+            "bounds": {
+                "min_bounds": [[-1.0, -2.0, -3.0]],
+                "max_bounds": [[1.0, 2.0, 3.0]],
+            },
+            "initial_guess_interpolation_type": "CONSTANT",
+            "initial_guess": [[4.0]],
+        },
+        {
+            "name": "qdot",
+            "dimension": 1,
+            "bounds_interpolation_type": "CONSTANT_WITH_FIRST_AND_LAST_DIFFERENT",
+            "bounds": {
+                "min_bounds": [[-10.0, -20.0, -30.0]],
+                "max_bounds": [[10.0, 20.0, 30.0]],
+            },
+            "initial_guess_interpolation_type": "CONSTANT",
+            "initial_guess": [[40.0]],
+        },
+    ],
+    "control_variables": [
+        {
+            "name": "tau",
+            "dimension": 1,
+            "bounds_interpolation_type": "CONSTANT_WITH_FIRST_AND_LAST_DIFFERENT",
+            "bounds": {
+                "min_bounds": [[-100.0, -200.0, -300.0]],
+                "max_bounds": [[100.0, 200.0, 300.0]],
+            },
+            "initial_guess_interpolation_type": "CONSTANT",
+            "initial_guess": [[400.0]],
+        },
+    ],
+}
+
 default_phases_info = {
     "nb_shooting_points": 24,
     "duration": 1.0,
+    "dynamics": "TORQUE_DRIVEN",
+    "state_variables": [
+        {
+            "name": "q",
+            "dimension": 1,
+            "bounds_interpolation_type": "CONSTANT_WITH_FIRST_AND_LAST_DIFFERENT",
+            "bounds": {
+                "min_bounds": [[-1.0, -2.0, -3.0]],
+                "max_bounds": [[1.0, 2.0, 3.0]],
+            },
+            "initial_guess_interpolation_type": "CONSTANT",
+            "initial_guess": [[4.0]],
+        },
+        {
+            "name": "qdot",
+            "dimension": 1,
+            "bounds_interpolation_type": "CONSTANT_WITH_FIRST_AND_LAST_DIFFERENT",
+            "bounds": {
+                "min_bounds": [[-10.0, -20.0, -30.0]],
+                "max_bounds": [[10.0, 20.0, 30.0]],
+            },
+            "initial_guess_interpolation_type": "CONSTANT",
+            "initial_guess": [[40.0]],
+        },
+    ],
+    "control_variables": [
+        {
+            "name": "tau",
+            "dimension": 1,
+            "bounds_interpolation_type": "CONSTANT_WITH_FIRST_AND_LAST_DIFFERENT",
+            "bounds": {
+                "min_bounds": [[-100.0, -200.0, -300.0]],
+                "max_bounds": [[100.0, 200.0, 300.0]],
+            },
+            "initial_guess_interpolation_type": "CONSTANT",
+            "initial_guess": [[400.0]],
+        },
+    ],
     "objectives": [],
     "constraints": [],
 }
@@ -847,3 +955,290 @@ def put_constraint_arguments(
         status_code=404,
         detail=f"{key} not found in arguments of constraint {constraint_index}",
     )
+
+
+@router.get("/phases_info/{phase_index}/dynamics", response_model=list)
+def get_dynamics_list():
+    return ["TORQUE_DRIVEN", "DUMMY"]
+
+
+@router.put("/phases_info/{phase_index}/dynamics", response_model=list)
+def put_dynamics_list(phase_index: int, dynamic_req: DynamicsRequest):
+    phases_info = read_generic_ocp_data("phases_info")
+
+    new_dynamic = dynamic_req.dynamics
+
+    phases_info[phase_index]["dynamics"] = new_dynamic
+
+    if new_dynamic == "TORQUE_DRIVEN":
+        phases_info[phase_index]["state_variables"] = default_torque_driven_variables[
+            "state_variables"
+        ]
+        phases_info[phase_index]["control_variables"] = default_torque_driven_variables[
+            "control_variables"
+        ]
+    else:
+        phases_info[phase_index]["state_variables"] = default_dummy_variables[
+            "state_variables"
+        ]
+        phases_info[phase_index]["control_variables"] = default_dummy_variables[
+            "control_variables"
+        ]
+    update_generic_ocp_data("phases_info", phases_info)
+
+    return phases_info
+
+
+@router.put("/phases_info/{phase_index}/state_variables/{variable_index}/dimension")
+def put_state_variable_dimensions(
+    phase_index: int, variable_index: int, dimension: DimensionRequest
+):
+    phases_info = read_generic_ocp_data("phases_info")
+
+    new_dimension = dimension.dimension
+
+    variable = phases_info[phase_index]["state_variables"][variable_index]
+
+    variable["dimension"] = new_dimension
+
+    for bound in variable["bounds"].keys():
+        shape = np.array(variable["bounds"][bound]).shape
+        new_value = np.zeros((new_dimension, shape[1])).tolist()
+        variable["bounds"][bound] = new_value
+
+    shape = np.array(variable["initial_guess"]).shape
+    new_value = np.zeros((new_dimension, shape[1])).tolist()
+    variable["initial_guess"] = new_value
+
+    update_generic_ocp_data("phases_info", phases_info)
+    return phases_info
+
+
+@router.put("/phases_info/{phase_index}/control_variables/{variable_index}/dimension")
+def put_control_variables_dimensions(
+    phase_index: int, variable_index: int, dimension: DimensionRequest
+):
+    phases_info = read_generic_ocp_data("phases_info")
+
+    new_dimension = dimension.dimension
+
+    variable = phases_info[phase_index]["control_variables"][variable_index]
+
+    variable["dimension"] = new_dimension
+
+    for bound in variable["bounds"].keys():
+        shape = np.array(variable["bounds"][bound]).shape
+        new_value = np.zeros((new_dimension, shape[1])).tolist()
+        variable["bounds"][bound] = new_value
+
+    shape = np.array(variable["initial_guess"]).shape
+    new_value = np.zeros((new_dimension, shape[1])).tolist()
+    variable["initial_guess"] = new_value
+
+    update_generic_ocp_data("phases_info", phases_info)
+    return phases_info
+
+
+def variables_zeros(dimension: int, interpolation_type: str) -> list:
+    if interpolation_type == "LINEAR":
+        return np.zeros((dimension, 2)).tolist()
+    elif interpolation_type == "CONSTANT":
+        return np.zeros((dimension, 1)).tolist()
+    else:
+        return np.zeros((dimension, 3)).tolist()
+
+
+@router.put(
+    "/phases_info/{phase_index}/state_variables/{variable_index}/bounds_interpolation_type"
+)
+def put_state_variables_bounds_interpolation_type(
+    phase_index: int, variable_index: int, interpolation: InterpolationTypeRequest
+):
+    phases_info = read_generic_ocp_data("phases_info")
+
+    new_interpolation = interpolation.interpolation_type
+
+    variable = phases_info[phase_index]["state_variables"][variable_index]
+
+    variable["bounds_interpolation_type"] = new_interpolation
+    dimension = variable["dimension"]
+
+    variable["bounds"]["min_bounds"] = variables_zeros(dimension, new_interpolation)
+    variable["bounds"]["max_bounds"] = variables_zeros(dimension, new_interpolation)
+
+    phases_info[phase_index]["state_variables"][variable_index] = variable
+
+    update_generic_ocp_data("phases_info", phases_info)
+
+    return phases_info
+
+
+@router.put(
+    "/phases_info/{phase_index}/state_variables/{variable_index}/initial_guess_interpolation_type"
+)
+def put_state_variables_initial_guess_interpolation_type(
+    phase_index: int, variable_index: int, interpolation: InterpolationTypeRequest
+):
+    phases_info = read_generic_ocp_data("phases_info")
+
+    new_interpolation = interpolation.interpolation_type
+
+    variable = phases_info[phase_index]["state_variables"][variable_index]
+
+    variable["initial_guess_interpolation_type"] = new_interpolation
+    dimension = variable["dimension"]
+    variable["initial_guess"] = variables_zeros(dimension, new_interpolation)
+
+    phases_info[phase_index]["state_variables"][variable_index] = variable
+
+    update_generic_ocp_data("phases_info", phases_info)
+    return phases_info
+
+
+@router.put(
+    "/phases_info/{phase_index}/control_variables/{variable_index}/bounds_interpolation_type"
+)
+def put_control_variables_bounds_interpolation_type(
+    phase_index: int, variable_index: int, interpolation: InterpolationTypeRequest
+):
+    phases_info = read_generic_ocp_data("phases_info")
+
+    new_interpolation = interpolation.interpolation_type
+
+    variable = phases_info[phase_index]["control_variables"][variable_index]
+
+    variable["bounds_interpolation_type"] = new_interpolation
+    dimension = variable["dimension"]
+
+    variable["bounds"]["min_bounds"] = variables_zeros(dimension, new_interpolation)
+    variable["bounds"]["max_bounds"] = variables_zeros(dimension, new_interpolation)
+
+    phases_info[phase_index]["control_variables"][variable_index] = variable
+
+    update_generic_ocp_data("phases_info", phases_info)
+
+    return phases_info
+
+
+@router.put(
+    "/phases_info/{phase_index}/control_variables/{variable_index}/initial_guess_interpolation_type"
+)
+def put_control_variables_initial_guess_interpolation_type(
+    phase_index: int, variable_index: int, interpolation: InterpolationTypeRequest
+):
+    phases_info = read_generic_ocp_data("phases_info")
+
+    new_interpolation = interpolation.interpolation_type
+
+    variable = phases_info[phase_index]["control_variables"][variable_index]
+
+    variable["initial_guess_interpolation_type"] = new_interpolation
+    dimension = variable["dimension"]
+    variable["initial_guess"] = variables_zeros(dimension, new_interpolation)
+
+    phases_info[phase_index]["control_variables"][variable_index] = variable
+
+    update_generic_ocp_data("phases_info", phases_info)
+    return phases_info
+
+
+@router.put("/phases_info/{phase_index}/state_variables/{variable_index}/max_bounds")
+def put_state_variables_max_bounds_value(
+    phase_index: int, variable_index: int, value: VariableUpdateRequest
+):
+    phases_info = read_generic_ocp_data("phases_info")
+    x, y, new_value = value.x, value.y, value.value
+
+    variable = phases_info[phase_index]["state_variables"][variable_index]
+
+    variable["bounds"]["max_bounds"][x][y] = new_value
+
+    phases_info[phase_index]["state_variables"][variable_index] = variable
+
+    update_generic_ocp_data("phases_info", phases_info)
+    return phases_info
+
+
+@router.put("/phases_info/{phase_index}/state_variables/{variable_index}/min_bounds")
+def put_state_variables_min_bounds_value(
+    phase_index: int, variable_index: int, value: VariableUpdateRequest
+):
+    phases_info = read_generic_ocp_data("phases_info")
+    x, y, new_value = value.x, value.y, value.value
+
+    variable = phases_info[phase_index]["state_variables"][variable_index]
+
+    variable["bounds"]["min_bounds"][x][y] = new_value
+
+    phases_info[phase_index]["state_variables"][variable_index] = variable
+
+    update_generic_ocp_data("phases_info", phases_info)
+    return phases_info
+
+
+@router.put("/phases_info/{phase_index}/state_variables/{variable_index}/initial_guess")
+def put_state_variables_initial_guess_value(
+    phase_index: int, variable_index: int, value: VariableUpdateRequest
+):
+    phases_info = read_generic_ocp_data("phases_info")
+    x, y, new_value = value.x, value.y, value.value
+
+    variable = phases_info[phase_index]["state_variables"][variable_index]
+
+    variable["initial_guess"][x][y] = new_value
+
+    phases_info[phase_index]["state_variables"][variable_index] = variable
+
+    update_generic_ocp_data("phases_info", phases_info)
+    return phases_info
+
+
+@router.put("/phases_info/{phase_index}/control_variables/{variable_index}/max_bounds")
+def put_control_variables_max_bounds_value(
+    phase_index: int, variable_index: int, value: VariableUpdateRequest
+):
+    phases_info = read_generic_ocp_data("phases_info")
+    x, y, new_value = value.x, value.y, value.value
+
+    variable = phases_info[phase_index]["control_variables"][variable_index]
+
+    variable["bounds"]["max_bounds"][x][y] = new_value
+
+    phases_info[phase_index]["control_variables"][variable_index] = variable
+
+    update_generic_ocp_data("phases_info", phases_info)
+    return phases_info
+
+
+@router.put("/phases_info/{phase_index}/control_variables/{variable_index}/min_bounds")
+def put_control_variables_min_bounds_value(
+    phase_index: int, variable_index: int, value: VariableUpdateRequest
+):
+    phases_info = read_generic_ocp_data("phases_info")
+    x, y, new_value = value.x, value.y, value.value
+
+    variable = phases_info[phase_index]["control_variables"][variable_index]
+
+    variable["bounds"]["min_bounds"][x][y] = new_value
+    phases_info[phase_index]["control_variables"][variable_index] = variable
+
+    update_generic_ocp_data("phases_info", phases_info)
+    return phases_info
+
+
+@router.put(
+    "/phases_info/{phase_index}/control_variables/{variable_index}/initial_guess"
+)
+def put_control_variables_initial_guess_value(
+    phase_index: int, variable_index: int, value: VariableUpdateRequest
+):
+    phases_info = read_generic_ocp_data("phases_info")
+    x, y, new_value = value.x, value.y, value.value
+
+    variable = phases_info[phase_index]["control_variables"][variable_index]
+
+    variable["initial_guess"][x][y] = new_value
+    phases_info[phase_index]["control_variables"][variable_index] = variable
+
+    update_generic_ocp_data("phases_info", phases_info)
+    return phases_info

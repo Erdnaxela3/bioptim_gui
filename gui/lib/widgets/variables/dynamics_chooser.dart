@@ -1,6 +1,6 @@
 import 'package:bioptim_gui/models/dynamics.dart';
 import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
-import 'package:bioptim_gui/widgets/utils/custom_dropdown_button.dart';
+import 'package:bioptim_gui/widgets/variables/dynamic_chooser.dart';
 import 'package:flutter/material.dart';
 
 class DynamicsChooser extends StatelessWidget {
@@ -19,14 +19,10 @@ class DynamicsChooser extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
-          child: CustomDropdownButton<DynamicsType>(
-              title: 'Dynamic equations',
-              value: dynamics.type,
-              items: DynamicsType.values,
-              onSelected: (DynamicsType type) => controllers.setDynamics(
-                  Dynamics(type: type, isExpanded: dynamics.isExpanded),
-                  phaseIndex: phaseIndex)),
-        ),
+            child: DynamicChooser(
+          width: width,
+          phaseIndex: phaseIndex,
+        )),
         const SizedBox(width: 12),
         InkWell(
           onTap: () {

@@ -23,7 +23,6 @@ class BioModelChooser extends StatefulWidget {
 class BioModelChooserState extends State<BioModelChooser> {
   @override
   Widget build(BuildContext context) {
-    String modelPath = '';
     final String endpoint = '${APIConfig.url}/generic_ocp/model_path';
 
     Future<void> updateModelPath(String endpoint, String modelPathValue) async {
@@ -34,9 +33,7 @@ class BioModelChooserState extends State<BioModelChooser> {
       );
 
       if (response.statusCode == 200) {
-        setState(() {
-          modelPath = modelPathValue;
-        });
+        setState(() {});
 
         if (kDebugMode) {
           print('Model path set to : $modelPathValue');
@@ -52,7 +49,7 @@ class BioModelChooserState extends State<BioModelChooser> {
             title: 'Dynamic model',
             value: BioModel.biorbd,
             items: BioModel.values,
-            // onSelected: (value) => , TODO
+            // onSelected: (value) TODO,
             isExpanded: false,
           ),
           Padding(
@@ -61,7 +58,7 @@ class BioModelChooserState extends State<BioModelChooser> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Flexible(
-                    child: Text(modelPath.isEmpty
+                    child: Text(data.modelPath.isEmpty
                         ? 'Select the model file'
                         : File(data.modelPath).uri.pathSegments.last)),
                 Tooltip(
@@ -75,6 +72,7 @@ class BioModelChooserState extends State<BioModelChooser> {
                       if (results == null) return;
 
                       updateModelPath(endpoint, results.files.single.path!);
+                      data.updateBioModelPath(results.files.single.path!);
                     },
                     icon: const Icon(Icons.file_upload_outlined),
                   ),

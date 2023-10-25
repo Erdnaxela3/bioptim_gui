@@ -27,9 +27,9 @@ class Constraint(Penalty):
     pass
 
 
-class Somersault(BaseModel):
+class Phase(BaseModel):
     nb_shooting_points: int
-    nb_half_twists: int
     duration: float
+    dynamics: str
     objectives: list[Objective]
     constraints: list[Constraint]

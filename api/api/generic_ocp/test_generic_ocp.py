@@ -23,6 +23,44 @@ def run_for_all():
             {
                 "nb_shooting_points": 24,
                 "duration": 1.0,
+                "dynamics": "TORQUE_DRIVEN",
+                "state_variables": [
+                    {
+                        "name": "q",
+                        "dimension": 1,
+                        "bounds_interpolation_type": "CONSTANT_WITH_FIRST_AND_LAST_DIFFERENT",
+                        "bounds": {
+                            "min_bounds": [[-1.0, -2.0, -3.0]],
+                            "max_bounds": [[1.0, 2.0, 3.0]],
+                        },
+                        "initial_guess_interpolation_type": "CONSTANT",
+                        "initial_guess": [[4.0]],
+                    },
+                    {
+                        "name": "qdot",
+                        "dimension": 1,
+                        "bounds_interpolation_type": "CONSTANT_WITH_FIRST_AND_LAST_DIFFERENT",
+                        "bounds": {
+                            "min_bounds": [[-10.0, -20.0, -30.0]],
+                            "max_bounds": [[10.0, 20.0, 30.0]],
+                        },
+                        "initial_guess_interpolation_type": "CONSTANT",
+                        "initial_guess": [[40.0]],
+                    },
+                ],
+                "control_variables": [
+                    {
+                        "name": "tau",
+                        "dimension": 1,
+                        "bounds_interpolation_type": "CONSTANT_WITH_FIRST_AND_LAST_DIFFERENT",
+                        "bounds": {
+                            "min_bounds": [[-100.0, -200.0, -300.0]],
+                            "max_bounds": [[100.0, 200.0, 300.0]],
+                        },
+                        "initial_guess_interpolation_type": "CONSTANT",
+                        "initial_guess": [[400.0]],
+                    },
+                ],
                 "objectives": [],
                 "constraints": [],
             }
@@ -1080,3 +1118,29 @@ def test_get_constraints_fcn():
     data = response.json()
     assert type(data) is list
     assert len(data) != 0
+
+
+def test_get_dynamic():
+    response = client.get("/generic_ocp/phases_info/1/dynamics")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data == ["TORQUE_DRIVEN", "DUMMY"]
+
+
+def test_put_dynamic():
+    response = client.put(
+        "/generic_ocp/phases_info/0/dynamics", json={"dynamics": "DUMMY"}
+    )
+    assert response.status_code == 200, response
+
+
+def test_put_state_variable_interpolation_type():
+    response = client.put(
+        "/generic_ocp/phases_info/0/control_variables/0/initial_guess",
+        json={
+            "x": 0,
+            "y": 0,
+            "value": 69,
+        },
+    )
+    assert response.status_code == 200, response

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bioptim_gui/models/acrobatics_data.dart';
 import 'package:bioptim_gui/models/api_config.dart';
+import 'package:bioptim_gui/models/penalty.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;

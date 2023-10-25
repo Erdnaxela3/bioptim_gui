@@ -31,6 +31,7 @@ class _PositiveIntegerTextFieldState extends State<PositiveIntegerTextField> {
   Widget build(BuildContext context) {
     return Focus(
       onFocusChange: (hasFocus) {
+        // TODO Color
         if (!hasFocus) {
           int? value = int.tryParse(widget.controller.text);
           if (value == null) {
@@ -43,7 +44,6 @@ class _PositiveIntegerTextFieldState extends State<PositiveIntegerTextField> {
       child: TextField(
         controller: widget.controller,
         decoration: InputDecoration(
-            // if color
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: widget.color),
             ),

@@ -1,4 +1,5 @@
 import 'package:bioptim_gui/models/acrobatics_data.dart';
+import 'package:bioptim_gui/models/penalty.dart';
 import 'package:bioptim_gui/widgets/acrobatics/somersault_informations.dart';
 import 'package:bioptim_gui/widgets/penalties/penalty_expander.dart';
 import 'package:bioptim_gui/widgets/utils/animated_expanding_widget.dart';

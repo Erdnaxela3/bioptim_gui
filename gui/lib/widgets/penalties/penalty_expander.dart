@@ -4,6 +4,7 @@ import 'package:bioptim_gui/models/acrobatics_data.dart';
 import 'package:bioptim_gui/models/api_config.dart';
 import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
 import 'package:bioptim_gui/models/optimal_control_program_type.dart';
+import 'package:bioptim_gui/models/penalty.dart';
 import 'package:bioptim_gui/widgets/penalties/integration_rule_chooser.dart';
 import 'package:bioptim_gui/widgets/penalties/maximize_minimize_radio.dart';
 import 'package:bioptim_gui/widgets/penalties/nodes_chooser.dart';
@@ -40,7 +41,7 @@ class PenaltyExpanderState extends State<PenaltyExpander> {
   final String endpointPrefix = OptimalControlProgramControllers
               .instance.ocpType ==
           OptimalControlProgramType.ocp
-      ? '/generic/phases_info' // TODO change when api for generic is implemented
+      ? '/generic_ocp/phases_info' // TODO change when api for generic is implemented
       : '/acrobatics/somersaults_info';
 
   @override

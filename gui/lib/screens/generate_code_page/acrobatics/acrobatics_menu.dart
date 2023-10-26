@@ -1,11 +1,8 @@
-import 'dart:convert';
 import 'package:bioptim_gui/models/acrobatics_data.dart';
+import 'package:bioptim_gui/models/acrobatics_request_maker.dart';
 import 'package:bioptim_gui/screens/generate_code_page/acrobatics/acrobatics_header.dart';
 import 'package:bioptim_gui/screens/generate_code_page/acrobatics/generate_somersaults.dart';
-import 'package:bioptim_gui/models/api_config.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 class AcrobaticsMenu extends StatefulWidget {
@@ -30,21 +27,7 @@ class _AcrobaticsMenuState extends State<AcrobaticsMenu> {
   @override
   void initState() {
     super.initState();
-    _data = _fetchData();
-  }
-
-  Future<AcrobaticsData> _fetchData() async {
-    final url = Uri.parse('${APIConfig.url}/acrobatics');
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      if (kDebugMode) print("Data fetch success.");
-
-      final data = json.decode(response.body);
-      return AcrobaticsData.fromJson(data);
-    } else {
-      throw Exception("Fetch error");
-    }
+    _data = AcrobaticsRequestMaker.fetchData();
   }
 
   @override

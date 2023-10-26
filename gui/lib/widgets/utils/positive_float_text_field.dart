@@ -1,38 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class PositiveIntegerTextField extends StatefulWidget {
-  const PositiveIntegerTextField({
+class PositiveFloatTextField extends StatefulWidget {
+  const PositiveFloatTextField({
     super.key,
-    this.label,
+    required this.label,
     required this.value,
-    this.onSubmitted,
-    this.onChanged,
     this.enabled = true,
     this.allowZero = false,
     this.color = Colors.black,
+    this.onSubmitted,
   });
 
-  final String? label;
+  final String label;
   final String value;
-  final Function(int value)? onChanged;
   final bool enabled;
   final bool allowZero;
   final Color color;
   final ValueChanged<String>? onSubmitted;
 
   @override
-  State<PositiveIntegerTextField> createState() =>
-      _PositiveIntegerTextFieldState();
+  State<PositiveFloatTextField> createState() => _PositiveFloatTextFieldState();
 }
 
-class _PositiveIntegerTextFieldState extends State<PositiveIntegerTextField> {
+class _PositiveFloatTextFieldState extends State<PositiveFloatTextField> {
   Color color = Colors.black;
 
   @override
   void initState() {
     // if label ends with *, it is mandatory, and the color is red
-    if (widget.label != null && widget.label!.endsWith('*')) {
+    if (widget.label.endsWith('*')) {
       color = Colors.red;
     }
     super.initState();
@@ -52,9 +49,10 @@ class _PositiveIntegerTextFieldState extends State<PositiveIntegerTextField> {
             ),
             labelText: widget.label,
             border: const OutlineInputBorder()),
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]'))
+        ],
         onSubmitted: widget.onSubmitted,
-        enabled: widget.enabled,
       ),
     );
   }

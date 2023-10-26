@@ -1,11 +1,8 @@
-import 'dart:convert';
 import 'package:bioptim_gui/models/generic_ocp_data.dart';
-import 'package:bioptim_gui/models/api_config.dart';
+import 'package:bioptim_gui/models/generic_ocp_request_maker.dart';
 import 'package:bioptim_gui/screens/generate_code_page/generic/generate_phases.dart';
 import 'package:bioptim_gui/screens/generate_code_page/generic/generic_header.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 class GenericMenu extends StatefulWidget {
@@ -30,21 +27,7 @@ class _GenericMenuState extends State<GenericMenu> {
   @override
   void initState() {
     super.initState();
-    _data = _fetchData();
-  }
-
-  Future<GenericOcpData> _fetchData() async {
-    final url = Uri.parse('${APIConfig.url}/generic_ocp');
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      if (kDebugMode) print("Data fetch success.");
-
-      final data = json.decode(response.body);
-      return GenericOcpData.fromJson(data);
-    } else {
-      throw Exception("Fetch error");
-    }
+    _data = GenericOCPRequestMaker.fetchData();
   }
 
   @override

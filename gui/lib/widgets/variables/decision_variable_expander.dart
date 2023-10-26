@@ -126,9 +126,7 @@ class _DecisionVariableChooser extends StatelessWidget {
                 width: width / 3 - 8,
                 child: PositiveIntegerTextField(
                   label: 'Dimension',
-                  controller: TextEditingController(
-                    text: variable.dimension.toString(),
-                  ),
+                  value: variable.dimension.toString(),
                   onSubmitted: (value) async {
                     if (value.isNotEmpty) {
                       final response = await updateField("dimension", value);

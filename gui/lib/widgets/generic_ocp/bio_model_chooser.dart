@@ -1,14 +1,12 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:bioptim_gui/models/api_config.dart';
 import 'package:bioptim_gui/models/bio_model.dart';
 import 'package:bioptim_gui/models/generic_ocp_data.dart';
+import 'package:bioptim_gui/models/generic_ocp_request_maker.dart';
 import 'package:bioptim_gui/widgets/utils/custom_dropdown_button.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 class BioModelChooser extends StatefulWidget {
@@ -24,22 +22,6 @@ class BioModelChooserState extends State<BioModelChooser> {
   @override
   Widget build(BuildContext context) {
     final String endpoint = '${APIConfig.url}/generic_ocp/model_path';
-
-    Future<void> updateModelPath(String endpoint, String modelPathValue) async {
-      final response = await http.put(
-        Uri.parse(endpoint),
-        headers: {"Content-Type": "application/json"},
-        body: json.encode({'model_path': modelPathValue}),
-      );
-
-      if (response.statusCode == 200) {
-        setState(() {});
-
-        if (kDebugMode) {
-          print('Model path set to : $modelPathValue');
-        }
-      }
-    }
 
     return Consumer<GenericOcpData>(builder: (context, data, child) {
       return Column(
@@ -71,7 +53,8 @@ class BioModelChooserState extends State<BioModelChooser> {
                       );
                       if (results == null) return;
 
-                      updateModelPath(endpoint, results.files.single.path!);
+                      GenericOCPRequestMaker.updateField(
+                          "model_path", results.files.single.path!);
                       data.updateBioModelPath(results.files.single.path!);
                     },
                     icon: const Icon(Icons.file_upload_outlined),

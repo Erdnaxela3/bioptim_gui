@@ -1,10 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:bioptim_gui/models/api_config.dart';
+import 'package:bioptim_gui/models/acrobatics_request_maker.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class AcrobaticBioModelChooser extends StatefulWidget {
   const AcrobaticBioModelChooser({
@@ -32,8 +29,6 @@ class AcrobaticBioModelChooserState extends State<AcrobaticBioModelChooser> {
 
   @override
   Widget build(BuildContext context) {
-    final String endpoint = '${APIConfig.url}/acrobatics/model_path';
-
     return SizedBox(
       width: widget.width,
       child: TextField(
@@ -54,7 +49,8 @@ class AcrobaticBioModelChooserState extends State<AcrobaticBioModelChooser> {
               );
               if (results == null) return;
 
-              _updateModelPath(endpoint, results.files.single.path!);
+              AcrobaticsRequestMaker.updateField(
+                  "model_path", results.files.single.path!);
             },
           ),
         ),
@@ -70,23 +66,5 @@ class AcrobaticBioModelChooserState extends State<AcrobaticBioModelChooser> {
         ),
       ),
     );
-  }
-
-  Future<void> _updateModelPath(String endpoint, String modelPathValue) async {
-    final response = await http.put(
-      Uri.parse(endpoint),
-      headers: {"Content-Type": "application/json"},
-      body: json.encode({'model_path': modelPathValue}),
-    );
-
-    if (response.statusCode == 200) {
-      setState(() {
-        modelPath = modelPathValue;
-      });
-
-      if (kDebugMode) {
-        print('Model path set to : $modelPathValue');
-      }
-    }
   }
 }

@@ -1,4 +1,4 @@
-import 'package:bioptim_gui/models/decision_variables.dart';
+import 'package:bioptim_gui/models/decision_variables_type.dart';
 import 'package:bioptim_gui/models/generic_ocp_data.dart';
 import 'package:bioptim_gui/models/penalty.dart';
 import 'package:bioptim_gui/widgets/generic_ocp/bio_model_chooser.dart';

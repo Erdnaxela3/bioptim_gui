@@ -115,11 +115,7 @@ class _BuildTraillingState extends State<_BuildTrailling> {
   }
 
   Widget _buildExportOrRunScriptButton() {
-    final controllers = OptimalControlProgramControllers.instance;
-
-    if ((controllers.ocpType == OptimalControlProgramType.ocp) ||
-        (controllers.ocpType == OptimalControlProgramType.abrobaticsOCP) ||
-        _scriptPath == null) {
+    if (_scriptPath == null) {
       return ElevatedButton(
           onPressed: _onExportFile, child: const Text('Export script'));
     }

@@ -35,6 +35,8 @@ class _GenerateCodeState extends State<GenerateCode> {
   void initState() {
     super.initState();
     PythonInterface.instance.registerToStatusChanged((status) => forceRedraw());
+    OptimalControlProgramControllers.instance
+        .registerToStatusChanged(forceRedraw);
   }
 
   void forceRedraw() {

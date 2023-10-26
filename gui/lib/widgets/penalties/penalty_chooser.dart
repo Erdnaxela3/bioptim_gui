@@ -1,9 +1,7 @@
-import 'package:bioptim_gui/models/acrobatics_data.dart';
 import 'package:bioptim_gui/widgets/utils/custom_http_dropdown.dart';
 import 'package:bioptim_gui/widgets/utils/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 
 class PenaltyChooser extends StatelessWidget {
   const PenaltyChooser({
@@ -25,18 +23,16 @@ class PenaltyChooser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AcrobaticsData>(builder: (context, acrobaticsData, child) {
-      return CustomHttpDropdown(
-        title: title,
-        width: width,
-        defaultValue:
-            defaultValue.replaceAll("_", " ").toLowerCase().capitalize(),
-        getEndpoint: getEndpoint,
-        putEndpoint: putEndpoint,
-        requestKey: "penalty_type",
-        customStringFormatting: (s) => s.replaceAll(" ", "_").toUpperCase(),
-        customCallBack: customCallBack,
-      );
-    });
+    return CustomHttpDropdown(
+      title: title,
+      width: width,
+      defaultValue:
+          defaultValue.replaceAll("_", " ").toLowerCase().capitalize(),
+      getEndpoint: getEndpoint,
+      putEndpoint: putEndpoint,
+      requestKey: "penalty_type",
+      customStringFormatting: (s) => s.replaceAll(" ", "_").toUpperCase(),
+      customCallBack: customCallBack,
+    );
   }
 }

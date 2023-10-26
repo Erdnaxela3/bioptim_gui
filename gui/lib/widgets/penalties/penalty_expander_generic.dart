@@ -7,7 +7,7 @@ import 'package:bioptim_gui/widgets/penalties/integration_rule_chooser.dart';
 import 'package:bioptim_gui/widgets/penalties/maximize_minimize_radio_generic.dart';
 import 'package:bioptim_gui/widgets/penalties/nodes_chooser.dart';
 import 'package:bioptim_gui/widgets/penalties/objective_type_radio_generic.dart';
-import 'package:bioptim_gui/widgets/penalties/penalty_chooser_generic.dart';
+import 'package:bioptim_gui/widgets/penalties/penalty_chooser.dart';
 import 'package:bioptim_gui/widgets/utils/animated_expanding_widget.dart';
 import 'package:bioptim_gui/widgets/utils/extensions.dart';
 import 'package:bioptim_gui/widgets/utils/remote_boolean_switch.dart';

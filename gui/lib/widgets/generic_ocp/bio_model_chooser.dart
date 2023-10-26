@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:bioptim_gui/models/api_config.dart';
 import 'package:bioptim_gui/models/bio_model.dart';
 import 'package:bioptim_gui/models/generic_ocp_data.dart';
 import 'package:bioptim_gui/models/generic_ocp_request_maker.dart';
@@ -21,8 +20,6 @@ class BioModelChooser extends StatefulWidget {
 class BioModelChooserState extends State<BioModelChooser> {
   @override
   Widget build(BuildContext context) {
-    final String endpoint = '${APIConfig.url}/generic_ocp/model_path';
-
     return Consumer<GenericOcpData>(builder: (context, data, child) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,

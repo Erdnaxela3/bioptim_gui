@@ -137,7 +137,7 @@ def startup_event():
 
 @app.on_event("shutdown")
 def startup_event():
-    datafiles = ["acrobatics_data.json", "generic_data.json"]
+    datafiles = ["acrobatics_data.json", "generic_ocp_data.json"]
 
     import os
 

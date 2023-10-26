@@ -211,9 +211,9 @@ def prepare_ocp():
     )
 """
 
-        for i in range(nb_phases):
-            for control_variable in phases[i]["control_variables"]:
-                generated += f"""
+    for i in range(nb_phases):
+        for control_variable in phases[i]["control_variables"]:
+            generated += f"""
     u_bounds.add(
         "{control_variable["name"]}",
         min_bound={control_variable["bounds"]["min_bounds"]},
@@ -221,25 +221,25 @@ def prepare_ocp():
         interpolation=InterpolationType.{control_variable["bounds_interpolation_type"]},
 """
 
-                if nb_phases > 1:
-                    generated += f"""        phase={i},
+            if nb_phases > 1:
+                generated += f"""        phase={i},
 """
 
-                generated += """    )
+            generated += """    )
 """
 
-            generated += f"""
+        generated += f"""
     u_initial_guesses.add(
         "{control_variable["name"]}",
         initial_guess={control_variable["initial_guess"]},
         interpolation=InterpolationType.{control_variable["initial_guess_interpolation_type"]},
 """
 
-            if nb_phases > 1:
-                generated += f"""        phase={i},
+        if nb_phases > 1:
+            generated += f"""        phase={i},
 """
 
-            generated += """    )
+        generated += """    )
 """
 
     generated += """

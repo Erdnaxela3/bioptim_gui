@@ -7,7 +7,11 @@ from fastapi.testclient import TestClient
 from generic_ocp.generic_ocp import router
 
 test_app = FastAPI()
-test_app.include_router(router)
+test_app.include_router(
+    router,
+    prefix="/generic_ocp",
+    tags=["generic_ocp"],
+)
 client = TestClient(test_app)
 
 

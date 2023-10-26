@@ -192,23 +192,22 @@ def prepare_ocp():
             if nb_phases > 1:
                 generated += f"""
         phase={i},
-    """
-
-            generated += """
-    )
 """
 
-        generated += f"""
+            generated += """    )
+"""
+
+            generated += f"""
     x_initial_guesses.add(
         "{state_variable["name"]}",
         initial_guess={state_variable["initial_guess"]},
-        interpolation=InterpolationType.{state_variable["initial_guess_interpolation_type"]},"""
+        interpolation=InterpolationType.{state_variable["initial_guess_interpolation_type"]},
+"""
 
-        if nb_phases > 1:
-            generated += f"""
-        phase={i},"""
+            if nb_phases > 1:
+                generated += f"""        phase={i},"""
 
-        generated += """
+            generated += """
     )
 """
 
@@ -219,29 +218,28 @@ def prepare_ocp():
         "{control_variable["name"]}",
         min_bound={control_variable["bounds"]["min_bounds"]},
         max_bound={control_variable["bounds"]["max_bounds"]},
-        interpolation=InterpolationType.{control_variable["bounds_interpolation_type"]},"""
+        interpolation=InterpolationType.{control_variable["bounds_interpolation_type"]},
+"""
 
                 if nb_phases > 1:
-                    generated += f"""
-        phase={i},
-        """
+                    generated += f"""        phase={i},
+"""
 
-                generated += """
-    )
+                generated += """    )
 """
 
             generated += f"""
     u_initial_guesses.add(
         "{control_variable["name"]}",
         initial_guess={control_variable["initial_guess"]},
-        interpolation=InterpolationType.{control_variable["initial_guess_interpolation_type"]},"""
+        interpolation=InterpolationType.{control_variable["initial_guess_interpolation_type"]},
+"""
 
             if nb_phases > 1:
-                generated += f"""
-        phase={i},"""
+                generated += f"""        phase={i},
+"""
 
-            generated += """
-    )
+            generated += """    )
 """
 
     generated += """

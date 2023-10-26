@@ -13,8 +13,6 @@ from generic_ocp.generic_ocp_responses import *
 from generic_ocp.generic_ocp_requests import *
 
 router = APIRouter(
-    prefix="/generic_ocp",
-    tags=["generic_ocp"],
     responses={404: {"description": "Not found"}},
 )
 router.include_router(code_generation.router)

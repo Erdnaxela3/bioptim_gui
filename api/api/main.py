@@ -13,7 +13,11 @@ app = FastAPI()
 app.include_router(acrobatics.router)
 app.include_router(penalty.router)
 app.include_router(variables.router)
-app.include_router(generic_ocp.router)
+app.include_router(
+    generic_ocp.router,
+    prefix="/generic_ocp",
+    tags=["generic_ocp"],
+)
 
 
 @app.on_event("startup")

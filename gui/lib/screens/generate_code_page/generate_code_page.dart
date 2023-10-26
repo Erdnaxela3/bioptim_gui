@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:bioptim_gui/models/acrobatics_ocp.dart';
+import 'package:bioptim_gui/models/optimal_control_program.dart';
 import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
 import 'package:bioptim_gui/models/optimal_control_program_type.dart';
 import 'package:bioptim_gui/models/python_interface.dart';
@@ -33,8 +35,6 @@ class _GenerateCodeState extends State<GenerateCode> {
   void initState() {
     super.initState();
     PythonInterface.instance.registerToStatusChanged((status) => forceRedraw());
-    OptimalControlProgramControllers.instance
-        .registerToStatusChanged(forceRedraw);
   }
 
   void forceRedraw() {
@@ -115,8 +115,7 @@ class _BuildTraillingState extends State<_BuildTrailling> {
   Widget _buildExportOrRunScriptButton() {
     final controllers = OptimalControlProgramControllers.instance;
 
-    if ((controllers.ocpType == OptimalControlProgramType.ocp &&
-            controllers.mustExport) ||
+    if ((controllers.ocpType == OptimalControlProgramType.ocp) ||
         (controllers.ocpType == OptimalControlProgramType.abrobaticsOCP) ||
         _scriptPath == null) {
       return ElevatedButton(
@@ -189,8 +188,9 @@ class _BuildTraillingState extends State<_BuildTrailling> {
     if (_scriptPath == null) return;
 
     if (controllers.ocpType == OptimalControlProgramType.ocp) {
-      controllers.exportScript(_scriptPath!);
+      OptimalControlProgram.exportScript(_scriptPath!);
     } else if (controllers.ocpType == OptimalControlProgramType.abrobaticsOCP) {
+      AcrobaticsOCPProgram.exportScript(_scriptPath!);
     } else {
       throw Exception('Unknown OCP type');
     }

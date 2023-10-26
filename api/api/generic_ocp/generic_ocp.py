@@ -6,6 +6,8 @@ import numpy as np
 from bioptim import ObjectiveFcn
 from fastapi import APIRouter, HTTPException
 
+import generic_ocp.generic_ocp_code_generation as code_generation
+
 from generic_ocp.generic_ocp_responses import *
 
 from generic_ocp.generic_ocp_requests import *
@@ -15,6 +17,7 @@ router = APIRouter(
     tags=["generic_ocp"],
     responses={404: {"description": "Not found"}},
 )
+router.include_router(code_generation.router)
 
 datafile = "generic_ocp_data.json"
 

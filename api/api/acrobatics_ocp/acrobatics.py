@@ -6,12 +6,14 @@ from bioptim import ObjectiveFcn
 from fastapi import APIRouter, HTTPException
 
 from acrobatics_ocp.acrobatics_responses import *
+import acrobatics_ocp.acrobatics_code_generation as acrobatics_code_generation
 
 router = APIRouter(
     prefix="/acrobatics",
     tags=["acrobatics"],
     responses={404: {"description": "Not found"}},
 )
+router.include_router(acrobatics_code_generation.router)
 
 datafile = "acrobatics_data.json"
 

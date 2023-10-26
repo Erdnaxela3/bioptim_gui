@@ -1,6 +1,5 @@
-import 'package:bioptim_gui/models/dynamics.dart';
-import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
 import 'package:bioptim_gui/widgets/variables/dynamic_chooser.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class DynamicsChooser extends StatelessWidget {
@@ -12,9 +11,6 @@ class DynamicsChooser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controllers = OptimalControlProgramControllers.instance;
-    final dynamics = controllers.getDynamics(phaseIndex: phaseIndex);
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -26,19 +22,23 @@ class DynamicsChooser extends StatelessWidget {
         const SizedBox(width: 12),
         InkWell(
           onTap: () {
-            final value = !dynamics.isExpanded;
-            controllers.setDynamics(
-                Dynamics(type: dynamics.type, isExpanded: value),
-                phaseIndex: phaseIndex);
+            // final value = false; // TODO reimplement
+            // // controllers.setDynamics(
+            // //     Dynamics(type: dynamics.type, isExpanded: value),
+            // //     phaseIndex: phaseIndex);
           },
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Checkbox(
-                value: dynamics.isExpanded,
-                onChanged: (value) => controllers.setDynamics(
-                    Dynamics(type: dynamics.type, isExpanded: value!),
-                    phaseIndex: phaseIndex),
+                value: true,
+                onChanged: (bool? value) {
+                  if (kDebugMode) print("yes");
+                },
+                // TODO reimplement
+                // onChanged: (value) => controllers.setDynamics(
+                //     Dynamics(type: dynamics.type, isExpanded: value!),
+                //     phaseIndex: phaseIndex),
               ),
               const Text('Expand\ndynamics'),
               const SizedBox(width: 12),

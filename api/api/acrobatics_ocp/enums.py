@@ -17,11 +17,6 @@ class Position(str, Enum):
     PIKE = "pike"
 
 
-class MinimizeOrMaximize(str, Enum):
-    MINIMIZE = "minimize"
-    MAXIMIZE = "maximize"
-
-
 class ObjectiveType(str, Enum):
     MAYER = "mayer"
     LAGRANGE = "lagrange"

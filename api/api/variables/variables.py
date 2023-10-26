@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 router = APIRouter(
     prefix="/variables",
-    tags=["penalties"],
+    tags=["variables"],
     responses={404: {"description": "Not found"}},
 )
 

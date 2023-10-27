@@ -3,12 +3,7 @@ from typing import Optional
 from bioptim import QuadratureRule, Node
 from pydantic import BaseModel
 
-from acrobatics_ocp.enums import (
-    Position,
-    SportType,
-    PreferredTwistSide,
-    ObjectiveType,
-)
+from penalty.enums import ObjectiveType
 
 
 class NbPhasesRequest(BaseModel):

@@ -5,7 +5,7 @@ import 'package:bioptim_gui/models/api_config.dart';
 import 'package:http/http.dart' as http;
 
 ///
-/// This is only handle the code generation
+/// This is only handle the code generation for the acrobatics ocp
 class AcrobaticsOCPProgram {
   static Future<void> exportScript(String path) async {
     final file = File(path);

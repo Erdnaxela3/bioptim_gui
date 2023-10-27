@@ -1148,3 +1148,11 @@ def test_put_state_variable_interpolation_type():
         },
     )
     assert response.status_code == 200, response
+
+
+def test_generate_code():
+    response = client.get("/generic_ocp/generate_code")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert type(data) is str
+    assert len(data) != 0

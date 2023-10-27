@@ -1,16 +1,15 @@
 import json
 
 from fastapi import APIRouter
+import generic_ocp.generic_ocp_config as config
 
 router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-datafile = "generic_ocp_data.json"
-
 
 def read_generic_ocp_data(key: str = None) -> dict:
-    with open(datafile, "r") as f:
+    with open(config.DefaultGenericOCPConfig.datafile, "r") as f:
         data = json.load(f)
     return data if key is None else data[key]
 

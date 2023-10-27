@@ -5,6 +5,14 @@ import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+///
+/// [OCPRequestMaker] is a class that contains all the methods to make requests
+/// for the different OCPs.
+/// As the OCPs endpoints are all very similar, this class is used as a parent
+/// class to reduce code duplication.
+/// example: the only thing that differs between the "generic OCP" and the
+/// "acrobatics OCP" is the endpoint beginning "generic_ocp/phases_info" or
+/// "acrobatics/somersaults_info".
 class OCPRequestMaker<T extends OCPData> {
   OCPRequestMaker({required this.prefix, required this.phaseInfoString});
 

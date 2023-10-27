@@ -16,7 +16,7 @@ class AcrobaticPositionChooser extends StatelessWidget {
     return CustomHttpDropdown(
       title: "Jump position *",
       width: width,
-      defaultValue: "Straight",
+      defaultValue: defaultValue,
       getEndpoint: "/acrobatics/position",
       putEndpoint: "/acrobatics/position",
       requestKey: "position",

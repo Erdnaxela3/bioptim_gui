@@ -1255,3 +1255,11 @@ def test_get_constraints_fcn():
     data = response.json()
     assert type(data) is list
     assert len(data) != 0
+
+
+def test_generate_code():
+    response = client.get("/acrobatics/generate_code")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert type(data) is str
+    assert len(data) != 0

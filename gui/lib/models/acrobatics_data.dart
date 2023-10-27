@@ -27,7 +27,8 @@ class AcrobaticsData extends ChangeNotifier implements OCPData {
           return Somersault.fromJson(somersault);
         }).toList();
 
-  // getters
+  ///
+  /// Getters Setters
 
   @override
   AcrobaticsRequestMaker get requestMaker {
@@ -55,7 +56,8 @@ class AcrobaticsData extends ChangeNotifier implements OCPData {
     notifyListeners();
   }
 
-  // update methods
+  ///
+  /// Update methods
 
   void updateData(AcrobaticsData newData) {
     nbSomersaults = newData.nbSomersaults;

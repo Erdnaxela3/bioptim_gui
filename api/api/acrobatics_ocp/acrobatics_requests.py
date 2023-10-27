@@ -3,11 +3,12 @@ from typing import Optional
 from bioptim import QuadratureRule, Node
 from pydantic import BaseModel
 
+from penalty.enums import ObjectiveType
+
 from acrobatics_ocp.enums import (
     Position,
     SportType,
     PreferredTwistSide,
-    ObjectiveType,
 )
 
 

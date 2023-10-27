@@ -2,17 +2,11 @@ import json
 
 from fastapi import APIRouter
 
+from acrobatics_ocp.acrobatics_utils import read_acrobatics_data
+
 router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
-
-datafile = "acrobatics_data.json"
-
-
-def read_acrobatics_data(key: str = None) -> dict:
-    with open(datafile, "r") as f:
-        data = json.load(f)
-    return data if key is None else data[key]
 
 
 def arg_to_string(argument: dict) -> str:

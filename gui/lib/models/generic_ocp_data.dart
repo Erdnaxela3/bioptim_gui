@@ -11,17 +11,19 @@ class GenericOcpData extends ChangeNotifier implements OCPData {
   @override
   List<GenericPhase> phaseInfo = [];
 
-  @override
-  GenericOCPRequestMaker get requestMaker {
-    return GenericOCPRequestMaker();
-  }
-
   GenericOcpData.fromJson(Map<String, dynamic> data)
       : _nbPhases = data["nb_phases"],
         _modelPath = data["model_path"],
         phaseInfo = (data["phases_info"] as List<dynamic>).map((phase) {
           return GenericPhase.fromJson(phase);
         }).toList();
+
+  // getters/setters
+
+  @override
+  GenericOCPRequestMaker get requestMaker {
+    return GenericOCPRequestMaker();
+  }
 
   @override
   int get nbPhases => _nbPhases;
@@ -39,6 +41,8 @@ class GenericOcpData extends ChangeNotifier implements OCPData {
     _nbPhases = value;
     notifyListeners();
   }
+
+  // update methods
 
   void updateData(GenericOcpData newData) {
     nbPhases = newData.nbPhases;

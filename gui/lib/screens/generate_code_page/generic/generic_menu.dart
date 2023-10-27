@@ -2,7 +2,7 @@ import 'package:bioptim_gui/models/generic_ocp_data.dart';
 import 'package:bioptim_gui/models/generic_ocp_request_maker.dart';
 import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/screens/generate_code_page/generic/generate_phases.dart';
-import 'package:bioptim_gui/screens/generate_code_page/generic/generic_header.dart';
+import 'package:bioptim_gui/widgets/generic_ocp/number_of_phases_chooser.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -83,7 +83,13 @@ class _HeaderBuilder extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 12),
-            GenericOCPHeaderBuilder(width: width),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 12),
+                NumberOfPhasesChooser(width: width),
+              ],
+            ),
           ],
         ),
       ),

@@ -8,9 +8,7 @@ import 'package:bioptim_gui/models/api_config.dart';
 import 'package:http/http.dart' as http;
 
 ///
-/// This is the main class holder for the model. Nevertheless, this class should
-/// not be instantiated manually but only by the [OptimalControlProgramController].
-/// Similarly, it should not be directly access (except from the said calss).
+/// This class only handles the code generation for generic OCPs
 class OptimalControlProgram {
   ///
   /// Constructor

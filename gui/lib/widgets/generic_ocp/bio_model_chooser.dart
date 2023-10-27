@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:bioptim_gui/models/bio_model.dart';
-import 'package:bioptim_gui/models/generic_ocp_data.dart';
 import 'package:bioptim_gui/models/generic_ocp_request_maker.dart';
+import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/widgets/utils/custom_dropdown_button.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +20,7 @@ class BioModelChooser extends StatefulWidget {
 class BioModelChooserState extends State<BioModelChooser> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<GenericOcpData>(builder: (context, data, child) {
+    return Consumer<OCPData>(builder: (context, data, child) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -52,7 +52,8 @@ class BioModelChooserState extends State<BioModelChooser> {
 
                       GenericOCPRequestMaker().updateField(
                           "model_path", results.files.single.path!);
-                      data.updateBioModelPath(results.files.single.path!);
+
+                      data.modelPath = results.files.single.path!;
                     },
                     icon: const Icon(Icons.file_upload_outlined),
                   ),

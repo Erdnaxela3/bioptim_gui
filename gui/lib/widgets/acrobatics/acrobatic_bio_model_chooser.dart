@@ -51,6 +51,10 @@ class AcrobaticBioModelChooserState extends State<AcrobaticBioModelChooser> {
 
               AcrobaticsRequestMaker()
                   .updateField("model_path", results.files.single.path!);
+
+              setState(() {
+                modelPath = results.files.single.path!;
+              });
             },
           ),
         ),

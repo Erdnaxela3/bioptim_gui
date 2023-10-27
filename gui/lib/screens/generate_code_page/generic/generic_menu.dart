@@ -1,5 +1,6 @@
 import 'package:bioptim_gui/models/generic_ocp_data.dart';
 import 'package:bioptim_gui/models/generic_ocp_request_maker.dart';
+import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/screens/generate_code_page/generic/generate_phases.dart';
 import 'package:bioptim_gui/screens/generate_code_page/generic/generic_header.dart';
 import 'package:flutter/material.dart';
@@ -42,20 +43,23 @@ class _GenericMenuState extends State<GenericMenu> {
         } else {
           final data = snapshot.data!;
 
-          return ChangeNotifierProvider<GenericOcpData>(
-            create: (context) => data,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _HeaderBuilder(width: widget.columnWidth),
-                const SizedBox(height: 12),
-                const Divider(),
-                const SizedBox(height: 12),
-                _PhaseBuilder(
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ChangeNotifierProvider<GenericOcpData>(
+                create: (context) => data,
+                child: _HeaderBuilder(width: widget.columnWidth),
+              ),
+              const SizedBox(height: 12),
+              const Divider(),
+              const SizedBox(height: 12),
+              ChangeNotifierProvider<OCPData>(
+                create: (context) => data,
+                child: _PhaseBuilder(
                   width: widget.columnWidth,
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         }
       },

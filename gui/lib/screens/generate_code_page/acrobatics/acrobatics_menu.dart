@@ -1,5 +1,6 @@
 import 'package:bioptim_gui/models/acrobatics_data.dart';
 import 'package:bioptim_gui/models/acrobatics_request_maker.dart';
+import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/screens/generate_code_page/acrobatics/acrobatics_header.dart';
 import 'package:bioptim_gui/screens/generate_code_page/acrobatics/generate_somersaults.dart';
 import 'package:flutter/material.dart';
@@ -42,20 +43,23 @@ class _AcrobaticsMenuState extends State<AcrobaticsMenu> {
         } else {
           final data = snapshot.data!;
 
-          return ChangeNotifierProvider<AcrobaticsData>(
-            create: (context) => data,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _HeaderBuilder(width: widget.columnWidth),
-                const SizedBox(height: 12),
-                const Divider(),
-                const SizedBox(height: 12),
-                _PhaseBuilder(
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ChangeNotifierProvider<AcrobaticsData>(
+                create: (context) => data,
+                child: _HeaderBuilder(width: widget.columnWidth),
+              ),
+              const SizedBox(height: 12),
+              const Divider(),
+              const SizedBox(height: 12),
+              ChangeNotifierProvider<OCPData>(
+                create: (context) => data,
+                child: _PhaseBuilder(
                   width: widget.columnWidth,
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         }
       },

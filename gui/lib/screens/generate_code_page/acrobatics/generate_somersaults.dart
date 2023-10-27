@@ -1,4 +1,4 @@
-import 'package:bioptim_gui/models/acrobatics_data.dart';
+import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/models/penalty.dart';
 import 'package:bioptim_gui/widgets/acrobatics/somersault_informations.dart';
 import 'package:bioptim_gui/widgets/penalties/penalty_expander.dart';
@@ -16,12 +16,12 @@ class SomersaultGenerationMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AcrobaticsData>(builder: (context, acrobaticsData, child) {
+    return Consumer<OCPData>(builder: (context, acrobaticsData, child) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          for (int i = 0; i < acrobaticsData.somersaultInfo.length; i++)
+          for (int i = 0; i < acrobaticsData.phaseInfo.length; i++)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 36),
               child: SizedBox(
@@ -41,11 +41,11 @@ class SomersaultGenerationMenu extends StatelessWidget {
     required int somersaultIndex,
     required double width,
   }) {
-    return Consumer<AcrobaticsData>(builder: (context, acrobaticsData, child) {
+    return Consumer<OCPData>(builder: (context, acrobaticsData, child) {
       return AnimatedExpandingWidget(
         header: Center(
           child: Text(
-            acrobaticsData.nbSomersaults > 1
+            acrobaticsData.nbPhases > 1
                 ? 'Information on somersault ${somersaultIndex + 1}'
                 : 'Information on the somersault',
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -66,12 +66,14 @@ class SomersaultGenerationMenu extends StatelessWidget {
               penaltyType: Objective,
               phaseIndex: somersaultIndex,
               width: width,
+              endpointPrefix: '/acrobatics/somersaults_info',
             ),
             const Divider(),
             PenaltyExpander(
               penaltyType: Constraint,
               phaseIndex: somersaultIndex,
               width: width,
+              endpointPrefix: '/acrobatics/somersaults_info',
             ),
           ],
         ),

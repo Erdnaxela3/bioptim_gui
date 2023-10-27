@@ -1,7 +1,6 @@
 import 'dart:convert';
 
-import 'package:bioptim_gui/models/acrobatics_data.dart';
-import 'package:bioptim_gui/models/acrobatics_request_maker.dart';
+import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/models/penalty.dart';
 import 'package:bioptim_gui/widgets/utils/extensions.dart';
 import 'package:flutter/material.dart';
@@ -36,9 +35,9 @@ class MinMaxRadioState extends State<MinMaxRadio> {
   Widget build(BuildContext context) {
     final List<String> values = ["maximize", "minimize"];
 
-    return Consumer<AcrobaticsData>(builder: (context, data, child) {
+    return Consumer<OCPData>(builder: (context, data, child) {
       void updatePenalty(String newValue) async {
-        final response = await AcrobaticsRequestMaker().updateMaximizeMinimize(
+        final response = await data.requestMaker.updateMaximizeMinimize(
             widget.phaseIndex, widget.objectiveIndex, newValue);
 
         setState(() {

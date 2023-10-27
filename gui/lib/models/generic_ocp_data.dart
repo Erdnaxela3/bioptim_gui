@@ -1,21 +1,40 @@
+import 'package:bioptim_gui/models/generic_ocp_request_maker.dart';
 import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/models/penalty.dart';
 import 'package:bioptim_gui/models/variables.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class GenericOcpData extends ChangeNotifier implements OCPData {
   int _nbPhases;
-  String modelPath;
-  List<Phase> phaseInfo = [];
+  String _modelPath;
+
+  @override
+  List<GenericPhase> phaseInfo = [];
+
+  @override
+  GenericOCPRequestMaker get requestMaker {
+    return GenericOCPRequestMaker();
+  }
 
   GenericOcpData.fromJson(Map<String, dynamic> data)
       : _nbPhases = data["nb_phases"],
-        modelPath = data["model_path"],
+        _modelPath = data["model_path"],
         phaseInfo = (data["phases_info"] as List<dynamic>).map((phase) {
-          return Phase.fromJson(phase);
+          return GenericPhase.fromJson(phase);
         }).toList();
 
+  @override
   int get nbPhases => _nbPhases;
+
+  @override
+  String get modelPath => _modelPath;
+
+  @override
+  set modelPath(String value) {
+    _modelPath = value;
+    notifyListeners();
+  }
+
   set nbPhases(int value) {
     _nbPhases = value;
     notifyListeners();
@@ -23,20 +42,22 @@ class GenericOcpData extends ChangeNotifier implements OCPData {
 
   void updateData(GenericOcpData newData) {
     nbPhases = newData.nbPhases;
-    modelPath = newData.modelPath;
+    _modelPath = newData._modelPath;
     phaseInfo = List.from(newData.phaseInfo);
 
     notifyListeners();
   }
 
-  void updatePhaseInfo(List<Phase> newData) {
-    phaseInfo = newData;
+  @override
+  void updatePhaseInfo(List<dynamic> newData) {
+    final newPhases = (newData).map((p) => GenericPhase.fromJson(p)).toList();
+    phaseInfo = newPhases;
 
     notifyListeners();
   }
 
   void updateBioModelPath(String newModelPath) {
-    modelPath = newModelPath;
+    _modelPath = newModelPath;
     notifyListeners();
   }
 
@@ -64,19 +85,13 @@ class GenericOcpData extends ChangeNotifier implements OCPData {
   }
 }
 
-class Phase {
-  int nbShootingPoints;
-  double duration;
+class GenericPhase extends Phase {
   String dynamics;
   List<Variable> stateVariables;
   List<Variable> controlVariables;
-  List<Objective> objectives;
-  List<Constraint> constraints;
 
-  Phase.fromJson(Map<String, dynamic> phaseData)
-      : nbShootingPoints = phaseData["nb_shooting_points"],
-        duration = phaseData["duration"],
-        dynamics = phaseData["dynamics"],
+  GenericPhase.fromJson(Map<String, dynamic> phaseData)
+      : dynamics = phaseData["dynamics"],
         stateVariables =
             (phaseData["state_variables"] as List<dynamic>).map((variable) {
           return Variable.fromJson(variable);
@@ -85,12 +100,5 @@ class Phase {
             (phaseData["control_variables"] as List<dynamic>).map((variable) {
           return Variable.fromJson(variable);
         }).toList(),
-        objectives =
-            (phaseData["objectives"] as List<dynamic>).map((objective) {
-          return Objective.fromJson(objective);
-        }).toList(),
-        constraints =
-            (phaseData["constraints"] as List<dynamic>).map((constraint) {
-          return Constraint.fromJson(constraint);
-        }).toList();
+        super.fromJson(phaseData);
 }

@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:bioptim_gui/models/api_config.dart';
 import 'package:bioptim_gui/models/decision_variables_type.dart';
 import 'package:bioptim_gui/models/generic_ocp_data.dart';
+import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/models/variables.dart';
 import 'package:bioptim_gui/widgets/utils/animated_expanding_widget.dart';
 import 'package:bioptim_gui/widgets/utils/positive_integer_text_field.dart';
@@ -27,10 +28,10 @@ class DecisionVariableExpander extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<GenericOcpData>(builder: (context, data, child) {
+    return Consumer<OCPData>(builder: (context, data, child) {
       List<Variable> variables = from == DecisionVariableType.control
-          ? data.phaseInfo[phaseIndex].controlVariables
-          : data.phaseInfo[phaseIndex].stateVariables;
+          ? (data.phaseInfo[phaseIndex] as GenericPhase).controlVariables
+          : (data.phaseInfo[phaseIndex] as GenericPhase).stateVariables;
 
       return AnimatedExpandingWidget(
         header: SizedBox(
@@ -98,10 +99,12 @@ class _DecisionVariableChooser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<GenericOcpData>(builder: (context, data, child) {
+    return Consumer<OCPData>(builder: (context, data, child) {
       final variable = from == DecisionVariableType.control
-          ? data.phaseInfo[phaseIndex].controlVariables[variableIndex]
-          : data.phaseInfo[phaseIndex].stateVariables[variableIndex];
+          ? (data.phaseInfo[phaseIndex] as GenericPhase)
+              .controlVariables[variableIndex]
+          : (data.phaseInfo[phaseIndex] as GenericPhase)
+              .stateVariables[variableIndex];
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,9 +135,7 @@ class _DecisionVariableChooser extends StatelessWidget {
                       final response = await updateField("dimension", value);
 
                       final newPhases =
-                          (json.decode(response.body) as List<dynamic>)
-                              .map((e) => Phase.fromJson(e))
-                              .toList();
+                          (json.decode(response.body) as List<dynamic>);
 
                       data.updatePhaseInfo(newPhases);
                     }
@@ -155,9 +156,7 @@ class _DecisionVariableChooser extends StatelessWidget {
             titlePrefix: 'Bounds',
             defaultValue: variable.boundsInterpolationType,
             customCallBack: (response) {
-              final newPhases = (json.decode(response.body) as List<dynamic>)
-                  .map((e) => Phase.fromJson(e))
-                  .toList();
+              final newPhases = (json.decode(response.body) as List<dynamic>);
 
               data.updatePhaseInfo(newPhases);
             },
@@ -174,9 +173,7 @@ class _DecisionVariableChooser extends StatelessWidget {
             titlePrefix: 'Initial guess',
             defaultValue: variable.initialGuessInterpolationType,
             customCallBack: (response) {
-              final newPhases = (json.decode(response.body) as List<dynamic>)
-                  .map((e) => Phase.fromJson(e))
-                  .toList();
+              final newPhases = (json.decode(response.body) as List<dynamic>);
 
               data.updatePhaseInfo(newPhases);
             },
@@ -272,10 +269,12 @@ class _DataFiller extends StatelessWidget {
       }
     }
 
-    return Consumer<GenericOcpData>(builder: (context, data, child) {
+    return Consumer<OCPData>(builder: (context, data, child) {
       final variable = from == DecisionVariableType.control
-          ? data.phaseInfo[phaseIndex].controlVariables[variableIndex]
-          : data.phaseInfo[phaseIndex].stateVariables[variableIndex];
+          ? (data.phaseInfo[phaseIndex] as GenericPhase)
+              .controlVariables[variableIndex]
+          : (data.phaseInfo[phaseIndex] as GenericPhase)
+              .stateVariables[variableIndex];
 
       final interpolationType = title == 'Initial guess'
           ? variable.initialGuessInterpolationType
@@ -334,9 +333,7 @@ class _DataFiller extends StatelessWidget {
                                   await updateVariableValue(i, j, value);
 
                               final newPhases =
-                                  (json.decode(response.body) as List<dynamic>)
-                                      .map((e) => Phase.fromJson(e))
-                                      .toList();
+                                  (json.decode(response.body) as List<dynamic>);
 
                               data.updatePhaseInfo(newPhases);
                             }

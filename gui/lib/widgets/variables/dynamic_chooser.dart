@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:bioptim_gui/models/generic_ocp_data.dart';
+import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/widgets/utils/custom_http_dropdown.dart';
 import 'package:bioptim_gui/widgets/utils/extensions.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +20,7 @@ class DynamicChooser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<GenericOcpData>(builder: (context, data, child) {
+    return Consumer<OCPData>(builder: (context, data, child) {
       return CustomHttpDropdown(
         title: 'Dynamic equations',
         width: width,
@@ -31,9 +31,7 @@ class DynamicChooser extends StatelessWidget {
         requestKey: "dynamics",
         customStringFormatting: (s) => s.replaceAll(" ", "_").toUpperCase(),
         customCallBack: (response) async {
-          final newPhases = (json.decode(response.body) as List<dynamic>)
-              .map((p) => Phase.fromJson(p))
-              .toList();
+          final newPhases = (json.decode(response.body) as List<dynamic>);
           data.updatePhaseInfo(newPhases);
         },
       );

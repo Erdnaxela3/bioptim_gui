@@ -1,20 +1,22 @@
+import 'package:bioptim_gui/models/acrobatics_request_maker.dart';
 import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/models/penalty.dart';
 import 'package:flutter/foundation.dart';
 
 class AcrobaticsData extends ChangeNotifier implements OCPData {
   int _nbSomersaults;
-  String modelPath;
+  String _modelPath;
   double finalTime;
   double finalTimeMargin;
   String position;
   String sportType;
   String preferredTwistSide;
+
   List<Somersault> somersaultInfo = [];
 
   AcrobaticsData.fromJson(Map<String, dynamic> data)
       : _nbSomersaults = data["nb_somersaults"],
-        modelPath = data["model_path"],
+        _modelPath = data["model_path"],
         finalTime = data["final_time"],
         finalTimeMargin = data["final_time_margin"],
         position = data["position"],
@@ -25,15 +27,39 @@ class AcrobaticsData extends ChangeNotifier implements OCPData {
           return Somersault.fromJson(somersault);
         }).toList();
 
+  // getters
+
+  @override
+  AcrobaticsRequestMaker get requestMaker {
+    return AcrobaticsRequestMaker();
+  }
+
+  @override
+  List<Phase> get phaseInfo => somersaultInfo;
+
+  @override
+  String get modelPath => _modelPath;
+
+  @override
+  set modelPath(String value) {
+    _modelPath = value;
+    notifyListeners();
+  }
+
+  @override
+  int get nbPhases => _nbSomersaults;
+
   int get nbSomersaults => _nbSomersaults;
   set nbSomersaults(int value) {
     _nbSomersaults = value;
     notifyListeners();
   }
 
+  // update methods
+
   void updateData(AcrobaticsData newData) {
     nbSomersaults = newData.nbSomersaults;
-    modelPath = newData.modelPath;
+    _modelPath = newData._modelPath;
     finalTime = newData.finalTime;
     finalTimeMargin = newData.finalTimeMargin;
     position = newData.position;
@@ -69,25 +95,20 @@ class AcrobaticsData extends ChangeNotifier implements OCPData {
 
     notifyListeners();
   }
+
+  @override
+  void updatePhaseInfo(List newData) {
+    final newPhases = (newData).map((p) => Somersault.fromJson(p)).toList();
+    somersaultInfo = newPhases;
+
+    notifyListeners();
+  }
 }
 
-class Somersault {
-  int nbShootingPoints;
+class Somersault extends Phase {
   int nbHalfTwists;
-  double duration;
-  List<Objective> objectives;
-  List<Constraint> constraints;
 
   Somersault.fromJson(Map<String, dynamic> somersaultData)
-      : nbShootingPoints = somersaultData["nb_shooting_points"],
-        nbHalfTwists = somersaultData["nb_half_twists"],
-        duration = somersaultData["duration"],
-        objectives =
-            (somersaultData["objectives"] as List<dynamic>).map((objective) {
-          return Objective.fromJson(objective);
-        }).toList(),
-        constraints =
-            (somersaultData["constraints"] as List<dynamic>).map((constraint) {
-          return Constraint.fromJson(constraint);
-        }).toList();
+      : nbHalfTwists = somersaultData["nb_half_twists"],
+        super.fromJson(somersaultData);
 }

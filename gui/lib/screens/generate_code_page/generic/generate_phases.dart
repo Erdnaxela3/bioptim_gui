@@ -1,9 +1,9 @@
 import 'package:bioptim_gui/models/decision_variables_type.dart';
-import 'package:bioptim_gui/models/generic_ocp_data.dart';
+import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/models/penalty.dart';
 import 'package:bioptim_gui/widgets/generic_ocp/bio_model_chooser.dart';
 import 'package:bioptim_gui/widgets/generic_ocp/phase_information.dart';
-import 'package:bioptim_gui/widgets/penalties/penalty_expander_generic.dart';
+import 'package:bioptim_gui/widgets/penalties/penalty_expander.dart';
 import 'package:bioptim_gui/widgets/utils/animated_expanding_widget.dart';
 import 'package:bioptim_gui/widgets/variables/decision_variable_expander.dart';
 import 'package:bioptim_gui/widgets/variables/dynamics_chooser.dart';
@@ -20,7 +20,7 @@ class PhaseGenerationMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<GenericOcpData>(builder: (context, data, child) {
+    return Consumer<OCPData>(builder: (context, data, child) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -36,7 +36,7 @@ class PhaseGenerationMenu extends StatelessWidget {
   }
 
   Widget _buildPhase({required int phaseIndex}) {
-    return Consumer<GenericOcpData>(builder: (context, data, child) {
+    return Consumer<OCPData>(builder: (context, data, child) {
       return AnimatedExpandingWidget(
         header: Center(
           child: Text(
@@ -78,12 +78,14 @@ class PhaseGenerationMenu extends StatelessWidget {
               penaltyType: Objective,
               phaseIndex: phaseIndex,
               width: width,
+              endpointPrefix: '/generic_ocp/phases_info',
             ),
             const Divider(),
             PenaltyExpander(
               penaltyType: Constraint,
               phaseIndex: phaseIndex,
               width: width,
+              endpointPrefix: '/generic_ocp/phases_info',
             ),
           ],
         ),

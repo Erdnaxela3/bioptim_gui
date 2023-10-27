@@ -1,7 +1,6 @@
 import 'dart:convert';
 
-import 'package:bioptim_gui/models/acrobatics_data.dart';
-import 'package:bioptim_gui/models/acrobatics_request_maker.dart';
+import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/models/penalty.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,9 +34,9 @@ class ObjectiveTypeRadioState extends State<ObjectiveTypeRadio> {
   Widget build(BuildContext context) {
     final valueLabel = {"mayer": "\u2133", "lagrange": "\u2112"};
 
-    return Consumer<AcrobaticsData>(builder: (context, data, child) {
+    return Consumer<OCPData>(builder: (context, data, child) {
       void updatePenalty(newValue) async {
-        final response = await AcrobaticsRequestMaker().updateObjectiveField(
+        final response = await data.requestMaker.updateObjectiveField(
             widget.phaseIndex, widget.objectiveIndex, newValue);
 
         setState(() {

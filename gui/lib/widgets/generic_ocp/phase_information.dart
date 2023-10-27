@@ -1,5 +1,5 @@
-import 'package:bioptim_gui/models/generic_ocp_data.dart';
 import 'package:bioptim_gui/models/generic_ocp_request_maker.dart';
+import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/widgets/utils/positive_float_text_field.dart';
 import 'package:bioptim_gui/widgets/utils/positive_integer_text_field.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +17,7 @@ class PhaseInformation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<GenericOcpData>(builder: (context, data, child) {
+    return Consumer<OCPData>(builder: (context, data, child) {
       return Row(
         children: [
           SizedBox(

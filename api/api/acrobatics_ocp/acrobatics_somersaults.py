@@ -1,13 +1,12 @@
 from bioptim import ObjectiveFcn
 from fastapi import APIRouter, HTTPException
 
+import penalty.penalty_config as penalty_config
 from acrobatics_ocp.acrobatics_responses import *
 from acrobatics_ocp.acrobatics_utils import (
     read_acrobatics_data,
     update_acrobatics_data,
 )
-import penalty.penalty_config as penalty_config
-
 from penalty.penalty_utils import obj_arguments, constraint_arguments
 
 router = APIRouter()

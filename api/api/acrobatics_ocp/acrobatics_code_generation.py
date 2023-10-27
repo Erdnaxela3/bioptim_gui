@@ -1,5 +1,3 @@
-import json
-
 from fastapi import APIRouter
 
 from acrobatics_ocp.acrobatics_utils import read_acrobatics_data
@@ -10,8 +8,8 @@ router = APIRouter(
 
 
 def arg_to_string(argument: dict) -> str:
-    name, type, value = argument["name"], argument["type"], argument["value"]
-    if type == "int" or type == "float":
+    name, arg_type, value = argument["name"], argument["type"], argument["value"]
+    if arg_type == "int" or arg_type == "float":
         return f"{name}={value}"
     else:
         return f'{name}="{value}"'

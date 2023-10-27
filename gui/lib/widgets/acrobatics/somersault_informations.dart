@@ -29,7 +29,7 @@ class SomersaultInformation extends StatelessWidget {
                   .toString(),
               onSubmitted: (newValue) {
                 if (newValue.isNotEmpty) {
-                  AcrobaticsRequestMaker.updateSomersaultField(
+                  AcrobaticsRequestMaker().updateSomersaultField(
                       somersaultIndex, "nb_half_twists", newValue);
                 }
               },
@@ -47,7 +47,7 @@ class SomersaultInformation extends StatelessWidget {
                       .toString(),
                   onSubmitted: (newValue) {
                     if (newValue.isNotEmpty) {
-                      AcrobaticsRequestMaker.updateSomersaultField(
+                      AcrobaticsRequestMaker().updateSomersaultField(
                           somersaultIndex, "nb_shooting_points", newValue);
                     }
                   },
@@ -61,7 +61,7 @@ class SomersaultInformation extends StatelessWidget {
                   label: 'Phase time (s)',
                   onSubmitted: (newValue) {
                     if (newValue.isNotEmpty) {
-                      AcrobaticsRequestMaker.updateSomersaultField(
+                      AcrobaticsRequestMaker().updateSomersaultField(
                           somersaultIndex, "duration", newValue);
                     }
                   },

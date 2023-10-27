@@ -25,8 +25,8 @@ class NumberOfPhasesChooser extends StatelessWidget {
           enabled: true,
           onSubmitted: (newValue) async {
             if (newValue.isNotEmpty) {
-              final response = await GenericOCPRequestMaker.updateField(
-                  "nb_phases", newValue);
+              final response = await GenericOCPRequestMaker()
+                  .updateField("nb_phases", newValue);
 
               final updatedData =
                   GenericOcpData.fromJson(json.decode(response.body));

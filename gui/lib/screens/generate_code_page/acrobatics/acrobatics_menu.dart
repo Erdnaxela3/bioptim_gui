@@ -27,7 +27,7 @@ class _AcrobaticsMenuState extends State<AcrobaticsMenu> {
   @override
   void initState() {
     super.initState();
-    _data = AcrobaticsRequestMaker.fetchData();
+    _data = AcrobaticsRequestMaker().fetchData();
   }
 
   @override

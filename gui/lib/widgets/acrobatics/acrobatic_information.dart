@@ -26,8 +26,8 @@ class AcrobaticInformation extends StatelessWidget {
               value: acrobaticsData.nbSomersaults.toString(),
               onSubmitted: (newValue) async {
                 if (newValue.isNotEmpty) {
-                  final response = await AcrobaticsRequestMaker.updateField(
-                      "nb_somersaults", newValue);
+                  final response = await AcrobaticsRequestMaker()
+                      .updateField("nb_somersaults", newValue);
 
                   final updatedData =
                       AcrobaticsData.fromJson(json.decode(response.body));
@@ -49,8 +49,8 @@ class AcrobaticInformation extends StatelessWidget {
                   label: 'Final time *',
                   onSubmitted: (newValue) {
                     if (newValue.isNotEmpty) {
-                      AcrobaticsRequestMaker.updateField(
-                          "final_time", newValue);
+                      AcrobaticsRequestMaker()
+                          .updateField("final_time", newValue);
                     }
                   },
                 ),
@@ -63,8 +63,8 @@ class AcrobaticInformation extends StatelessWidget {
                   label: 'Final time margin *',
                   onSubmitted: (newValue) {
                     if (newValue.isNotEmpty) {
-                      AcrobaticsRequestMaker.updateField(
-                          "final_time_margin", newValue);
+                      AcrobaticsRequestMaker()
+                          .updateField("final_time_margin", newValue);
                     }
                   },
                 ),

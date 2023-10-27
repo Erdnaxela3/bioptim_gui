@@ -1,8 +1,9 @@
+import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/models/penalty.dart';
 import 'package:bioptim_gui/models/variables.dart';
 import 'package:flutter/foundation.dart';
 
-class GenericOcpData extends ChangeNotifier {
+class GenericOcpData extends ChangeNotifier implements OCPData {
   int _nbPhases;
   String modelPath;
   List<Phase> phaseInfo = [];
@@ -39,6 +40,7 @@ class GenericOcpData extends ChangeNotifier {
     notifyListeners();
   }
 
+  @override
   void updatePenalties(
       int phaseIndex, String penaltyType, List<Penalty> penalties) {
     if (penaltyType == "objective") {
@@ -49,6 +51,7 @@ class GenericOcpData extends ChangeNotifier {
     notifyListeners();
   }
 
+  @override
   void updatePenalty(
       int phaseIndex, String penaltyType, int penaltyIndex, Penalty penalty) {
     if (penaltyType == "objective") {

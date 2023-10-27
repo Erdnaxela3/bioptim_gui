@@ -1,11 +1,9 @@
 import 'dart:convert';
 
 import 'package:bioptim_gui/models/acrobatics_data.dart';
-import 'package:bioptim_gui/models/api_config.dart';
+import 'package:bioptim_gui/models/acrobatics_request_maker.dart';
 import 'package:bioptim_gui/models/penalty.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 class ObjectiveTypeRadio extends StatefulWidget {
@@ -33,69 +31,41 @@ class ObjectiveTypeRadioState extends State<ObjectiveTypeRadio> {
     _selectedValue = widget.value;
   }
 
-  Future<http.Response> _updateValue(String value) async {
-    final url = Uri.parse(
-        '${APIConfig.url}/acrobatics/somersaults_info/${widget.phaseIndex}/objectives/${widget.objectiveIndex}/objective_type');
-    final headers = {'Content-Type': 'application/json'};
-    final body = json.encode({"objective_type": value});
-
-    final response = await http.put(url, headers: headers, body: body);
-
-    if (response.statusCode == 200) {
-      setState(() {
-        _selectedValue = value;
-      });
-
-      if (kDebugMode) {
-        print(
-            'somersault ${widget.phaseIndex}\'s objective ${widget.objectiveIndex} changed to value $value');
-      }
-
-      return response;
-    } else {
-      throw Exception(
-          'Error while changing somersault ${widget.phaseIndex}\'s objective ${widget.objectiveIndex} to value $value');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Consumer<AcrobaticsData>(builder: (context, acrobaticsData, child) {
+    final valueLabel = {"mayer": "\u2133", "lagrange": "\u2112"};
+
+    return Consumer<AcrobaticsData>(builder: (context, data, child) {
       void updatePenalty(newValue) async {
-        final response = await _updateValue(newValue!);
+        final response = await AcrobaticsRequestMaker().updateObjectiveField(
+            widget.phaseIndex, widget.objectiveIndex, newValue);
+
+        setState(() {
+          _selectedValue = newValue;
+        });
+
         final Penalty newObjective = Objective.fromJson(
             json.decode(response.body) as Map<String, dynamic>);
-        acrobaticsData.updatePenalty(widget.phaseIndex, "objective",
+        data.updatePenalty(widget.phaseIndex, "objective",
             widget.objectiveIndex, newObjective);
       }
 
       return Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              Radio<String>(
-                value: "mayer",
-                groupValue: _selectedValue,
-                onChanged: (newValue) async {
-                  updatePenalty(newValue);
-                },
-              ),
-              const Text("\u2133"), // German mark M
-            ],
-          ),
-          Row(
-            children: [
-              Radio<String>(
-                value: "lagrange",
-                groupValue: _selectedValue,
-                onChanged: (newValue) async {
-                  updatePenalty(newValue);
-                },
-              ),
-              const Text("\u2112"), // Laplace L
-            ],
-          ),
+          for (var pair in valueLabel.entries)
+            Row(
+              children: [
+                Radio<String>(
+                  value: pair.key,
+                  groupValue: _selectedValue,
+                  onChanged: (newValue) async {
+                    updatePenalty(newValue);
+                  },
+                ),
+                Text(pair.value),
+              ],
+            ),
         ],
       );
     });

@@ -27,7 +27,7 @@ class _GenericMenuState extends State<GenericMenu> {
   @override
   void initState() {
     super.initState();
-    _data = GenericOCPRequestMaker.fetchData();
+    _data = GenericOCPRequestMaker().fetchData();
   }
 
   @override

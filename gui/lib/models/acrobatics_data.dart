@@ -1,7 +1,8 @@
+import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/models/penalty.dart';
 import 'package:flutter/foundation.dart';
 
-class AcrobaticsData extends ChangeNotifier {
+class AcrobaticsData extends ChangeNotifier implements OCPData {
   int _nbSomersaults;
   String modelPath;
   double finalTime;
@@ -43,6 +44,7 @@ class AcrobaticsData extends ChangeNotifier {
     notifyListeners();
   }
 
+  @override
   void updatePenalties(
       int somersaultIndex, String penaltyType, List<Penalty> penalties) {
     if (penaltyType == "objective") {
@@ -54,6 +56,7 @@ class AcrobaticsData extends ChangeNotifier {
     notifyListeners();
   }
 
+  @override
   void updatePenalty(int somersaultIndex, String penaltyType, int penaltyIndex,
       Penalty penalty) {
     if (penaltyType == "objective") {

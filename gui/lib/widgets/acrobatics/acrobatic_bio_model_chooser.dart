@@ -49,8 +49,8 @@ class AcrobaticBioModelChooserState extends State<AcrobaticBioModelChooser> {
               );
               if (results == null) return;
 
-              AcrobaticsRequestMaker.updateField(
-                  "model_path", results.files.single.path!);
+              AcrobaticsRequestMaker()
+                  .updateField("model_path", results.files.single.path!);
             },
           ),
         ),

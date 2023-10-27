@@ -50,7 +50,7 @@ class BioModelChooserState extends State<BioModelChooser> {
                       );
                       if (results == null) return;
 
-                      GenericOCPRequestMaker.updateField(
+                      GenericOCPRequestMaker().updateField(
                           "model_path", results.files.single.path!);
                       data.updateBioModelPath(results.files.single.path!);
                     },

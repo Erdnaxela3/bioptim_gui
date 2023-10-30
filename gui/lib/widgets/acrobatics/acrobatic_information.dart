@@ -34,9 +34,7 @@ class AcrobaticInformation extends StatelessWidget {
                   final updatedData =
                       AcrobaticsData.fromJson(json.decode(response.body));
 
-                  // ignore: use_build_context_synchronously
-                  Provider.of<AcrobaticsData>(context, listen: false)
-                      .updateData(updatedData);
+                  acrobaticsData.updateData(updatedData);
                 }
               },
             ),

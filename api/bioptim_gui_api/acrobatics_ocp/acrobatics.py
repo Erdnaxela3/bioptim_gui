@@ -22,6 +22,7 @@ router.include_router(acrobatics_code_generation.router)
 
 
 def add_somersault_info(n: int = 1) -> None:
+    # rounding is necessary to avoid buffer overflow in the frontend
     if n < 1:
         raise ValueError("n must be positive")
 
@@ -31,11 +32,11 @@ def add_somersault_info(n: int = 1) -> None:
     n_somersaults = before + n
     final_time = data["final_time"]
     for i in range(0, before):
-        somersaults_info[i]["duration"] = final_time / n_somersaults
+        somersaults_info[i]["duration"] = round(final_time / n_somersaults, 2)
 
     for i in range(before, before + n):
         somersaults_info.append(config.DefaultAcrobaticsConfig.default_somersaults_info)
-        somersaults_info[i]["duration"] = final_time / n_somersaults
+        somersaults_info[i]["duration"] = round(final_time / n_somersaults, 2)
 
     data["somersaults_info"] = somersaults_info
     with open(config.DefaultAcrobaticsConfig.datafile, "w") as f:

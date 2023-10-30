@@ -265,6 +265,29 @@ def test_add_multiple_somersault():
         assert len(data["somersaults_info"][i]["constraints"]) == 0
 
 
+def test_add_odd_somersault_durations_are_rounded_2_digit():
+    many = 3
+    response = client.put("/acrobatics/nb_somersaults/", json={"nb_somersaults": many})
+    assert response.status_code == 200, response
+    assert response.json()["nb_somersaults"] == many
+
+    response = client.get("/acrobatics/")
+    assert response.status_code == 200, response
+    data = response.json()
+    assert data["nb_somersaults"] == many
+    assert data["model_path"] == ""
+    assert data["final_time"] == 1
+    assert data["final_time_margin"] == 0.1
+    assert data["position"] == "straight"
+    assert data["sport_type"] == "trampoline"
+    assert data["preferred_twist_side"] == "left"
+    assert len(data["somersaults_info"]) == many
+    for i in range(many):
+        assert data["somersaults_info"][i]["duration"] == 0.33
+        assert len(data["somersaults_info"][i]["objectives"]) == 2
+        assert len(data["somersaults_info"][i]["constraints"]) == 0
+
+
 def test_remove_one_somersault_2to1():
     response = client.put("/acrobatics/nb_somersaults/", json={"nb_somersaults": 2})
     assert response.status_code == 200, response

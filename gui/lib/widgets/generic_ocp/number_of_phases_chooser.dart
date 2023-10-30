@@ -32,9 +32,7 @@ class NumberOfPhasesChooser extends StatelessWidget {
               final updatedData =
                   GenericOcpData.fromJson(json.decode(response.body));
 
-              // ignore: use_build_context_synchronously
-              Provider.of<GenericOcpData>(context, listen: false)
-                  .updateData(updatedData);
+              (data as GenericOcpData).updateData(updatedData);
             }
           },
         ),

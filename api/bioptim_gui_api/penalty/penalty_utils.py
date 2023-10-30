@@ -1,8 +1,28 @@
 import inspect
+import re
 
 import bioptim
 from bioptim import ObjectiveFcn
 from fastapi import HTTPException
+
+
+def format_arg_type(arg_type: str) -> str:
+    """
+    Format the type of the argument
+
+    Parameters
+    ----------
+    arg_type: str
+        The type of the argument (e.g. "<class 'list'>", "float")
+
+    Returns
+    -------
+    The formatted type (e.g. "list", "float")
+    """
+    pattern = r"<(class|enum) '(.*)'>"
+    arg_type = str(arg_type)
+    match = re.search(pattern, arg_type)
+    return match and match.group(2) or arg_type
 
 
 def get_args(penalty_fcn) -> list:
@@ -26,7 +46,8 @@ def get_args(penalty_fcn) -> list:
     arguments = arg_specs.annotations
 
     formatted_arguments = [
-        {"name": k, "value": None, "type": str(v)} for k, v in arguments.items()
+        {"name": k, "value": None, "type": format_arg_type(v)}
+        for k, v in arguments.items()
     ]
 
     if defaults:

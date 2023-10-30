@@ -20,5 +20,7 @@ def variables_zeros(dimension: int, interpolation_type: str) -> list:
         return np.zeros((dimension, 2)).tolist()
     elif interpolation_type == "CONSTANT":
         return np.zeros((dimension, 1)).tolist()
-    else:
+    elif interpolation_type == "CONSTANT_WITH_FIRST_AND_LAST_DIFFERENT":
         return np.zeros((dimension, 3)).tolist()
+    else:
+        raise ValueError(f"Interpolation type {interpolation_type} not implemented")

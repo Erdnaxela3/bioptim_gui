@@ -92,4 +92,34 @@ class OCPRequestMaker<T extends OCPData> {
 
     return response;
   }
+
+  Future<http.Response> updatePenaltyArgument(
+      int phaseIndex,
+      int objectiveIndex,
+      String argumentName,
+      String? newValue,
+      String argumentType,
+      String penaltyType) async {
+    final url = Uri.parse(
+        '${APIConfig.url}/$prefix/$phaseInfoString/$phaseIndex/$penaltyType/$objectiveIndex/arguments/$argumentName');
+    final body = json.encode({
+      "name": argumentName,
+      "value": newValue,
+      "type": argumentType,
+    });
+
+    final response =
+        await http.put(url, body: body, headers: APIConfig.headers);
+
+    if (response.statusCode != 200) {
+      throw Exception(
+          'Error while changing $phaseInfoString $phaseIndex\'s $penaltyType $objectiveIndex $argumentName to value $newValue');
+    }
+
+    if (kDebugMode) {
+      print(
+          '$phaseInfoString $phaseIndex\'s $penaltyType $objectiveIndex $argumentName changed to value $newValue');
+    }
+    return response;
+  }
 }

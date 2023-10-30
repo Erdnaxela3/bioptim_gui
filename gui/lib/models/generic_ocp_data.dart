@@ -126,8 +126,24 @@ class GenericOcpData extends ChangeNotifier implements OCPData {
   }
 
   @override
-  void updateObjectiveArgument(int phaseIndex, int objectiveIndex,
-      String argumentName, String newValue) {}
+  void updatePenaltyArgument(
+      int phaseIndex,
+      int objectiveIndex,
+      String argumentName,
+      String? newValue,
+      String argumentType,
+      int argumentIndex,
+      String penaltyType) {
+    requestMaker.updatePenaltyArgument(phaseIndex, objectiveIndex, argumentName,
+        newValue, argumentType, penaltyType);
+
+    phaseInfo[phaseIndex]
+        .objectives[objectiveIndex]
+        .arguments[argumentIndex]
+        .value = newValue;
+
+    notifyListeners();
+  }
 }
 
 class GenericPhase extends Phase {

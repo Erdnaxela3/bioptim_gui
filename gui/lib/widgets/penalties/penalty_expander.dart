@@ -1,9 +1,7 @@
 import 'dart:convert';
 
-import 'package:bioptim_gui/models/acrobatics_controllers.dart';
 import 'package:bioptim_gui/models/api_config.dart';
 import 'package:bioptim_gui/models/ocp_data.dart';
-import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
 import 'package:bioptim_gui/models/penalty.dart';
 import 'package:bioptim_gui/widgets/penalties/integration_rule_chooser.dart';
 import 'package:bioptim_gui/widgets/penalties/maximize_minimize_radio.dart';
@@ -271,38 +269,38 @@ class _PathTile extends StatelessWidget {
               ),
           ]),
           const SizedBox(height: 12),
-          ...arguments.map((argument) => Padding(
-                padding: const EdgeInsets.only(bottom: 12.0),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: width,
-                      child: TextField(
-                        controller: TextEditingController(
-                            text: argument.value.toString() == "null"
-                                ? ""
-                                : argument.value.toString()),
-                        decoration: InputDecoration(
-                            label: Text(
-                                'Argument: ${argument.name} (${argument.type})'),
-                            border: const OutlineInputBorder()),
-                        // inputFormatters: [FilteringTextInputFormatter.allow()],
-                        onSubmitted: (value) => {
-                          http.put(
-                            Uri.parse(
-                                '${APIConfig.url}$endpointPrefix/$phaseIndex/${_penaltyTypeToEndpoint(plural: true)}/$penaltyIndex/arguments/${argument.name}'),
-                            headers: {'Content-Type': 'application/json'},
-                            body: json.encode({
-                              "type": argument.type,
-                              "value": value.isEmpty ? null : value
-                            }),
-                          ),
-                        },
-                      ),
+          for (int i = 0; i < arguments.length; i++)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12.0),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: width,
+                    child: TextField(
+                      controller: TextEditingController(
+                          text: arguments[i].value.toString() == "null"
+                              ? ""
+                              : arguments[i].value.toString()),
+                      decoration: InputDecoration(
+                          label: Text(
+                              'Argument: ${arguments[i].name} (${arguments[i].type})'),
+                          border: const OutlineInputBorder()),
+                      // inputFormatters: [FilteringTextInputFormatter.allow()],
+                      onSubmitted: (value) => {
+                        data.updatePenaltyArgument(
+                            phaseIndex,
+                            penaltyIndex,
+                            arguments[i].name,
+                            (value.isEmpty ? null : value),
+                            arguments[i].type,
+                            i,
+                            _penaltyTypeToEndpoint(plural: true))
+                      },
                     ),
-                  ],
-                ),
-              )),
+                  ),
+                ],
+              ),
+            ),
           Row(
             children: [
               SizedBox(

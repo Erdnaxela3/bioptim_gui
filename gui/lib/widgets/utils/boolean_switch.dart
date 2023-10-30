@@ -1,5 +1,3 @@
-import 'package:bioptim_gui/models/acrobatics_controllers.dart';
-import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
 import 'package:flutter/material.dart';
 
 class BooleanSwitch extends StatefulWidget {

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:bioptim_gui/models/acrobatics_request_maker.dart';
 import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';

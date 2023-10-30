@@ -32,7 +32,7 @@ abstract class Penalty {
 class Argument {
   String name;
   String type;
-  String value;
+  String? value;
 
   Argument.fromJson(Map<String, dynamic> argumentData)
       : name = argumentData["name"],

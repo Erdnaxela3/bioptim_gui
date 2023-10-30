@@ -93,62 +93,62 @@ def prepare_ocp():
         for objective in somersaults[i]["objectives"]:
             generated += f"""
     objective_functions.add(
-        objective=ObjectiveFcn.{objective["objective_type"].capitalize()}.{objective["penalty_type"]}(
+        objective=ObjectiveFcn.{objective["objective_type"].capitalize()}.{objective["penalty_type"]},
 """
             for argument in objective["arguments"]:
-                generated += f"            {arg_to_string(argument)},\n"
+                generated += f"        {arg_to_string(argument)},\n"
 
-            generated += f"""            node=Node.{objective["nodes"].upper()},
-            quadratic={objective["quadratic"]},
-            weight={objective["weight"]},
+            generated += f"""        node=Node.{objective["nodes"].upper()},
+        quadratic={objective["quadratic"]},
+        weight={objective["weight"]},
 """
             if not objective["expand"]:
-                generated += "            expand = False,\n"
+                generated += "        expand = False,\n"
             if objective["target"] is not None:
-                generated += f"            target = {objective['target']},\n"
+                generated += f"        target = {objective['target']},\n"
             if objective["derivative"]:
-                generated += "            derivative = True,\n"
+                generated += "        derivative = True,\n"
             if (
                 objective["objective_type"] == "lagrange"
                 and objective["integration_rule"] != "rectangle_left"
             ):
-                generated += f"            integration_rule = QuadratureRule.{objective['integration_rule'].upper()},\n"
+                generated += f"        integration_rule = QuadratureRule.{objective['integration_rule'].upper()},\n"
             if objective["multi_thread"]:
-                generated += "            multi_thread = True,\n"
+                generated += "        multi_thread = True,\n"
             if nb_somersaults > 1:
-                generated += f"            phase={i},\n"
+                generated += f"        phase={i},\n"
 
-            generated += """        )
+            generated += """
     )"""
 
         for constraint in somersaults[i]["constraints"]:
             generated += f"""
     constraints.add(
-        constraint=ConstraintFcn.{constraint["penalty_type"]}("""
+        constraint=ConstraintFcn.{constraint["penalty_type"]},"""
 
             generated += f"""
-            node=Node.{constraint["nodes"].upper()},
-            quadratic={constraint["quadratic"]},
+        node=Node.{constraint["nodes"].upper()},
+        quadratic={constraint["quadratic"]},
 """
 
             for argument in constraint["arguments"]:
-                generated += f"            {arg_to_string(argument)},\n"
+                generated += f"        {arg_to_string(argument)},\n"
 
             if not constraint["expand"]:
-                generated += "            expand = False,\n"
+                generated += "        expand = False,\n"
             if constraint["target"] is not None:
-                generated += f"            target = {constraint['target']},\n"
+                generated += f"        target = {constraint['target']},\n"
             if constraint["derivative"]:
-                generated += "            derivative = True,\n"
+                generated += "        derivative = True,\n"
             if constraint["integration_rule"] != "rectangle_left":
-                generated += f"            integration_rule = QuadratureRule.{constraint['integration_rule'].upper()},\n"
+                generated += f"        integration_rule = QuadratureRule.{constraint['integration_rule'].upper()},\n"
             if constraint["multi_thread"]:
-                generated += "            multi_thread = True,\n"
+                generated += "        multi_thread = True,\n"
             if nb_somersaults > 1:
-                generated += f"            phase={i},\n"
+                generated += f"        phase={i},\n"
 
-            generated += """        )
-    )"""
+            generated += """    )
+"""
 
     generated += f"""
     # Declaration of the dynamics function used during integration
@@ -393,7 +393,7 @@ if __name__ == "__main__":
     # --- Solve the ocp --- #
     sol = ocp.solve(solver=solver)
 
-    out = sol.integrate(merge_somersaults=True)
+    out = sol.integrate(merge_phases=True)
     state, time_vector = out._states["unscaled"], out._time_vector
 
     save = {{

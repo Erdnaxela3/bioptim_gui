@@ -7,7 +7,14 @@ import 'package:http/http.dart' as http;
 ///
 /// This is only handle the code generation for the acrobatics ocp
 class AcrobaticsOCPProgram {
-  static Future<void> exportScript(String path) async {
+  AcrobaticsOCPProgram();
+
+  bool _hasPendingChangesToBeExported = true;
+  void notifyThatModelHasChanged() => _hasPendingChangesToBeExported = true;
+  bool get mustExport => _hasPendingChangesToBeExported;
+
+  Future<void> exportScript(String path) async {
+    _hasPendingChangesToBeExported = false;
     final file = File(path);
 
     Future<String> getGeneratedContent() async {

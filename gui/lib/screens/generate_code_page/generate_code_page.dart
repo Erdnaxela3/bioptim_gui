@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'package:bioptim_gui/models/acrobatics_ocp.dart';
-import 'package:bioptim_gui/models/optimal_control_program.dart';
+import 'package:bioptim_gui/models/acrobatics_controllers.dart';
 import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
 import 'package:bioptim_gui/models/optimal_control_program_type.dart';
 import 'package:bioptim_gui/models/python_interface.dart';
@@ -37,6 +36,7 @@ class _GenerateCodeState extends State<GenerateCode> {
     PythonInterface.instance.registerToStatusChanged((status) => forceRedraw());
     OptimalControlProgramControllers.instance
         .registerToStatusChanged(forceRedraw);
+    AcrobaticsControllers.instance.registerToStatusChanged(forceRedraw);
   }
 
   void forceRedraw() {
@@ -115,7 +115,14 @@ class _BuildTraillingState extends State<_BuildTrailling> {
   }
 
   Widget _buildExportOrRunScriptButton() {
-    if (_scriptPath == null) {
+    final controllers = OptimalControlProgramControllers.instance;
+    final acrobaticsControllers = AcrobaticsControllers.instance;
+
+    if ((controllers.ocpType == OptimalControlProgramType.ocp &&
+            controllers.mustExport) ||
+        (controllers.ocpType == OptimalControlProgramType.abrobaticsOCP &&
+            acrobaticsControllers.mustExport) ||
+        _scriptPath == null) {
       return ElevatedButton(
           onPressed: _onExportFile, child: const Text('Export script'));
     }
@@ -178,6 +185,7 @@ class _BuildTraillingState extends State<_BuildTrailling> {
 
   void _onExportFile() async {
     final controllers = OptimalControlProgramControllers.instance;
+    final acrobaticsControllers = AcrobaticsControllers.instance;
 
     _scriptPath = await FilePicker.platform.saveFile(
       allowedExtensions: ['py'],
@@ -186,9 +194,9 @@ class _BuildTraillingState extends State<_BuildTrailling> {
     if (_scriptPath == null) return;
 
     if (controllers.ocpType == OptimalControlProgramType.ocp) {
-      OptimalControlProgram.exportScript(_scriptPath!);
+      controllers.exportScript(_scriptPath!);
     } else if (controllers.ocpType == OptimalControlProgramType.abrobaticsOCP) {
-      AcrobaticsOCPProgram.exportScript(_scriptPath!);
+      acrobaticsControllers.exportScript(_scriptPath!);
     } else {
       throw Exception('Unknown OCP type');
     }

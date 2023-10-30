@@ -118,8 +118,8 @@ def prepare_ocp():
             if nb_somersaults > 1:
                 generated += f"        phase={i},\n"
 
-            generated += """
-    )"""
+            generated += """    )
+"""
 
         for constraint in somersaults[i]["constraints"]:
             generated += f"""

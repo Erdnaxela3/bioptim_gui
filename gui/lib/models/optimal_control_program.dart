@@ -24,7 +24,9 @@ class OptimalControlProgram {
 
   GenericOptimalControlProgram generic = GenericOptimalControlProgram();
 
-  static Future<void> exportScript(String path) async {
+  Future<void> exportScript(String path) async {
+    _hasPendingChangesToBeExported = false;
+
     final file = File(path);
 
     Future<String> getGeneratedContent() async {

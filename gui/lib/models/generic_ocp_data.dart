@@ -1,5 +1,6 @@
 import 'package:bioptim_gui/models/generic_ocp_request_maker.dart';
 import 'package:bioptim_gui/models/ocp_data.dart';
+import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
 import 'package:bioptim_gui/models/penalty.dart';
 import 'package:bioptim_gui/models/variables.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class GenericOcpData extends ChangeNotifier implements OCPData {
 
   @override
   GenericOCPRequestMaker get requestMaker {
+    notifyListeners();
     return GenericOCPRequestMaker();
   }
 
@@ -86,6 +88,12 @@ class GenericOcpData extends ChangeNotifier implements OCPData {
     }
 
     notifyListeners();
+  }
+
+  @override
+  void notifyListeners() {
+    OptimalControlProgramControllers.instance.notifyListeners();
+    super.notifyListeners();
   }
 }
 

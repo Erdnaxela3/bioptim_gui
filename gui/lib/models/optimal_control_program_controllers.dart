@@ -12,6 +12,7 @@ class OptimalControlProgramControllers {
   OptimalControlProgramControllers._internal();
 
   bool get mustExport => _ocp.mustExport;
+  Function(String path) get exportScript => _ocp.exportScript;
 
   final _ocp = OptimalControlProgram();
   // This is to keep track of how many controllers we have because we don't
@@ -19,7 +20,7 @@ class OptimalControlProgramControllers {
 
   ///
   /// This callback can be used so the UI is updated on any change
-  void _notifyListeners() {
+  void notifyListeners() {
     if (_hasChanged != null) _hasChanged!();
     _ocp.notifyThatModelHasChanged();
   }
@@ -27,7 +28,7 @@ class OptimalControlProgramControllers {
   void Function()? _hasChanged;
   void registerToStatusChanged(Function() callback) {
     _hasChanged = callback;
-    _notifyListeners();
+    notifyListeners();
   }
 
   ///
@@ -35,6 +36,6 @@ class OptimalControlProgramControllers {
   OptimalControlProgramType get ocpType => _ocp.generic.ocpType;
   void setOcpType(OptimalControlProgramType value) {
     _ocp.generic.ocpType = value;
-    _notifyListeners();
+    notifyListeners();
   }
 }

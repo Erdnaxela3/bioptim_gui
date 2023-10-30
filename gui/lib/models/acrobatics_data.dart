@@ -1,3 +1,4 @@
+import 'package:bioptim_gui/models/acrobatics_controllers.dart';
 import 'package:bioptim_gui/models/acrobatics_request_maker.dart';
 import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/models/penalty.dart';
@@ -32,6 +33,7 @@ class AcrobaticsData extends ChangeNotifier implements OCPData {
 
   @override
   AcrobaticsRequestMaker get requestMaker {
+    notifyListeners();
     return AcrobaticsRequestMaker();
   }
 
@@ -104,6 +106,12 @@ class AcrobaticsData extends ChangeNotifier implements OCPData {
     somersaultInfo = newPhases;
 
     notifyListeners();
+  }
+
+  @override
+  void notifyListeners() {
+    AcrobaticsControllers.instance.notifyListeners();
+    super.notifyListeners();
   }
 }
 

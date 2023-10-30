@@ -22,7 +22,8 @@ class AcrobaticsMenu extends StatefulWidget {
 
 class _AcrobaticsMenuState extends State<AcrobaticsMenu> {
   final _verticalScroll = ScrollController();
-  late Future<AcrobaticsData> _data;
+
+  AcrobaticsData? _data;
 
   @override
   void dispose() {
@@ -33,42 +34,37 @@ class _AcrobaticsMenuState extends State<AcrobaticsMenu> {
   @override
   void initState() {
     super.initState();
-    _data = AcrobaticsRequestMaker().fetchData();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    final data = await AcrobaticsRequestMaker().fetchData();
+    setState(() {
+      _data = data;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<AcrobaticsData>(
-      future: _data,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          final data = snapshot.data!;
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ChangeNotifierProvider<AcrobaticsData>(
-                create: (context) => data,
-                child: _HeaderBuilder(width: widget.columnWidth),
-              ),
-              const SizedBox(height: 12),
-              const Divider(),
-              const SizedBox(height: 12),
-              ChangeNotifierProvider<OCPData>(
-                create: (context) => data,
-                child: _PhaseBuilder(
-                  width: widget.columnWidth,
-                ),
-              ),
-            ],
-          );
-        }
-      },
-    );
+    if (_data == null) {
+      return const CircularProgressIndicator();
+    } else {
+      return ChangeNotifierProvider<OCPData>(
+        create: (context) => _data!,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _HeaderBuilder(width: widget.columnWidth),
+            const SizedBox(height: 12),
+            const Divider(),
+            const SizedBox(height: 12),
+            _PhaseBuilder(
+              width: widget.columnWidth,
+            ),
+          ],
+        ),
+      );
+    }
   }
 }
 
@@ -88,7 +84,8 @@ class _HeaderBuilder extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 12),
-            Consumer<AcrobaticsData>(builder: (context, acrobaticsData, child) {
+            Consumer<OCPData>(builder: (context, data, child) {
+              final acrobaticsData = data as AcrobaticsData;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

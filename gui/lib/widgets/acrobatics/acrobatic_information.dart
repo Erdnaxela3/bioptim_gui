@@ -1,5 +1,6 @@
 import 'package:bioptim_gui/models/acrobatics_data.dart';
 import 'package:bioptim_gui/models/acrobatics_request_maker.dart';
+import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/widgets/utils/positive_float_text_field.dart';
 import 'package:bioptim_gui/widgets/utils/positive_integer_text_field.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,8 @@ class AcrobaticInformation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AcrobaticsData>(builder: (context, acrobaticsData, child) {
+    return Consumer<OCPData>(builder: (context, data, child) {
+      final acrobaticsData = data as AcrobaticsData;
       return Column(
         children: [
           SizedBox(

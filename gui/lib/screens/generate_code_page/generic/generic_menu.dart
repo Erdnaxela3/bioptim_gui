@@ -17,7 +17,8 @@ class GenericMenu extends StatefulWidget {
 
 class _GenericMenuState extends State<GenericMenu> {
   final _verticalScroll = ScrollController();
-  late Future<GenericOcpData> _data;
+
+  GenericOcpData? _data;
 
   @override
   void dispose() {
@@ -28,42 +29,37 @@ class _GenericMenuState extends State<GenericMenu> {
   @override
   void initState() {
     super.initState();
-    _data = GenericOCPRequestMaker().fetchData();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    final data = await GenericOCPRequestMaker().fetchData();
+    setState(() {
+      _data = data;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<GenericOcpData>(
-      future: _data,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          final data = snapshot.data!;
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ChangeNotifierProvider<GenericOcpData>(
-                create: (context) => data,
-                child: _HeaderBuilder(width: widget.columnWidth),
-              ),
-              const SizedBox(height: 12),
-              const Divider(),
-              const SizedBox(height: 12),
-              ChangeNotifierProvider<OCPData>(
-                create: (context) => data,
-                child: _PhaseBuilder(
-                  width: widget.columnWidth,
-                ),
-              ),
-            ],
-          );
-        }
-      },
-    );
+    if (_data == null) {
+      return const CircularProgressIndicator();
+    } else {
+      return ChangeNotifierProvider<OCPData>(
+        create: (context) => _data!,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _HeaderBuilder(width: widget.columnWidth),
+            const SizedBox(height: 12),
+            const Divider(),
+            const SizedBox(height: 12),
+            _PhaseBuilder(
+              width: widget.columnWidth,
+            ),
+          ],
+        ),
+      );
+    }
   }
 }
 

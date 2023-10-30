@@ -1,5 +1,4 @@
 import 'package:bioptim_gui/models/acrobatics_data.dart';
-import 'package:bioptim_gui/models/acrobatics_request_maker.dart';
 import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/widgets/utils/positive_float_text_field.dart';
 import 'package:bioptim_gui/widgets/utils/positive_integer_text_field.dart';
@@ -18,9 +17,8 @@ class SomersaultInformation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<OCPData>(builder: (context, acrobaticsData, child) {
-      final somersault =
-          (acrobaticsData.phaseInfo[somersaultIndex] as Somersault);
+    return Consumer<OCPData>(builder: (context, data, child) {
+      final somersault = (data.phaseInfo[somersaultIndex] as Somersault);
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -31,7 +29,7 @@ class SomersaultInformation extends StatelessWidget {
               value: somersault.nbHalfTwists.toString(),
               onSubmitted: (newValue) {
                 if (newValue.isNotEmpty) {
-                  AcrobaticsRequestMaker().updateSomersaultField(
+                  data.requestMaker.updatePhaseField(
                       somersaultIndex, "nb_half_twists", newValue);
                 }
               },
@@ -47,7 +45,7 @@ class SomersaultInformation extends StatelessWidget {
                   value: somersault.nbShootingPoints.toString(),
                   onSubmitted: (newValue) {
                     if (newValue.isNotEmpty) {
-                      AcrobaticsRequestMaker().updateSomersaultField(
+                      data.requestMaker.updatePhaseField(
                           somersaultIndex, "nb_shooting_points", newValue);
                     }
                   },
@@ -60,7 +58,7 @@ class SomersaultInformation extends StatelessWidget {
                   label: 'Phase time (s)',
                   onSubmitted: (newValue) {
                     if (newValue.isNotEmpty) {
-                      AcrobaticsRequestMaker().updateSomersaultField(
+                      data.requestMaker.updatePhaseField(
                           somersaultIndex, "duration", newValue);
                     }
                   },

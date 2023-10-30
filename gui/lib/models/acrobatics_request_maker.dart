@@ -21,9 +21,4 @@ class AcrobaticsRequestMaker extends OCPRequestMaker<AcrobaticsData> {
     final data = json.decode(response.body);
     return AcrobaticsData.fromJson(data);
   }
-
-  Future<void> updateSomersaultField(
-      int somersaultIndex, String fieldName, String newValue) async {
-    super.updatePhaseField(somersaultIndex, fieldName, newValue);
-  }
 }

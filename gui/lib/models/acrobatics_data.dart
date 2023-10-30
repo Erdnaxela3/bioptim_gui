@@ -33,7 +33,6 @@ class AcrobaticsData extends ChangeNotifier implements OCPData {
 
   @override
   AcrobaticsRequestMaker get requestMaker {
-    notifyListeners();
     return AcrobaticsRequestMaker();
   }
 
@@ -110,8 +109,8 @@ class AcrobaticsData extends ChangeNotifier implements OCPData {
 
   @override
   void notifyListeners() {
-    AcrobaticsControllers.instance.notifyListeners();
     super.notifyListeners();
+    AcrobaticsControllers.instance.notifyListeners();
   }
 }
 

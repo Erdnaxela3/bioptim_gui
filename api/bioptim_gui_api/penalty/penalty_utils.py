@@ -53,7 +53,7 @@ def get_args(penalty_fcn) -> list:
     if defaults:
         l_defaults = len(defaults)
         for i in range(l_defaults):
-            formatted_arguments[i]["value"] = defaults[i]
+            formatted_arguments[-l_defaults + i]["value"] = defaults[i]
 
     formatted_arguments = [
         arg

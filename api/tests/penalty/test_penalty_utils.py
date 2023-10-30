@@ -49,6 +49,28 @@ def test_format_arg_type(arg_type, expected):
                 {"name": "axis", "value": None, "type": "Axis"},
             ],
         ),
+        (
+            ObjectiveFcn.Lagrange.PROPORTIONAL_STATE,
+            [
+                {"name": "key", "value": None, "type": "str"},
+                {"name": "first_dof", "value": None, "type": "int"},
+                {"name": "second_dof", "value": None, "type": "int"},
+                {"name": "coef", "value": None, "type": "float"},
+                {"name": "first_dof_intercept", "value": 0.0, "type": "float"},
+                {"name": "second_dof_intercept", "value": 0.0, "type": "float"},
+            ],
+        ),
+        (
+            ObjectiveFcn.Lagrange.PROPORTIONAL_CONTROL,
+            [
+                {"name": "key", "value": None, "type": "str"},
+                {"name": "first_dof", "value": None, "type": "int"},
+                {"name": "second_dof", "value": None, "type": "int"},
+                {"name": "coef", "value": None, "type": "float"},
+                {"name": "first_dof_intercept", "value": 0.0, "type": "float"},
+                {"name": "second_dof_intercept", "value": 0.0, "type": "float"},
+            ],
+        ),
         (ConstraintFcn.CONTINUITY, []),
     ],
 )
@@ -66,6 +88,12 @@ def test_get_args(penalty_fcn, expected):
             ObjectiveFcn.Lagrange.TRACK_MARKER_WITH_SEGMENT_AXIS,
             "lagrange",
             "TRACK_MARKER_WITH_SEGMENT_AXIS",
+        ),
+        (ObjectiveFcn.Lagrange.PROPORTIONAL_STATE, "lagrange", "PROPORTIONAL_STATE"),
+        (
+            ObjectiveFcn.Lagrange.PROPORTIONAL_CONTROL,
+            "lagrange",
+            "PROPORTIONAL_CONTROL",
         ),
     ],
 )

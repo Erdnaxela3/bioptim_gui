@@ -280,7 +280,10 @@ class _PathTile extends StatelessWidget {
                     SizedBox(
                       width: width,
                       child: TextField(
-                        controller: TextEditingController(text: argument.value),
+                        controller: TextEditingController(
+                            text: argument.value.toString() == "null"
+                                ? ""
+                                : argument.value.toString()),
                         decoration: InputDecoration(
                             label: Text(
                                 'Argument: ${argument.name} (${argument.type})'),
@@ -291,8 +294,10 @@ class _PathTile extends StatelessWidget {
                             Uri.parse(
                                 '${APIConfig.url}$endpointPrefix/$phaseIndex/${_penaltyTypeToEndpoint(plural: true)}/$penaltyIndex/arguments/${argument.name}'),
                             headers: {'Content-Type': 'application/json'},
-                            body: json.encode(
-                                {"type": argument.type, "value": value}),
+                            body: json.encode({
+                              "type": argument.type,
+                              "value": value.isEmpty ? null : value
+                            }),
                           )
                         },
                       ),
@@ -348,8 +353,10 @@ class _PathTile extends StatelessWidget {
             children: [
               Expanded(
                 child: TextField(
-                  controller:
-                      TextEditingController(text: penalty.target.toString()),
+                  controller: TextEditingController(
+                      text: penalty.target.toString() == "null"
+                          ? ""
+                          : penalty.target.toString()),
                   decoration: const InputDecoration(
                       label: Text('Target'), border: OutlineInputBorder()),
                   inputFormatters: [

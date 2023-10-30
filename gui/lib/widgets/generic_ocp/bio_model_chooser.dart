@@ -28,7 +28,7 @@ class BioModelChooserState extends State<BioModelChooser> {
             title: 'Dynamic model',
             value: BioModel.biorbd,
             items: BioModel.values,
-            // onSelected: (value) TODO,
+            // onSelected: (value) Alexandre: TODO implement this in the backend,
             isExpanded: false,
           ),
           Padding(

@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 /// It will be used in [Consumer] to provide the data to the widgets that
 /// display the data that can be common to both OCPs. (penalties for now)
 abstract class OCPData<T extends Phase> with ChangeNotifier {
-  // TODO maybe gather the common data here like nbPhases and model_path
+  // Alexandre: TODO maybe gather the common data here like nbPhases and model_path
 
   ///
   /// Getter Setters

@@ -1,5 +1,6 @@
 import 'package:bioptim_gui/models/optimal_control_program_type.dart';
 import 'package:bioptim_gui/models/optimal_control_program.dart';
+import 'package:flutter/foundation.dart';
 
 ///
 /// This class mimics the strcture of the [OptimalControlProgram] class but in
@@ -21,6 +22,7 @@ class OptimalControlProgramControllers {
   ///
   /// This callback can be used so the UI is updated on any change
   void notifyListeners() {
+    if (kDebugMode) print("OptimalControlProgramControllers: notifyListeners");
     if (_hasChanged != null) _hasChanged!();
     _ocp.notifyThatModelHasChanged();
   }

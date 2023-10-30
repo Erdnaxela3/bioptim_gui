@@ -43,12 +43,6 @@ class AcrobaticsData extends ChangeNotifier implements OCPData {
   String get modelPath => _modelPath;
 
   @override
-  set modelPath(String value) {
-    _modelPath = value;
-    notifyListeners();
-  }
-
-  @override
   int get nbPhases => _nbSomersaults;
 
   int get nbSomersaults => _nbSomersaults;
@@ -59,6 +53,58 @@ class AcrobaticsData extends ChangeNotifier implements OCPData {
 
   ///
   /// Update methods
+
+  @override
+  void updateField(String name, String value) {
+    requestMaker.updateField(name, value);
+
+    switch (name) {
+      case "nb_somersaults":
+        nbSomersaults = int.parse(value);
+        break;
+      case "model_path":
+        _modelPath = value;
+        break;
+      case "final_time":
+        finalTime = double.parse(value);
+        break;
+      case "final_time_margin":
+        finalTimeMargin = double.parse(value);
+        break;
+      case "position":
+        position = value;
+        break;
+      case "sport_type":
+        sportType = value;
+        break;
+      case "preferred_twist_side":
+        preferredTwistSide = value;
+        break;
+      default:
+        break;
+    }
+    notifyListeners();
+  }
+
+  @override
+  void updatePhaseField(int phaseIndex, String fieldName, String newValue) {
+    requestMaker.updatePhaseField(phaseIndex, fieldName, newValue);
+
+    switch (fieldName) {
+      case "nb_half_twists":
+        somersaultInfo[phaseIndex].nbHalfTwists = int.parse(newValue);
+        break;
+      case "duration":
+        somersaultInfo[phaseIndex].duration = double.parse(newValue);
+        break;
+      case "nb_shooting_points":
+        somersaultInfo[phaseIndex].nbShootingPoints = int.parse(newValue);
+        break;
+      default:
+        break;
+    }
+    notifyListeners();
+  }
 
   void updateData(AcrobaticsData newData) {
     nbSomersaults = newData.nbSomersaults;
@@ -109,9 +155,13 @@ class AcrobaticsData extends ChangeNotifier implements OCPData {
 
   @override
   void notifyListeners() {
-    super.notifyListeners();
     AcrobaticsControllers.instance.notifyListeners();
+    super.notifyListeners();
   }
+
+  @override
+  void updateObjectiveArgument(int phaseIndex, int objectiveIndex,
+      String argumentName, String newValue) {}
 }
 
 class Somersault extends Phase {

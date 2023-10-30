@@ -33,18 +33,47 @@ class GenericOcpData extends ChangeNotifier implements OCPData {
   @override
   String get modelPath => _modelPath;
 
-  @override
-  set modelPath(String value) {
-    _modelPath = value;
-    notifyListeners();
-  }
-
   set nbPhases(int value) {
     _nbPhases = value;
     notifyListeners();
   }
 
-  // update methods
+  ///
+  /// update methods
+
+  @override
+  void updateField(String name, String value) {
+    requestMaker.updateField(name, value);
+
+    switch (name) {
+      case "nb_phases":
+        nbPhases = int.parse(value);
+        break;
+      case "model_path":
+        _modelPath = value;
+        break;
+    }
+    notifyListeners();
+  }
+
+  @override
+  void updatePhaseField(int phaseIndex, String fieldName, String newValue) {
+    requestMaker.updatePhaseField(phaseIndex, fieldName, newValue);
+
+    // TODO fix double calls to notifyListeners for nb_shooting_points and duration
+    switch (fieldName) {
+      case "dynamics":
+        phaseInfo[phaseIndex].dynamics = newValue;
+        break;
+      case "nb_shooting_points":
+        phaseInfo[phaseIndex].nbShootingPoints = int.parse(newValue);
+        break;
+      case "duration":
+        phaseInfo[phaseIndex].duration = double.parse(newValue);
+        break;
+    }
+    notifyListeners();
+  }
 
   void updateData(GenericOcpData newData) {
     nbPhases = newData.nbPhases;
@@ -95,6 +124,10 @@ class GenericOcpData extends ChangeNotifier implements OCPData {
     OptimalControlProgramControllers.instance.notifyListeners();
     super.notifyListeners();
   }
+
+  @override
+  void updateObjectiveArgument(int phaseIndex, int objectiveIndex,
+      String argumentName, String newValue) {}
 }
 
 class GenericPhase extends Phase {

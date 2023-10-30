@@ -71,23 +71,23 @@ class OCPRequestMaker<T extends OCPData> {
     return response;
   }
 
-  Future<http.Response> updateObjectiveField(
-      int phaseIndex, int objectiveIndex, String value) async {
+  Future<http.Response> updateObjectiveField(int phaseIndex, int objectiveIndex,
+      String objectiveField, String value) async {
     final url = Uri.parse(
-        '${APIConfig.url}/$prefix/$phaseInfoString/$phaseIndex/objectives/$objectiveIndex/objective_type');
-    final body = json.encode({"objective_type": value});
+        '${APIConfig.url}/$prefix/$phaseInfoString/$phaseIndex/objectives/$objectiveIndex/$objectiveField');
+    final body = json.encode({objectiveField: value});
 
     final response =
         await http.put(url, body: body, headers: APIConfig.headers);
 
     if (response.statusCode != 200) {
       throw Exception(
-          'Error while changing $phaseInfoString $phaseIndex}\'s objective $objectiveIndex} to value $value');
+          'Error while changing $phaseInfoString $phaseIndex}\'s objective $objectiveIndex} $objectiveField to value $value');
     }
 
     if (kDebugMode) {
       print(
-          '$phaseInfoString $phaseIndex\'s objective $objectiveIndex changed to value $value');
+          '$phaseInfoString $phaseIndex\'s objective $objectiveIndex $objectiveField changed to value $value');
     }
 
     return response;

@@ -27,7 +27,7 @@ class PhaseInformation extends StatelessWidget {
               value: data.phaseInfo[phaseIndex].nbShootingPoints.toString(),
               onSubmitted: (newValue) {
                 if (newValue.isNotEmpty) {
-                  GenericOCPRequestMaker().updatePhaseField(
+                  data.updatePhaseField(
                       phaseIndex, "nb_shooting_points", newValue);
                 }
               },
@@ -40,8 +40,7 @@ class PhaseInformation extends StatelessWidget {
               label: 'Phase time (s)',
               onSubmitted: (newValue) {
                 if (newValue.isNotEmpty) {
-                  GenericOCPRequestMaker()
-                      .updatePhaseField(phaseIndex, "duration", newValue);
+                  data.updatePhaseField(phaseIndex, "duration", newValue);
                 }
               },
             ),

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:bioptim_gui/models/bio_model.dart';
-import 'package:bioptim_gui/models/generic_ocp_request_maker.dart';
 import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/widgets/utils/custom_dropdown_button.dart';
 import 'package:file_picker/file_picker.dart';
@@ -50,10 +49,8 @@ class BioModelChooserState extends State<BioModelChooser> {
                       );
                       if (results == null) return;
 
-                      GenericOCPRequestMaker().updateField(
+                      data.updateField(
                           "model_path", results.files.single.path!);
-
-                      data.modelPath = results.files.single.path!;
                     },
                     icon: const Icon(Icons.file_upload_outlined),
                   ),

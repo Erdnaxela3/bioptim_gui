@@ -1,4 +1,6 @@
+import 'package:bioptim_gui/models/acrobatics_controllers.dart';
 import 'package:bioptim_gui/models/api_config.dart';
+import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
 import 'package:bioptim_gui/widgets/utils/custom_dropdown_button.dart';
 import 'package:bioptim_gui/widgets/utils/extensions.dart';
 import 'package:flutter/foundation.dart';
@@ -73,21 +75,22 @@ class CustomHttpDropdownState extends State<CustomHttpDropdown> {
 
     final response = await http.put(url, headers: headers, body: body);
 
-    if (response.statusCode == 200) {
-      setState(() {
-        _selectedValue = value;
-      });
-
-      if (kDebugMode) {
-        print('${widget.title} changed to value $requestValue');
-      }
-
-      if (widget.customCallBack != null) widget.customCallBack!(response);
-    } else {
-      if (kDebugMode) {
-        print('Error while changing ${widget.title} to value $requestValue');
-      }
+    if (response.statusCode != 200) {
+      throw Exception(
+          'Error while changing ${widget.title} to value $requestValue');
     }
+
+    setState(() {
+      _selectedValue = value;
+    });
+
+    if (kDebugMode) print('${widget.title} changed to value $requestValue');
+
+    // Alexandre: TODO find a prettier way to reset the export button
+    AcrobaticsControllers.instance.notifyListeners();
+    OptimalControlProgramControllers.instance.notifyListeners();
+
+    if (widget.customCallBack != null) widget.customCallBack!(response);
   }
 
   @override

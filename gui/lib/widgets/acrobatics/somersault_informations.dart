@@ -29,7 +29,7 @@ class SomersaultInformation extends StatelessWidget {
               value: somersault.nbHalfTwists.toString(),
               onSubmitted: (newValue) {
                 if (newValue.isNotEmpty) {
-                  data.requestMaker.updatePhaseField(
+                  data.updatePhaseField(
                       somersaultIndex, "nb_half_twists", newValue);
                 }
               },
@@ -45,7 +45,7 @@ class SomersaultInformation extends StatelessWidget {
                   value: somersault.nbShootingPoints.toString(),
                   onSubmitted: (newValue) {
                     if (newValue.isNotEmpty) {
-                      data.requestMaker.updatePhaseField(
+                      data.updatePhaseField(
                           somersaultIndex, "nb_shooting_points", newValue);
                     }
                   },
@@ -58,7 +58,7 @@ class SomersaultInformation extends StatelessWidget {
                   label: 'Phase time (s)',
                   onSubmitted: (newValue) {
                     if (newValue.isNotEmpty) {
-                      data.requestMaker.updatePhaseField(
+                      data.updatePhaseField(
                           somersaultIndex, "duration", newValue);
                     }
                   },

@@ -17,18 +17,19 @@ abstract class OCPData<T extends Phase> with ChangeNotifier {
   List<T> get phaseInfo;
   int get nbPhases;
   String get modelPath;
-  set modelPath(String value);
 
   ///
   /// Update methods
 
+  void updateField(String name, String value);
+  void updatePhaseField(int phaseIndex, String fieldName, String newValue);
   void updatePhaseInfo(List<dynamic> newData);
-
   void updatePenalties(
       int phaseIndex, String penaltyType, List<Penalty> penalties);
-
   void updatePenalty(
       int phaseIndex, String penaltyType, int penaltyIndex, Penalty penalty);
+  void updateObjectiveArgument(
+      int phaseIndex, int objectiveIndex, String argumentName, String newValue);
 }
 
 ///

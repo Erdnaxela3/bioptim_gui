@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:bioptim_gui/models/acrobatics_controllers.dart';
+import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:bioptim_gui/models/api_config.dart';
@@ -41,15 +43,19 @@ class RemoteBooleanSwitchState extends State<RemoteBooleanSwitch> {
 
     final response = await http.put(url, headers: headers, body: body);
 
-    if (response.statusCode == 200) {
-      setState(() {
-        switchValue = value;
-      });
-
-      if (kDebugMode) {
-        print('${widget.leftText} switch updated to $value');
-      }
+    if (response.statusCode != 200) {
+      throw Exception('${widget.leftText} switch didn\'t update to $value');
     }
+
+    if (kDebugMode) print('${widget.leftText} switch updated to $value');
+
+    setState(() {
+      switchValue = value;
+    });
+
+    // Alexandre: TODO find a prettier way to reset the export button
+    AcrobaticsControllers.instance.notifyListeners();
+    OptimalControlProgramControllers.instance.notifyListeners();
   }
 
   @override
@@ -62,9 +68,7 @@ class RemoteBooleanSwitchState extends State<RemoteBooleanSwitch> {
           Text(widget.leftText),
           Switch(
             value: switchValue,
-            onChanged: (bool value) {
-              _updateRemoteValue(value);
-            },
+            onChanged: (bool value) => {_updateRemoteValue(value)},
             thumbIcon: MaterialStateProperty.resolveWith<Icon?>(
               (Set<MaterialState> states) {
                 if (states.contains(MaterialState.selected)) {

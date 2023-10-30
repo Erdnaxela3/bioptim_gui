@@ -49,8 +49,7 @@ class AcrobaticInformation extends StatelessWidget {
                   label: 'Final time *',
                   onSubmitted: (newValue) {
                     if (newValue.isNotEmpty) {
-                      AcrobaticsRequestMaker()
-                          .updateField("final_time", newValue);
+                      data.updateField("final_time", newValue);
                     }
                   },
                 ),
@@ -63,8 +62,7 @@ class AcrobaticInformation extends StatelessWidget {
                   label: 'Final time margin *',
                   onSubmitted: (newValue) {
                     if (newValue.isNotEmpty) {
-                      AcrobaticsRequestMaker()
-                          .updateField("final_time_margin", newValue);
+                      data.updateField("final_time_margin", newValue);
                     }
                   },
                 ),

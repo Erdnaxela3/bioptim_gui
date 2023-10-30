@@ -37,7 +37,10 @@ class ObjectiveTypeRadioState extends State<ObjectiveTypeRadio> {
     return Consumer<OCPData>(builder: (context, data, child) {
       void updatePenalty(newValue) async {
         final response = await data.requestMaker.updateObjectiveField(
-            widget.phaseIndex, widget.objectiveIndex, newValue);
+            widget.phaseIndex,
+            widget.objectiveIndex,
+            "objective_type",
+            newValue);
 
         setState(() {
           _selectedValue = newValue;

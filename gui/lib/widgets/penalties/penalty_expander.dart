@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:bioptim_gui/models/acrobatics_controllers.dart';
 import 'package:bioptim_gui/models/api_config.dart';
 import 'package:bioptim_gui/models/ocp_data.dart';
+import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
 import 'package:bioptim_gui/models/penalty.dart';
 import 'package:bioptim_gui/widgets/penalties/integration_rule_chooser.dart';
 import 'package:bioptim_gui/widgets/penalties/maximize_minimize_radio.dart';
@@ -72,13 +74,11 @@ class PenaltyExpanderState extends State<PenaltyExpander> {
 
     final response = await http.post(url);
 
-    if (response.statusCode == 200) {
-      if (kDebugMode) print("Created a penalty");
+    if (response.statusCode != 200) throw Exception("Fetch error");
 
-      return response;
-    } else {
-      throw Exception("Fetch error");
-    }
+    if (kDebugMode) print("Created a penalty");
+
+    return response;
   }
 
   @override
@@ -214,14 +214,12 @@ class _PathTile extends StatelessWidget {
 
     final response = await http.delete(url);
 
-    if (response.statusCode == 200) {
-      if (kDebugMode) {
-        print('Removed a penalty (${_penaltyTypeToEndpoint(plural: true)})');
-      }
-      return response;
-    } else {
-      throw Exception("Fetch error");
+    if (response.statusCode != 200) throw Exception("Fetch error");
+
+    if (kDebugMode) {
+      print('Removed a penalty (${_penaltyTypeToEndpoint(plural: true)})');
     }
+    return response;
   }
 
   @override
@@ -298,7 +296,7 @@ class _PathTile extends StatelessWidget {
                               "type": argument.type,
                               "value": value.isEmpty ? null : value
                             }),
-                          )
+                          ),
                         },
                       ),
                     ),

@@ -28,9 +28,12 @@ abstract class OCPData<T extends Phase> with ChangeNotifier {
       int phaseIndex, String penaltyType, List<Penalty> penalties);
   void updatePenalty(
       int phaseIndex, String penaltyType, int penaltyIndex, Penalty penalty);
+  void updatePenaltyField(int phaseIndex, int penaltyIndex, String penaltyType,
+      String fieldName, dynamic newValue,
+      {bool? doUpdate});
   void updatePenaltyArgument(
       int phaseIndex,
-      int objectiveIndex,
+      int penaltyIndex,
       String argumentName,
       String? newValue,
       String argumentType,

@@ -324,13 +324,13 @@ class _PathTile extends StatelessWidget {
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]')),
                     ],
                     onSubmitted: (value) => {
-                      http.put(
-                        Uri.parse(
-                            '${APIConfig.url}$endpointPrefix/$phaseIndex/${_penaltyTypeToEndpoint(plural: true)}/$penaltyIndex/weight'),
-                        headers: {'Content-Type': 'application/json'},
-                        body: json
-                            .encode({"weight": double.tryParse(value) ?? 0}),
-                      )
+                      data.updatePenaltyField(
+                          phaseIndex,
+                          penaltyIndex,
+                          _penaltyTypeToEndpoint(plural: true),
+                          "weight",
+                          (double.tryParse(value) ?? 0).toString(),
+                          doUpdate: false),
                     },
                   ),
                 ),
@@ -359,12 +359,12 @@ class _PathTile extends StatelessWidget {
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9\.,\[\]]'))
                   ],
                   onSubmitted: (value) => {
-                    http.put(
-                      Uri.parse(
-                          '${APIConfig.url}$endpointPrefix/$phaseIndex/${_penaltyTypeToEndpoint(plural: true)}/$penaltyIndex/target'),
-                      headers: {'Content-Type': 'application/json'},
-                      body: json.encode({"target": value.tryParseDoubleList()}),
-                    )
+                    data.updatePenaltyField(
+                        phaseIndex,
+                        penaltyIndex,
+                        _penaltyTypeToEndpoint(plural: true),
+                        "target",
+                        value.tryParseDoubleList())
                   },
                 ),
               ),

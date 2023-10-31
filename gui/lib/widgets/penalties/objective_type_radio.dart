@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:bioptim_gui/models/ocp_data.dart';
-import 'package:bioptim_gui/models/penalty.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -36,20 +33,13 @@ class ObjectiveTypeRadioState extends State<ObjectiveTypeRadio> {
 
     return Consumer<OCPData>(builder: (context, data, child) {
       void updatePenalty(newValue) async {
-        final response = await data.requestMaker.updateObjectiveField(
-            widget.phaseIndex,
-            widget.objectiveIndex,
-            "objective_type",
-            newValue);
+        data.updatePenaltyField(widget.phaseIndex, widget.objectiveIndex,
+            "objectives", "objective_type", newValue,
+            doUpdate: true);
 
         setState(() {
           _selectedValue = newValue;
         });
-
-        final Penalty newObjective = Objective.fromJson(
-            json.decode(response.body) as Map<String, dynamic>);
-        data.updatePenalty(widget.phaseIndex, "objective",
-            widget.objectiveIndex, newObjective);
       }
 
       return Column(

@@ -71,23 +71,23 @@ class OCPRequestMaker<T extends OCPData> {
     return response;
   }
 
-  Future<http.Response> updateObjectiveField(int phaseIndex, int objectiveIndex,
-      String objectiveField, String value) async {
+  Future<http.Response> updatePenaltyField(int phaseIndex, String penaltyType,
+      int penaltyIndex, String fieldName, dynamic value) async {
     final url = Uri.parse(
-        '${APIConfig.url}/$prefix/$phaseInfoString/$phaseIndex/objectives/$objectiveIndex/$objectiveField');
-    final body = json.encode({objectiveField: value});
+        '${APIConfig.url}/$prefix/$phaseInfoString/$phaseIndex/$penaltyType/$penaltyIndex/$fieldName');
+    final body = json.encode({fieldName: value});
 
     final response =
         await http.put(url, body: body, headers: APIConfig.headers);
 
     if (response.statusCode != 200) {
       throw Exception(
-          'Error while changing $phaseInfoString $phaseIndex}\'s objective $objectiveIndex} $objectiveField to value $value');
+          'Error while changing $phaseInfoString $phaseIndex}\'s $penaltyType $penaltyIndex} $fieldName to value $value');
     }
 
     if (kDebugMode) {
       print(
-          '$phaseInfoString $phaseIndex\'s objective $objectiveIndex $objectiveField changed to value $value');
+          '$phaseInfoString $phaseIndex\'s $penaltyType $penaltyIndex $fieldName changed to value $value');
     }
 
     return response;
@@ -95,13 +95,13 @@ class OCPRequestMaker<T extends OCPData> {
 
   Future<http.Response> updatePenaltyArgument(
       int phaseIndex,
-      int objectiveIndex,
+      int penaltyIndex,
       String argumentName,
       String? newValue,
       String argumentType,
       String penaltyType) async {
     final url = Uri.parse(
-        '${APIConfig.url}/$prefix/$phaseInfoString/$phaseIndex/$penaltyType/$objectiveIndex/arguments/$argumentName');
+        '${APIConfig.url}/$prefix/$phaseInfoString/$phaseIndex/$penaltyType/$penaltyIndex/arguments/$argumentName');
     final body = json.encode({
       "name": argumentName,
       "value": newValue,
@@ -113,12 +113,12 @@ class OCPRequestMaker<T extends OCPData> {
 
     if (response.statusCode != 200) {
       throw Exception(
-          'Error while changing $phaseInfoString $phaseIndex\'s $penaltyType $objectiveIndex $argumentName to value $newValue');
+          'Error while changing $phaseInfoString $phaseIndex\'s $penaltyType $penaltyIndex $argumentName to value $newValue');
     }
 
     if (kDebugMode) {
       print(
-          '$phaseInfoString $phaseIndex\'s $penaltyType $objectiveIndex $argumentName changed to value $newValue');
+          '$phaseInfoString $phaseIndex\'s $penaltyType $penaltyIndex $argumentName changed to value $newValue');
     }
     return response;
   }

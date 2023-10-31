@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bioptim_gui/models/generic_ocp_request_maker.dart';
 import 'package:bioptim_gui/models/ocp_data.dart';
 import 'package:bioptim_gui/models/optimal_control_program_controllers.dart';
@@ -143,6 +145,67 @@ class GenericOcpData extends ChangeNotifier implements OCPData {
         .value = newValue;
 
     notifyListeners();
+  }
+
+  @override
+  void updatePenaltyField(int phaseIndex, int penaltyIndex, String penaltyType,
+      String fieldName, dynamic newValue,
+      {bool? doUpdate}) async {
+    final response = await requestMaker.updatePenaltyField(
+        phaseIndex, penaltyType, penaltyIndex, fieldName, newValue);
+
+    final isObjective = penaltyType == "objectives";
+
+    switch (fieldName) {
+      case "target":
+        phaseInfo[phaseIndex].objectives[penaltyIndex].target = newValue;
+        break;
+      case "integration_rule":
+        phaseInfo[phaseIndex].objectives[penaltyIndex].integrationRule =
+            newValue!;
+        break;
+      case "weight":
+        phaseInfo[phaseIndex].objectives[penaltyIndex].weight =
+            double.parse(newValue!);
+        break;
+      case "nodes":
+        phaseInfo[phaseIndex].constraints[penaltyIndex].nodes = newValue!;
+        break;
+      case "quadratic":
+        phaseInfo[phaseIndex].constraints[penaltyIndex].quadratic =
+            newValue == "true";
+        break;
+      case "expand":
+        phaseInfo[phaseIndex].constraints[penaltyIndex].expand =
+            newValue == "true";
+        break;
+      case "multi_thread":
+        phaseInfo[phaseIndex].constraints[penaltyIndex].multiThread =
+            newValue == "true";
+        break;
+      case "derivative":
+        phaseInfo[phaseIndex].constraints[penaltyIndex].derivative =
+            newValue == "true";
+        break;
+      default:
+        break;
+    }
+
+    if (doUpdate != null && doUpdate) {
+      final Penalty newPenalties = isObjective
+          ? Objective.fromJson(
+              json.decode(response.body) as Map<String, dynamic>)
+          : Constraint.fromJson(
+              json.decode(response.body) as Map<String, dynamic>);
+
+      if (isObjective) {
+        updatePenalty(phaseIndex, "objective", penaltyIndex, newPenalties);
+      } else {
+        updatePenalty(phaseIndex, "constraint", penaltyIndex, newPenalties);
+      }
+    } else {
+      notifyListeners();
+    }
   }
 }
 

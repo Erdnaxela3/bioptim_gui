@@ -27,6 +27,11 @@ abstract class Penalty {
   String penaltyTypeToString() {
     return "";
   }
+
+  @override
+  String toString() {
+    return "";
+  }
 }
 
 class Argument {
@@ -53,6 +58,11 @@ class Objective extends Penalty {
   String penaltyTypeToString() {
     return objectiveType.capitalize();
   }
+
+  @override
+  String toString() {
+    return "objective";
+  }
 }
 
 class Constraint extends Penalty {
@@ -62,5 +72,10 @@ class Constraint extends Penalty {
   @override
   String penaltyTypeToString() {
     return "Constraint";
+  }
+
+  @override
+  String toString() {
+    return "constraint";
   }
 }

@@ -36,3 +36,8 @@ from bioptim_gui_api.variables.variables_utils import variables_zeros
 )
 def test_variables_zeros(dimension, interpolation_type, expected):
     assert variables_zeros(dimension, interpolation_type) == expected
+
+
+def test_variables_zeros_error():
+    with pytest.raises(ValueError):
+        variables_zeros(1, "NOT_IMPLEMENTED")

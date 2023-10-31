@@ -1,5 +1,6 @@
 import pytest
 from bioptim import ObjectiveFcn, ConstraintFcn
+from fastapi.exceptions import HTTPException
 
 from bioptim_gui_api.penalty.penalty_utils import (
     get_args,
@@ -109,3 +110,13 @@ def test_obj_arguments(objective_fcn, objective_type, penalty_type):
 )
 def test_constraint_arguments(constraint_fcn, penalty_type):
     assert constraint_arguments(penalty_type) == get_args(constraint_fcn)
+
+
+def test_bad_objective_fcn():
+    with pytest.raises(HTTPException):
+        obj_arguments("not_an_objective", "MINIMIZE_TIME")
+
+
+def test_bad_constraint_fcn():
+    with pytest.raises(HTTPException):
+        constraint_arguments("NOT_IMPLEMENTED")
